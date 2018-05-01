@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Finance manager</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="slideLeft">"&lt;&lt;"</string>
+    <string name="slideRight">"&gt;&gt;"</string>
+
+    <string-array name="accounts">
+        <item>Credit</item>
+        <item>Cash</item>
+        <item>Salary</item>
+    </string-array>
+
+    <string-array name="timePeriod">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Mounth</item>
+        <item>All time</item>
+        <item>Select period</item>
+    </string-array>
+
+    <string name="Outcome">Outcome</string>
+    <string name="Income">Income</string>
+</resources>
