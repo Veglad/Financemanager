@@ -5,6 +5,13 @@
     <string name="slideLeft">"&lt;&lt;"</string>
     <string name="slideRight">"&gt;&gt;"</string>
 
+    <string name="periodOfTime">Period</string>
+
+    <string name="Outcome">Outcome</string>
+    <string name="Income">Income</string>
+
+    <string name="save">Save</string>
+
     <string-array name="accounts">
         <item>Credit</item>
         <item>Cash</item>
@@ -14,11 +21,12 @@
     <string-array name="timePeriod">
         <item>Day</item>
         <item>Week</item>
-        <item>Mounth</item>
+        <item>Month</item>
+        <item>Year</item>
         <item>All time</item>
-        <item>Select period</item>
     </string-array>
 
-    <string name="Outcome">Outcome</string>
-    <string name="Income">Income</string>
+
+
+
 </resources>

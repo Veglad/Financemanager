@@ -20,7 +20,7 @@ public class CustomSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent){
         View view = InitView(position, convertView, parent);
-        //view.setBackgroundResource(R.drawable.spinner_item_shape);
+        //view.setBackgroundResource(R.drawable.spinner_shape);
         return view;
     }
 
@@ -44,7 +44,7 @@ public class CustomSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
         if(currentItem != null){
             image.setImageResource(currentItem.getImage());
-            accauntName.setText(currentItem.getAccountName());
+            accauntName.setText(currentItem.getName());
         }
 
         return convertView;

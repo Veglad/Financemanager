@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_transfers"
-        android:title="Transfers"/>
-    <item
-        android:id="@+id/nav_accounts"
-        android:title="Accounts"/>
-    <item
-        android:id="@+id/nav_currency"
-        android:title="Currency"/>
-    <item
-        android:id="@+id/nav_categories"
-        android:title="Categories"/>
+        android:title="Select period"
+        android:id="@+id/navigation_drawer_item_1"
+        app:actionLayout="@layout/spinner_periods_layout"
+        />
 </menu>

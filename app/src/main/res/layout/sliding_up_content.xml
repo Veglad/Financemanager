@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/darker_gray">
+    android:orientation="vertical">
 
 
     <LinearLayout
+        android:id="@+id/ll_HistoryHead"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@color/colorPrimary">
@@ -23,32 +23,13 @@
             android:textSize="16sp"/>
 
     </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/text1"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewOperations"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Operation 1"
-        android:gravity="center"
-        android:background="@android:color/white"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:textSize="14sp"
-        />
+        android:scrollbars="vertical"
+        android:layout_marginTop="5dp">
 
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Operation 1"
-        android:gravity="center"
-        android:background="@android:color/white"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:textSize="14sp"
-        />
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

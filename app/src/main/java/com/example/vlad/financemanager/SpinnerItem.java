@@ -1,19 +1,27 @@
 package com.example.vlad.financemanager;
 
-public class SpinnerItem {
-    private String accountName;
-    private int image;
+import java.io.Serializable;
 
-    public SpinnerItem(String accountName, int image){
-        this.accountName = accountName;
+public class SpinnerItem implements Serializable{
+    private String name;
+    private int image;
+    private int id;
+
+    public SpinnerItem(int id, String accountName, int image){
+        this.name = accountName;
         this.image = image;
+        this.id = id;
     }
 
-    public String getAccountName(){
-        return accountName;
+    public String getName(){
+        return name;
     }
 
     public int getImage(){
         return  image;
+    }
+
+    public int getId(){
+        return id;
     }
 }

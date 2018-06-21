@@ -7,22 +7,25 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:src="@drawable/money" />
+        android:layout_marginRight="0dp"
+        android:src="@drawable/cash" />
 
     <TextView
         android:id="@+id/tv_accountType"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="10dp"
+        android:layout_gravity="center_vertical"
+        android:text="111111"
         android:gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

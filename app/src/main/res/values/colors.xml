@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="tabsScrollColor">#004D40</color>
     <color name="colorLite">#FFFFFF</color>
-    <color name="colorLiteGreen">#4EF477</color>
-    <color name="colorLiteRed">#F44E4E</color>
+    <color name="colorLiteGreen">#2CAA55</color>
+    <color name="colorLiteRed">#D22C2C</color>
+    <color name="colorOrange">#e28126</color>
+    <color name="darkGrey">#4C4C4C</color>
 </resources>
