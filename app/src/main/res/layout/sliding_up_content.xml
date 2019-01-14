@@ -11,7 +11,7 @@
             android:id="@+id/slidingPanelTitleTextView"
             android:gravity="center|top"
             android:layout_gravity="center"
-            android:text="@string/slidingUpTitle"
+            android:text="@string/sliding_up_title"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimary"
             android:textSize="18sp"/>
