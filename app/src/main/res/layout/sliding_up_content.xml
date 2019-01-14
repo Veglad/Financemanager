@@ -5,31 +5,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <LinearLayout
-        android:id="@+id/ll_HistoryHead"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@color/colorPrimary">
-
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvSlidingPanel"
+            android:layout_height="30dp"
+            android:id="@+id/slidingPanelTitleTextView"
             android:gravity="center|top"
             android:layout_gravity="center"
-            android:text="History"
+            android:text="@string/sliding_up_title"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:background="@color/colorPrimary"
+            android:textSize="18sp"/>
 
-    </LinearLayout>
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewOperations"
+        android:id="@+id/operationsRecyclerView"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:scrollbars="vertical"
         android:layout_marginTop="5dp">
 
     </android.support.v7.widget.RecyclerView>
-
 </LinearLayout>

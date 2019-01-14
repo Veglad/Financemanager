@@ -2,35 +2,43 @@
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tool_bar"
-    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/calculatorToolbar"
+    android:layout_height="?attr/actionBarSize"
     android:layout_width="match_parent"
     app:theme="@style/HeaderBaseTheme"
     android:background="@color/colorPrimary">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
         <TextView
+            android:id="@+id/mainScreenTitleTextView"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="18sp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
             android:text="@string/app_name"
-            android:textColor="@android:color/white"/>
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinnerAccounts"
-            android:layout_width="130dp"
-            android:gravity="center"
-            android:layout_height="match_parent"
-            android:entries="@array/accounts"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/spinner_shape"/>
-    </RelativeLayout>
+            android:id="@+id/accountsSpinner"
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/spinner_shape"
+            android:entries="@array/accounts_titles"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 
 
