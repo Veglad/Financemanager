@@ -1,10 +1,6 @@
 package com.example.vlad.financemanager;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import com.example.vlad.financemanager.FinanceManagerContract.*;
 
 import java.math.BigDecimal;
 
@@ -26,38 +22,38 @@ public class PresenterMoneyCalc {
      */
     public void calculatorBtnOnClick(int btnId, String numberValue){
         switch (btnId){
-            case R.id.btnBack:
+            case R.id.calculatorBackButton:
                 view.setCalcResultText(model.clearLast());
                 break;
-            case R.id.btnAdd:
+            case R.id.aditionCalculatorButton:
                 if(!model.mathOperBtnClick(CalcOperations.Add)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
-            case R.id.btnSubstract:
+            case R.id.substractionCalculatorButton:
                 if(!model.mathOperBtnClick(CalcOperations.Sub)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
-            case R.id.btnMul:
+            case R.id.multiplicationCalculatorButton:
                 if(!model.mathOperBtnClick(CalcOperations.Mul)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
-            case R.id.btnDiv:
+            case R.id.divisionCalculatorButton:
                 if(!model.mathOperBtnClick(CalcOperations.Div)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
-            case R.id.btnEquals:
+            case R.id.equalsCalculatorButton:
                 if(model.calculatePress())
                     view.setCalcResultText(model.getResulText());
                 else{

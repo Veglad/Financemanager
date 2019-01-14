@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tool_bar"
+    android:id="@+id/calculatorToolbar"
     android:layout_height="?attr/actionBarSize"
     android:layout_width="match_parent"
     app:theme="@style/HeaderBaseTheme"
@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/mainScreenTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="2"
@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinnerAccounts"
+            android:id="@+id/accountsSpinner"
             android:layout_width="100dp"
             android:layout_height="25dp"
             android:layout_marginTop="8dp"

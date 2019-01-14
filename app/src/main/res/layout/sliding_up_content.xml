@@ -8,16 +8,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:id="@+id/tvSlidingPanel"
+            android:id="@+id/slidingPanelTitleTextView"
             android:gravity="center|top"
             android:layout_gravity="center"
-            android:text="History"
+            android:text="@string/slidingUpTitle"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimary"
             android:textSize="18sp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewOperations"
+        android:id="@+id/operationsRecyclerView"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:scrollbars="vertical"

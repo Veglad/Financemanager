@@ -3,8 +3,6 @@ package com.example.vlad.financemanager;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.design.widget.NavigationView;
@@ -17,12 +15,10 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.support.v7.widget.Toolbar;
@@ -76,11 +72,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnIncome = (Button)findViewById(R.id.btnIncome);
-        btnOutcome = (Button)findViewById(R.id.btnOutcome);
-        btnLeft = (Button)findViewById(R.id.btnLeft);
-        btnRight = (Button)findViewById(R.id.btnRight);
-        tv_balance = (TextView)findViewById(R.id.tv_balance);
+        btnIncome = (Button)findViewById(R.id.incomeButton);
+        btnOutcome = (Button)findViewById(R.id.outcomeButton);
+        btnLeft = (Button)findViewById(R.id.leftButton);
+        btnRight = (Button)findViewById(R.id.rightButton);
+        tv_balance = (TextView)findViewById(R.id.balanceTextView);
 
         btnLeft.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
         btnRight.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
@@ -88,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         btnIncome.setOnClickListener(this);
         btnOutcome.setOnClickListener(this);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.mainScreenToolbar);
         setSupportActionBar(toolbar);
 
 
@@ -111,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         //Operations Adapter
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewOperations);
+        RecyclerView recyclerView = findViewById(R.id.operationsRecyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         operationList = new ArrayList<>();
@@ -136,13 +132,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         /**Sliding tabs**/
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pieChartViewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, 2);
         viewPagerAdapter.setOperations(operationList);
         viewPager.setAdapter(viewPagerAdapter);
 
         // Give the PagerSlidingTabStrip the ViewPager
-        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.pieChartTabs);
         // Attach the view pager to the tab strip
         tabsStrip.setViewPager(viewPager);
 
@@ -303,11 +299,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         Intent intent = new Intent(this, moneyCalculator.class);
         boolean isIncome = false;
         switch (v.getId()){
-            case R.id.btnIncome:
+            case R.id.incomeButton:
                 intent.putExtra("msg","Income");
                 isIncome = true;
                 break;
-            case R.id.btnOutcome:
+            case R.id.outcomeButton:
                 intent.putExtra("msg", "Outcome");
                 isIncome = false;
                 break;
@@ -336,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         //Gett all accounts for the spinner init
        spinnerAccountItems = getAccountsFromDBForSpinner();
 
-        spinnerAccounts = (Spinner)findViewById(R.id.spinnerAccounts);
+        spinnerAccounts = (Spinner)findViewById(R.id.accountsSpinner);
         spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountItems);

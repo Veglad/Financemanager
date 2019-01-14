@@ -11,6 +11,30 @@
     <string name="Income">Income</string>
 
     <string name="save">Save</string>
+    <string name="slidingUpTitle">History</string>
+
+    <string name="category">Category</string>
+    <string name="account">Account</string>
+    <string name="comment">Comment</string>
+
+    <!-- Calculator strings -->
+    <string name="oneCalculatorButton">1</string>
+    <string name="twoCalculatorButton">2</string>
+    <string name="threeCalculatorButton">3</string>
+    <string name="fourCalculatorButton">4</string>
+    <string name="fiveCalculatorButton">5</string>
+    <string name="sixCalculatorButton">6</string>
+    <string name="sevenCalculatorButton">7</string>
+    <string name="eightCalculatorButton">8</string>
+    <string name="nineCalculatorButton">9</string>
+    <string name="zeroCalculatorButton">0</string>
+
+    <string name="divisionCalculatorButton">/</string>
+    <string name="multiplicationCalculatorButton">×</string>
+    <string name="substractionCalculatorButton">-</string>
+    <string name="additionCalculatorButton">+</string>
+    <string name="equalsCalculatorButton">=</string>
+    <string name="separatorCalculatorButton">.</string>
 
     <string-array name="accounts">
         <item>Credit</item>

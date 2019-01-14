@@ -3,19 +3,13 @@ package com.example.vlad.financemanager;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.ColorFilter;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,7 +58,7 @@ public class moneyCalculator extends AppCompatActivity implements IMoneyCalculat
         opernForChange = false;
 
         //Setting long clear button press;
-        Button btnBack = (Button)findViewById(R.id.btnBack);
+        Button btnBack = (Button)findViewById(R.id.calculatorBackButton);
         btnBack.getBackground().setColorFilter(R.color.darkGrey, PorterDuff.Mode.SRC_ATOP);
         btnBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -76,12 +69,12 @@ public class moneyCalculator extends AppCompatActivity implements IMoneyCalculat
         });
 
         //main views
-        resultText = (TextView)findViewById(R.id.tvResultText);
-        comment = (EditText)findViewById(R.id.etComment);
+        resultText = (TextView)findViewById(R.id.calculationResultTextView);
+        comment = (EditText)findViewById(R.id.commentMoneyActivityEditText);
         initSpinners();
 
         //datePicker Button
-        setDateButton = (Button)findViewById(R.id.btnOperDate);
+        setDateButton = (Button)findViewById(R.id.operationDateButton);
         setDateButton.setText(sdf.format( new Date()));
         setDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +91,7 @@ public class moneyCalculator extends AppCompatActivity implements IMoneyCalculat
         });
 
         //Toolbar settings
-        Toolbar toolbar = (Toolbar)findViewById(R.id.calc_toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.calculatorActivityMoneyToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -119,7 +112,7 @@ public class moneyCalculator extends AppCompatActivity implements IMoneyCalculat
             opernForChange = true;
         }
 
-        TextView toolbarTitle = (TextView)findViewById(R.id.toolbatTitle);
+        TextView toolbarTitle = (TextView)findViewById(R.id.toolbarTitleTextView);
         toolbarTitle.setText(str);
 
         isOperationInput = str.equals("Income");
@@ -299,8 +292,8 @@ public class moneyCalculator extends AppCompatActivity implements IMoneyCalculat
 
 
 
-        spinnerAccounts = (Spinner)findViewById(R.id.spinnerAccount);
-        spinnerCategories = (Spinner)findViewById(R.id.spinnerCategory);
+        spinnerAccounts = (Spinner)findViewById(R.id.accountSpinner);
+        spinnerCategories = (Spinner)findViewById(R.id.categorySpinner);
         spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         spinnerCategories.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 

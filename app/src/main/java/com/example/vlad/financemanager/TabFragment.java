@@ -58,7 +58,7 @@ public class TabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanse){
         view = inflater.inflate(R.layout.fragment_tab, container, false );
 
-        textDate = (TextView)view.findViewById(R.id.tvDateText);
+        textDate = (TextView)view.findViewById(R.id.datePieChartFragmentTextView);
         text = getArguments().getString(tabDateTextKey);
         textDate.setText(text);
 

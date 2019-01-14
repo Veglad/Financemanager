@@ -8,7 +8,7 @@
     tools:context=".moneyCalculator">
 
     <include
-        android:id="@+id/calc_toolbar"
+        android:id="@+id/calculatorActivityMoneyToolbar"
         layout="@layout/calculator_toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnOperDate"
+        android:id="@+id/operationDateButton"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_gravity="center"
@@ -28,77 +28,76 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calc_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/calculatorActivityMoneyToolbar" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/categoryTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Category"
+        android:text="@string/category"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="@id/spinnerCategory"
-        app:layout_constraintBottom_toBottomOf="@id/spinnerCategory"
+        app:layout_constraintTop_toTopOf="@id/categorySpinner"
+        app:layout_constraintBottom_toBottomOf="@id/categorySpinner"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
-        android:id="@+id/spinnerCategory"
+        android:id="@+id/categorySpinner"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/spinner_shape"
-        app:layout_constraintLeft_toRightOf="@id/textView2"
-        app:layout_constraintTop_toBottomOf="@id/btnOperDate"/>
+        app:layout_constraintLeft_toRightOf="@id/categoryTextView"
+        app:layout_constraintTop_toBottomOf="@id/operationDateButton"/>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/accountTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Account"
+        android:text="@string/account"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="@id/spinnerAccount"
-        app:layout_constraintBottom_toBottomOf="@id/spinnerAccount"
-        app:layout_constraintStart_toStartOf="@+id/textView2" />
+        app:layout_constraintTop_toTopOf="@id/accountSpinner"
+        app:layout_constraintBottom_toBottomOf="@id/accountSpinner"
+        app:layout_constraintStart_toStartOf="@+id/categoryTextView" />
 
     <Spinner
-        android:id="@+id/spinnerAccount"
+        android:id="@+id/accountSpinner"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:background="@drawable/spinner_shape"
-        app:layout_constraintLeft_toLeftOf="@id/spinnerCategory"
-        app:layout_constraintRight_toRightOf="@id/spinnerCategory"
-        app:layout_constraintTop_toBottomOf="@id/spinnerCategory"/>
+        app:layout_constraintLeft_toLeftOf="@id/categorySpinner"
+        app:layout_constraintRight_toRightOf="@id/categorySpinner"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner"/>
 
     <EditText
-        android:id="@+id/etComment"
+        android:id="@+id/commentMoneyActivityEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Comment"
+        android:hint="@string/comment"
         android:imeOptions="actionDone"
         android:inputType="text"
         android:maxLength="100"
         android:maxLines="1"
-        app:layout_constraintBottom_toTopOf="@+id/tvResultText"
+        app:layout_constraintBottom_toTopOf="@+id/calculationResultTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/tvResultText"
+        android:id="@+id/calculationResultTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        android:gravity="right"
-        android:text="0"
+        android:text="@string/zeroCalculatorButton"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn1"
-        app:layout_constraintEnd_toStartOf="@+id/btnBack" />
+        app:layout_constraintBottom_toTopOf="@+id/oneCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/calculatorBackButton" />
 
     <Button
-        android:id="@+id/btnBack"
+        android:id="@+id/calculatorBackButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="25dp"
@@ -111,13 +110,13 @@
         android:textColor="@color/darkGrey"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnDiv"
+        app:layout_constraintBottom_toTopOf="@+id/divisionCalculatorButton"
         app:layout_constraintDimensionRatio="4:3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvResultText" />
+        app:layout_constraintTop_toTopOf="@+id/calculationResultTextView" />
 
     <Button
-        android:id="@+id/btn1"
+        android:id="@+id/oneCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
@@ -126,66 +125,66 @@
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
         android:padding="0dp"
-        android:text="1"
+        android:text="@string/oneCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn4"
-        app:layout_constraintEnd_toStartOf="@+id/btn2"
+        app:layout_constraintBottom_toTopOf="@+id/fourCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/twoCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn2"
+        android:id="@+id/twoCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="2"
+        android:text="@string/twoCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btn3"
+        app:layout_constraintEnd_toStartOf="@+id/threeCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn1"
-        app:layout_constraintTop_toTopOf="@+id/btn1" />
+        app:layout_constraintStart_toEndOf="@+id/oneCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/oneCalculatorButton" />
 
     <Button
-        android:id="@+id/btn3"
+        android:id="@+id/threeCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="3"
+        android:text="@string/threeCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btnDiv"
+        app:layout_constraintEnd_toStartOf="@+id/divisionCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn2"
-        app:layout_constraintTop_toTopOf="@+id/btn2" />
+        app:layout_constraintStart_toEndOf="@+id/twoCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/twoCalculatorButton" />
 
     <Button
-        android:id="@+id/btnDiv"
+        android:id="@+id/divisionCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="÷"
+        android:text="@string/additionCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn3"
-        app:layout_constraintTop_toTopOf="@+id/btn3" />
+        app:layout_constraintStart_toEndOf="@+id/threeCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/threeCalculatorButton" />
 
     <Button
-        android:id="@+id/btn4"
+        android:id="@+id/fourCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
@@ -193,66 +192,66 @@
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="4"
+        android:text="@string/fourCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn7"
-        app:layout_constraintEnd_toStartOf="@+id/btn5"
+        app:layout_constraintBottom_toTopOf="@+id/sevenCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/fiveCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn5"
+        android:id="@+id/fiveCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="5"
+        android:text="@string/fiveCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btn6"
+        app:layout_constraintEnd_toStartOf="@+id/sixCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn4"
-        app:layout_constraintTop_toTopOf="@+id/btn4" />
+        app:layout_constraintStart_toEndOf="@+id/fourCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/fourCalculatorButton" />
 
     <Button
-        android:id="@+id/btn6"
+        android:id="@+id/sixCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="6"
+        android:text="@string/sixCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btnMul"
+        app:layout_constraintEnd_toStartOf="@+id/multiplicationCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn5"
-        app:layout_constraintTop_toTopOf="@+id/btn5" />
+        app:layout_constraintStart_toEndOf="@+id/fiveCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/fiveCalculatorButton" />
 
     <Button
-        android:id="@+id/btnMul"
+        android:id="@+id/multiplicationCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="×"
+        android:text="@string/multiplicationCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn6"
-        app:layout_constraintTop_toTopOf="@+id/btn6" />
+        app:layout_constraintStart_toEndOf="@+id/sixCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/sixCalculatorButton" />
 
     <Button
-        android:id="@+id/btn7"
+        android:id="@+id/sevenCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
@@ -260,66 +259,66 @@
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="7"
+        android:text="@string/sevenCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnSeparator"
-        app:layout_constraintEnd_toStartOf="@+id/btn8"
+        app:layout_constraintBottom_toTopOf="@+id/separatorCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/eightCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn8"
+        android:id="@+id/eightCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="8"
+        android:text="@string/eightCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btn9"
+        app:layout_constraintEnd_toStartOf="@+id/nineCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn7"
-        app:layout_constraintTop_toTopOf="@+id/btn7" />
+        app:layout_constraintStart_toEndOf="@+id/sevenCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/sevenCalculatorButton" />
 
     <Button
-        android:id="@+id/btn9"
+        android:id="@+id/nineCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="9"
+        android:text="@string/nineCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btnSubstract"
+        app:layout_constraintEnd_toStartOf="@+id/substractionCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn8"
-        app:layout_constraintTop_toTopOf="@+id/btn8" />
+        app:layout_constraintStart_toEndOf="@+id/eightCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/eightCalculatorButton" />
 
     <Button
-        android:id="@+id/btnSubstract"
+        android:id="@+id/substractionCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="-"
+        android:text="@string/substractionCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn9"
-        app:layout_constraintTop_toTopOf="@+id/btn9" />
+        app:layout_constraintStart_toEndOf="@+id/nineCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/nineCalculatorButton" />
 
     <Button
-        android:id="@+id/btnSeparator"
+        android:id="@+id/separatorCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
@@ -327,64 +326,64 @@
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="."
+        android:text="@string/separatorCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
-        app:layout_constraintEnd_toStartOf="@+id/btn0"
+        app:layout_constraintBottom_toTopOf="@+id/saveRecordButton"
+        app:layout_constraintEnd_toStartOf="@+id/zeroCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn0"
+        android:id="@+id/zeroCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="0"
+        android:text="@string/zeroCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/btnEquals"
+        app:layout_constraintEnd_toStartOf="@+id/equalsCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnSeparator"
-        app:layout_constraintTop_toTopOf="@+id/btnSeparator" />
+        app:layout_constraintStart_toEndOf="@+id/separatorCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/separatorCalculatorButton" />
 
     <Button
-        android:id="@+id/btnEquals"
+        android:id="@+id/equalsCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="1"
         android:background="@color/colorOrange"
         android:onClick="calculatorBtnOnClick"
-        android:text="="
+        android:text="@string/equalsCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/btnAdd"
+        app:layout_constraintEnd_toStartOf="@+id/aditionCalculatorButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btn0"
-        app:layout_constraintTop_toTopOf="@+id/btn0" />
+        app:layout_constraintStart_toEndOf="@+id/zeroCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/zeroCalculatorButton" />
 
     <Button
-        android:id="@+id/btnAdd"
+        android:id="@+id/aditionCalculatorButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_weight="1"
         android:background="@color/darkGrey"
         android:onClick="calculatorBtnOnClick"
-        android:text="+"
+        android:text="@string/additionCalculatorButton"
         android:textColor="@color/colorLite"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnEquals"
-        app:layout_constraintTop_toTopOf="@+id/btnEquals" />
+        app:layout_constraintStart_toEndOf="@+id/equalsCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/equalsCalculatorButton" />
 
     <Button
-        android:id="@+id/btnSave"
+        android:id="@+id/saveRecordButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimaryDark"

@@ -1,7 +1,6 @@
 package com.example.vlad.financemanager;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -37,8 +36,8 @@ public class CustomSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
                     R.layout.spinner_item, parent, false);
         }
 
-        ImageView image = convertView.findViewById(R.id.icon);
-        TextView accauntName = convertView.findViewById(R.id.tv_accountType);
+        ImageView image = convertView.findViewById(R.id.iconSpinnerItem);
+        TextView accauntName = convertView.findViewById(R.id.accountTypeTextView);
 
         SpinnerItem currentItem = getItem(position);
 
