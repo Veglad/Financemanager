@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width = "match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -10,100 +10,110 @@
         android:id="@+id/toolbar"
         layout="@layout/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:textSize="12sp"
         android:textColor="#000000"
-        app:pstsUnderlineColor="@color/colorAccent"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:pstsDividerColor="@color/colorAccent"
-        app:pstsIndicatorHeight="2dp"/>
+        app:pstsIndicatorHeight="2dp"
+        app:pstsUnderlineColor="@color/colorAccent" />
 
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        app:layout_constraintBottom_toTopOf="@+id/btnLeft"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tabs"
+        app:layout_constraintTop_toBottomOf="@+id/tabs" />
 
 
+    <Button
+        android:id="@+id/btnLeft"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/sharp_arrow_left_black_48"
+        android:onClick="buttonLeftClick"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnIncome"
+        app:layout_constraintEnd_toStartOf="@+id/tv_balance"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnLeft"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:textSize="40sp"
-            android:textColor="@color/colorPrimary"
-            android:background="@drawable/sharp_arrow_left_black_48"
-            android:onClick="buttonLeftClick"
-            android:layout_weight="4"
-            style="?android:attr/borderlessButtonStyle"/>
-
-        <TextView
+    <TextView
         android:id="@+id/tv_balance"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:text="Balance: 34200"
-        android:layout_weight="2"/>
-
-        <Button
-            android:id="@+id/btnRight"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:textSize="40sp"
-            android:textColor="@color/colorPrimary"
-            android:background="@drawable/sharp_arrow_right_black_48"
-            android:onClick="buttonRigthClick"
-            android:layout_weight="4"
-            style="?android:attr/borderlessButtonStyle"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:text="Balance: 34200"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLeft"
+        app:layout_constraintEnd_toStartOf="@+id/btnRight"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnLeft"
+        app:layout_constraintTop_toTopOf="@+id/btnLeft" />
 
-        <Button
-            android:id="@+id/btnOutcome"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:text="@string/Outcome"
-            android:background="@drawable/btn_outcome_shape"
-            android:textColor="@color/colorLiteRed"
-            android:textSize="20sp"
-            android:layout_marginRight="5dp"
-            style="?android:attr/borderlessButtonStyle"/>
-
-        <Button
-            android:id="@+id/btnIncome"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_income_shape"
-            android:textColor="@color/colorLiteGreen"
-            android:text="@string/Income"
-            android:textSize="20sp"
-            style="?android:attr/borderlessButtonStyle"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnRight"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:background="@drawable/sharp_arrow_right_black_48"
+        android:onClick="buttonRigthClick"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_balance"
+        app:layout_constraintTop_toTopOf="@+id/btnLeft" />
 
 
-</LinearLayout>
+    <Button
+        android:id="@+id/btnOutcome"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_outcome_shape"
+        android:text="@string/Outcome"
+        android:textColor="@color/colorLiteRed"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnIncome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnIncome" />
+
+    <Button
+        android:id="@+id/btnIncome"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_income_shape"
+        android:text="@string/Income"
+        android:textColor="@color/colorLiteGreen"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnOutcome"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

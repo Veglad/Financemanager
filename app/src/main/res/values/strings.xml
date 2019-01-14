@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Finance manager</string>
+    <string name="app_name">FinanceManager</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="slideLeft">"&lt;&lt;"</string>
