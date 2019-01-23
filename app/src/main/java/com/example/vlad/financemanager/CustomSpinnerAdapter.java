@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+
 public class CustomSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
     public CustomSpinnerAdapter(Context context, int resource, ArrayList<SpinnerItem> spinnerItems){

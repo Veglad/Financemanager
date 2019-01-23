@@ -24,21 +24,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 
 public class TabFragment extends Fragment {
+    private Unbinder unbinder;
     private View view;
-    private TextView textDate;
+    @BindView(R.id.datePieChartFragmentTextView) TextView textDate;
+    @BindView(R.id.pieChart) PieChart pieChart;
     boolean isIncome;
     private ArrayList<Operation> operations;
-    String text;///////////
-    PieChart pieChart;
+    String text;
     private static final String tabDateTextKey = "TabDateText";
     private static final String tabIsIncomeKey = "TabIsIncome";
     private static final String tabOperationsKey = "OperationsKey";
 
     public static TabFragment newInstance(String str, ArrayList<Operation> operations, boolean isIncome) {
         Bundle args = new Bundle();
-        args.putString(tabDateTextKey, str);/////////////////
+        args.putString(tabDateTextKey, str);
         args.putBoolean(tabIsIncomeKey, isIncome);
         args.putSerializable(tabOperationsKey, operations);
 
@@ -58,19 +63,25 @@ public class TabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanse){
         view = inflater.inflate(R.layout.fragment_tab, container, false );
 
-        textDate = (TextView)view.findViewById(R.id.datePieChartFragmentTextView);
+        unbinder = ButterKnife.bind(this,view);
+
         text = getArguments().getString(tabDateTextKey);
         textDate.setText(text);
 
         operations = (ArrayList<Operation>)getArguments().getSerializable(tabOperationsKey);
         boolean isIncome = getArguments().getBoolean(tabIsIncomeKey);
 
-        pieChart = (PieChart) view.findViewById(R.id.pieChart);
         pieChart.setUsePercentValues(true);
 
         drawPieChart(isIncome);
 
         return  view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     //Full tab fragment update

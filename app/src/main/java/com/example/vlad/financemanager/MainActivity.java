@@ -33,37 +33,47 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 public class MainActivity extends AppCompatActivity implements OnClickListener, IMainActivity{
 
     private MainActivityPresenter presenter;
     private final String textBalance = "Balance: ";
-
-    private ActionBarDrawerToggle toggleActionBar;
     private final CharSequence Titles[] = {"Outcome", "Income"};
+
     private int userId;
-    private Spinner spinnerAccounts;
     private int operationAccIdBeforeChange;
-    private PeriodsOfTime selectedPeriod;
-    private DatabaseHelper database;
     private int positionInList;
     private int operationId;
+    private PeriodsOfTime selectedPeriod;
+    private DatabaseHelper database;
     private BigDecimal balanceForSelectedPeriod;
     private Calendar lastSelectedDay;
     private BigDecimal lastOperAmount;
-    ViewPagerAdapter viewPagerAdapter;
+    private ViewPagerAdapter viewPagerAdapter;
+    private OperationsAdapter mOperationsAdapter;
+    private ActionBarDrawerToggle toggleActionBar;
 
-    OperationsAdapter mOperationsAdapter ;
+    Spinner dateSpinner;
+    @BindView(R.id.accountsSpinner) Spinner accountsSpinner;
+    @BindView(R.id.leftButton) Button leftButton;
+    @BindView(R.id.rightButton) Button rightButton;
+    @BindView(R.id.balanceTextView) TextView balanceTextView;
+    @BindView(R.id.mainScreenToolbar) Toolbar toolbar;
+    @BindView(R.id.operationsRecyclerView) RecyclerView recyclerView;
+    @BindView(R.id.pieChartViewPager) ViewPager viewPager;
+    @BindView(R.id.pieChartTabs) PagerSlidingTabStrip tabsStrip;
+    @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
+    @BindView(R.id.navigationView) NavigationView navigationView;
 
-    private Button btnIncome, btnOutcome, btnLeft, btnRight;
-    private Spinner dateSpinner;
-    private TextView tv_balance;
-
-    private ArrayList<SpinnerItem> spinnerAccountItems;
-    private List<Category> categoryListIncome;
-    private List<Category> categoryListOutcome;
-    private List<Account> accountList;
-    private List<Operation> operationList;
+    ArrayList<SpinnerItem> spinnerAccountItems;
+    List<Category> categoryListIncome;
+    List<Category> categoryListOutcome;
+    List<Account> accountList;
+    List<Operation> operationList;
 
 
     @SuppressLint("ResourceAsColor")
@@ -71,20 +81,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        btnIncome = (Button)findViewById(R.id.incomeButton);
-        btnOutcome = (Button)findViewById(R.id.outcomeButton);
-        btnLeft = (Button)findViewById(R.id.leftButton);
-        btnRight = (Button)findViewById(R.id.rightButton);
-        tv_balance = (TextView)findViewById(R.id.balanceTextView);
+        leftButton.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
+        rightButton.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
 
-        btnLeft.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
-        btnRight.getBackground().setColorFilter(R.color.colorPrimary, PorterDuff.Mode.SRC_ATOP);
-
-        btnIncome.setOnClickListener(this);
-        btnOutcome.setOnClickListener(this);
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.mainScreenToolbar);
         setSupportActionBar(toolbar);
 
 
@@ -106,8 +107,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         spinnerPeriodsInit();
 
         //Operations Adapter
-
-        RecyclerView recyclerView = findViewById(R.id.operationsRecyclerView);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         operationList = new ArrayList<>();
@@ -132,18 +131,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         /**Sliding tabs**/
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pieChartViewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, 2);
         viewPagerAdapter.setOperations(operationList);
         viewPager.setAdapter(viewPagerAdapter);
 
-        // Give the PagerSlidingTabStrip the ViewPager
-        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.pieChartTabs);
         // Attach the view pager to the tab strip
         tabsStrip.setViewPager(viewPager);
 
         /**Toggle action bar**/
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawerLayout);
         toggleActionBar = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
 
         drawerLayout.addDrawerListener(toggleActionBar);
@@ -193,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
             operation = database.getOperation(id, userId);
             if(operation != null){
-                int currentAccId = accountList.get(spinnerAccounts.getSelectedItemPosition()).getId();//all acc
+                int currentAccId = accountList.get(accountsSpinner.getSelectedItemPosition()).getId();//all acc
                 //Add operation to the list if it is not out of the period and performed for current account
                 if(!isOutOfPeriod(operation.getOperationDate()) && (currentAccId == operation.getAccountId() || currentAccId == -1)){
                     operationList.add(0,operation);
@@ -237,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             balanceForSelectedPeriod= balanceForSelectedPeriod.subtract(newOperation.getAmount());
 
         viewPagerAdapter.updateTab(lastSelectedDay, selectedPeriod, operationList);
-        tv_balance.setText(textBalance + balanceForSelectedPeriod + " ₴");
+        balanceTextView.setText(textBalance + balanceForSelectedPeriod + " ₴");
     }
 
     private void updateBalanceForDeletedOper(Operation deletedOperation){
@@ -247,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             balanceForSelectedPeriod = balanceForSelectedPeriod.add(deletedOperation.getAmount());
 
         viewPagerAdapter.updateTab(lastSelectedDay, selectedPeriod, operationList);
-        tv_balance.setText(textBalance + balanceForSelectedPeriod + " ₴");
+        balanceTextView.setText(textBalance + balanceForSelectedPeriod + " ₴");
     }
 
     //Update balance with the new operation's list
@@ -261,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
 
         viewPagerAdapter.updateTab(lastSelectedDay, selectedPeriod, operationList);
-        tv_balance.setText(textBalance + balanceForSelectedPeriod + " ₴");
+        balanceTextView.setText(textBalance + balanceForSelectedPeriod + " ₴");
     }
 
     //Is new date is out of period
@@ -293,10 +288,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         return result;
     }
 
-
+    @OnClick({R.id.incomeButton, R.id.outcomeButton})
     @Override
     public void onClick(View v){
-        Intent intent = new Intent(this, moneyCalculator.class);
+        Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         boolean isIncome = false;
         switch (v.getId()){
             case R.id.incomeButton:
@@ -332,14 +327,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         //Gett all accounts for the spinner init
        spinnerAccountItems = getAccountsFromDBForSpinner();
 
-        spinnerAccounts = (Spinner)findViewById(R.id.accountsSpinner);
-        spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        accountsSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountItems);
-        spinnerAccounts.setAdapter(adapter);
+        accountsSpinner.setAdapter(adapter);
 
         //OnItemSelected
-        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 int accountId = spinnerAccountItems.get(selectedItemPosition).getId();
@@ -359,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void spinnerPeriodsInit(){
-        NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
         dateSpinner = (Spinner) navigationView.getMenu().findItem(R.id.navigation_drawer_item_1).getActionView();
 
 
@@ -395,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     private void fullUpdate(){
         operationList.clear();
-        int accId = spinnerAccountItems.get(spinnerAccounts.getSelectedItemPosition()).getId();
+        int accId = spinnerAccountItems.get(accountsSpinner.getSelectedItemPosition()).getId();
         operationList.addAll(database.getAllOperations(accId, selectedPeriod, lastSelectedDay));
         mOperationsAdapter.notifyDataSetChanged();
 
@@ -434,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     private void changeOperation(int position) {
         positionInList = position;
-        Intent intent = new Intent(this, moneyCalculator.class);
+        Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         Bundle extras = new Bundle();
         Operation operation  =  operationList.get(position);
         operationId = operation.getId();

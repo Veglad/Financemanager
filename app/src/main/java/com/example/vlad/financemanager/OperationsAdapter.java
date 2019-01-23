@@ -13,6 +13,9 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.OperationViewHolder> {
 
     private Context mContext;
@@ -25,22 +28,16 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     }
 
     public class OperationViewHolder extends RecyclerView.ViewHolder{
-        TextView categoryText;
-        TextView amountText;
-        TextView commentText;
-        TextView textDate;
-        ImageView categoryImg;
+        @BindView(R.id.itemCategoryNameTextView) TextView categoryText;
+        @BindView(R.id.itemAmountTextView) TextView amountText;
+        @BindView(R.id.itemCommentTextView) TextView commentText;
+        @BindView(R.id.dateOperationRecyclerItemTextView) TextView textDate;
+        @BindView(R.id.circleIconImageView) ImageView categoryImg;
 
 
         public OperationViewHolder(View itemView) {
             super(itemView);
-
-            categoryText = itemView.findViewById(R.id.itemCategoryNameTextView);
-            amountText = itemView.findViewById(R.id.itemAmountTextView);
-            commentText = itemView.findViewById(R.id.itemCommentTextView);
-            textDate = itemView.findViewById(R.id.dateOperationRecyclerItemTextView);
-            categoryImg = itemView.findViewById(R.id.circleIconImageView);
-
+            ButterKnife.bind(this, itemView);
         }
     }
 
