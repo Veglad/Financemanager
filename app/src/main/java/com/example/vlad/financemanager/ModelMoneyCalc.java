@@ -1,17 +1,14 @@
 package com.example.vlad.financemanager;
-import android.content.Context;
-import android.util.Log;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
 
 /**
  * Class - that implements logic of calculator
- * Model of the moneyCalculator view
+ * Model of the MoneyCalculatorActivity view
  * @author Vlad Shcheglov
  * @version 1.0
- * @see moneyCalculator
+ * @see MoneyCalculatorActivity
  */
 public class ModelMoneyCalc {
     /**  Our current number represented as text*/
