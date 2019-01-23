@@ -1,7 +1,6 @@
 package com.example.vlad.financemanager;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.widget.ImageView;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.example.vlad.financemanager.FinanceManagerContract.*;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -37,11 +35,11 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         public OperationViewHolder(View itemView) {
             super(itemView);
 
-            categoryText = itemView.findViewById(R.id.tv_itemCategoryName);
-            amountText = itemView.findViewById(R.id.tv_itemAmount);
-            commentText = itemView.findViewById(R.id.tv_itemComment);
-            textDate = itemView.findViewById(R.id.tv_textDate);
-            categoryImg = itemView.findViewById(R.id.circleIcon);
+            categoryText = itemView.findViewById(R.id.itemCategoryNameTextView);
+            amountText = itemView.findViewById(R.id.itemAmountTextView);
+            commentText = itemView.findViewById(R.id.itemCommentTextView);
+            textDate = itemView.findViewById(R.id.dateOperationRecyclerItemTextView);
+            categoryImg = itemView.findViewById(R.id.circleIconImageView);
 
         }
     }

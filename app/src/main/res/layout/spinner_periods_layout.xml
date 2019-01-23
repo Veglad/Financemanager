@@ -4,5 +4,5 @@
     android:id="@+id/spinnerPeriodsOfTime"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:entries="@array/timePeriod"
+    android:entries="@array/time_periods"
     android:layout_gravity="center_vertical"/>

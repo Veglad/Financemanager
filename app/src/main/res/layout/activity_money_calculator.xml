@@ -1,376 +1,398 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".moneyCalculator"
-    android:background="@color/colorLite">
+    android:background="@color/colorLite"
+    tools:context=".moneyCalculator">
 
     <include
-        android:id="@+id/calc_toolbar"
+        android:id="@+id/calculatorActivityMoneyToolbar"
         layout="@layout/calculator_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
+    <Button
+        android:id="@+id/operationDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorLite"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calculatorActivityMoneyToolbar" />
+
+    <TextView
+        android:id="@+id/categoryTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/category_title"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="@id/categorySpinner"
+        app:layout_constraintBottom_toBottomOf="@id/categorySpinner"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/spinner_shape"
+        app:layout_constraintLeft_toRightOf="@id/categoryTextView"
+        app:layout_constraintTop_toBottomOf="@id/operationDateButton"/>
+
+    <TextView
+        android:id="@+id/accountTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/account_title"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="@id/accountSpinner"
+        app:layout_constraintBottom_toBottomOf="@id/accountSpinner"
+        app:layout_constraintStart_toStartOf="@+id/categoryTextView" />
+
+    <Spinner
+        android:id="@+id/accountSpinner"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spinner_shape"
+        app:layout_constraintLeft_toLeftOf="@id/categorySpinner"
+        app:layout_constraintRight_toRightOf="@id/categorySpinner"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner"/>
+
+    <EditText
+        android:id="@+id/commentMoneyActivityEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/comment_title"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLength="100"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/calculationResultTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/calculationResultTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:text="@string/zero_calculator_button_text"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/oneCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/calculatorBackButton" />
+
+    <Button
+        android:id="@+id/calculatorBackButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="7"
+        android:background="@drawable/backspace_black_48"
+        android:gravity="center"
+        android:onClick="calculatorBtnOnClick"
+        android:textColor="@color/darkGrey"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/divisionCalculatorButton"
+        app:layout_constraintDimensionRatio="4:3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/calculationResultTextView" />
+
+    <Button
+        android:id="@+id/oneCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:padding="0dp"
+        android:text="@string/one_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/fourCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/twoCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/twoCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/two_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/threeCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/oneCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/oneCalculatorButton" />
+
+    <Button
+        android:id="@+id/threeCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/three_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/divisionCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/twoCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/twoCalculatorButton" />
+
+    <Button
+        android:id="@+id/divisionCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/addition_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/threeCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/threeCalculatorButton" />
+
+    <Button
+        android:id="@+id/fourCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/four_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sevenCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/fiveCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/fiveCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/five_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/sixCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fourCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/fourCalculatorButton" />
+
+    <Button
+        android:id="@+id/sixCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/six_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/multiplicationCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fiveCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/fiveCalculatorButton" />
+
+    <Button
+        android:id="@+id/multiplicationCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/multiplication_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sixCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/sixCalculatorButton" />
+
+    <Button
+        android:id="@+id/sevenCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/seven_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/separatorCalculatorButton"
+        app:layout_constraintEnd_toStartOf="@+id/eightCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/eightCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/eight_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/nineCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sevenCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/sevenCalculatorButton" />
+
+    <Button
+        android:id="@+id/nineCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/nine_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/substractionCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/eightCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/eightCalculatorButton" />
+
+    <Button
+        android:id="@+id/substractionCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/substraction_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/nineCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/nineCalculatorButton" />
+
+    <Button
+        android:id="@+id/separatorCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/separator_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/saveRecordButton"
+        app:layout_constraintEnd_toStartOf="@+id/zeroCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/zeroCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/zero_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/equalsCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/separatorCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/separatorCalculatorButton" />
+
+    <Button
+        android:id="@+id/equalsCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_weight="1"
+        android:background="@color/colorOrange"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/equals_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/aditionCalculatorButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/zeroCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/zeroCalculatorButton" />
+
+    <Button
+        android:id="@+id/aditionCalculatorButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/darkGrey"
+        android:onClick="calculatorBtnOnClick"
+        android:text="@string/addition_calculator_button_text"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/equalsCalculatorButton"
+        app:layout_constraintTop_toTopOf="@+id/equalsCalculatorButton" />
+
+    <Button
+        android:id="@+id/saveRecordButton"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="50dp"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="btnSaveOnClick"
+        android:text="@string/save"
+        android:textColor="@color/colorLite"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="60dp">
-            <Button
-                android:id="@+id/btnOperDate"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="16sp"
-                android:background="@color/colorLite"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginBottom="20dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginBottom="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:gravity="center_horizontal"
-                    android:text="Category"/>
-                <Spinner
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/spinnerCategory"
-                    android:background="@drawable/spinner_shape"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="5dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:textSize="20sp"
-                    android:text="Account"/>
-                <Spinner
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/spinnerAccount"
-                    android:background="@drawable/spinner_shape"/>
-            </LinearLayout>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:id="@+id/etComment"
-                android:hint="Comment"
-                android:layout_marginLeft="7dp"
-                android:maxLength="100"
-                android:inputType="text"
-                android:maxLines="1"
-                android:layout_marginRight="7dp"
-                android:imeOptions="actionDone"/>
-        </LinearLayout>
-
-        <!-- Calculator layout -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true"
-           >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/tvResultText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="40sp"
-                    android:gravity="right"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"/>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:id="@+id/btnBack"
-                    android:textSize="25sp"
-                    android:textStyle="bold"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="7"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:onClick="calculatorBtnOnClick"
-                    android:background="@drawable/backspace_black_48"
-                    android:textColor="@color/darkGrey"
-                    style="?android:attr/borderlessButtonStyle"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn1"
-                    android:text="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:padding="0dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"
-                    />
-                <Button
-                    android:id="@+id/btn2"
-                    android:text="2"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn3"
-                    android:text="3"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btnDiv"
-                    android:text="÷"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn4"
-                    android:text="4"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn5"
-                    android:text="5"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn6"
-                    android:text="6"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btnMul"
-                    android:text="×"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn7"
-                    android:text="7"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn8"
-                    android:text="8"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn9"
-                    android:text="9"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btnSubstract"
-                    android:text="-"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnSeparator"
-                    android:text="."
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btn0"
-                    android:text="0"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btnEquals"
-                    android:text="="
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginRight="1dp"
-                    android:background="@color/colorOrange"
-                    android:textColor="@color/colorLite"/>
-                <Button
-                    android:id="@+id/btnAdd"
-                    android:text="+"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:onClick="calculatorBtnOnClick"
-                    android:layout_marginBottom="1dp"
-                    android:background="@color/darkGrey"
-                    android:textColor="@color/colorLite"/>
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btnSave"
-                android:text="@string/save"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorLite"
-                android:background="@color/colorPrimaryDark"
-                android:textSize="20sp"
-                android:onClick="btnSaveOnClick"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
