@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,6 +30,7 @@ import com.astuetz.PagerSlidingTabStrip;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     private MainActivityPresenter presenter;
     private final String textBalance = "Balance: ";
-    private final CharSequence Titles[] = {"Outcome", "Income"};
+    private final List<String> TAB_TITLES = Arrays.asList("Outcome", "Income");
 
     private int userId;
     private int operationAccIdBeforeChange;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @BindView(R.id.mainScreenToolbar) Toolbar toolbar;
     @BindView(R.id.operationsRecyclerView) RecyclerView recyclerView;
     @BindView(R.id.pieChartViewPager) ViewPager viewPager;
-    @BindView(R.id.pieChartTabs) PagerSlidingTabStrip tabsStrip;
+    @BindView(R.id.pieChartTabs) TabLayout tabsStrip;
     @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
     @BindView(R.id.navigationView) NavigationView navigationView;
 
@@ -131,12 +133,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         /**Sliding tabs**/
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, 2);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TAB_TITLES);
         viewPagerAdapter.setOperations(operationList);
         viewPager.setAdapter(viewPagerAdapter);
 
         // Attach the view pager to the tab strip
-        tabsStrip.setViewPager(viewPager);
+        tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(0)));
+        tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(1)));
+        tabsStrip.setupWithViewPager(viewPager);
 
         /**Toggle action bar**/
         toggleActionBar = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
