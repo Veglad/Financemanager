@@ -8,10 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private static final int TABS_NUMBER = 2;
+    private static final int DAYS_IN_WEEK = 7;
+    private static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
+    private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
+    private static final String DATE_YEAR_PATTERN = "yyyy";
+
+    private static final SimpleDateFormat mediumDateFormat = new SimpleDateFormat(DATE_MEDIUM_PATTERN, Locale.getDefault());
+    private static final SimpleDateFormat monthAndYearDateFormat = new SimpleDateFormat(DATE_MONTH_AND_YEAR_PATTERN, Locale.getDefault());
+    private static final SimpleDateFormat yearDateFormat = new SimpleDateFormat(DATE_YEAR_PATTERN, Locale.getDefault());
 
     private List<String> titles;
     private Calendar currDay;
@@ -22,8 +31,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
 
         this.titles = titles;
-        this.periods = PeriodsOfTime.DAY;
-        this.currDay = Calendar.getInstance();
+        periods = PeriodsOfTime.DAY;
+        currDay = Calendar.getInstance();
     }
 
     @Override
@@ -42,19 +51,19 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     //Get text date for chosen period
     private String getStringDate() {
         String textDate = "";
-        switch (this.periods) {
+        switch (periods) {
             case DAY:
-                textDate = new SimpleDateFormat("E, dd MMMM").format(currDay.getTime());
+                textDate = mediumDateFormat.format(currDay.getTime());
                 break;
             case WEEK:
                 Calendar endOfPeriod = CalendarSettings.getEndOfPeriod(currDay, periods);
                 textDate = getTextDateForWeek(endOfPeriod);
                 break;
             case MONTH:
-                textDate = new SimpleDateFormat("MMMM, yyyy").format(currDay.getTime());
+                textDate = monthAndYearDateFormat.format(currDay.getTime());
                 break;
             case YEAR:
-                textDate = new SimpleDateFormat("yyyy").format(currDay.getTime());
+                textDate = yearDateFormat.format(currDay.getTime());
                 break;
             case ALL_TIME:
                 textDate = "All";
@@ -65,22 +74,31 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     //Get text date if chosen period is week
     private String getTextDateForWeek(Calendar endOfPeriod) {
+        StringBuilder weekPeriodTextDateBuilder = new StringBuilder();
 
-        String weekPeriodTextDate;
-
-        if (endOfPeriod.get(Calendar.DAY_OF_MONTH) <= 6) {
+        if (endOfPeriod.get(Calendar.DAY_OF_MONTH) < DAYS_IN_WEEK) {
             Calendar fromDate = Calendar.getInstance();
             fromDate.setTime(endOfPeriod.getTime());
             fromDate.set(Calendar.DAY_OF_WEEK, 1);
 
-            weekPeriodTextDate = fromDate.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(fromDate.getTime()) +
-                    " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
+            weekPeriodTextDateBuilder.append(fromDate.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(fromDate.getTime()))
+                    .append(" - ")
+                    .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(endOfPeriod.getTime()));
+
         } else {
-            weekPeriodTextDate = (endOfPeriod.get(Calendar.DAY_OF_MONTH) - 6) + " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
+            weekPeriodTextDateBuilder.append(endOfPeriod.get(Calendar.DAY_OF_MONTH) - (DAYS_IN_WEEK - 1))
+                    .append(" - ")
+                    .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(endOfPeriod.getTime()));
         }
 
 
-        return weekPeriodTextDate;
+        return weekPeriodTextDateBuilder.toString();
     }
 
 
