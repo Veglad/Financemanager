@@ -68,15 +68,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
         String weekPeriodTextDate;
 
-        if(endOfPeriod.get(Calendar.DAY_OF_MONTH ) <= 6) {
+        if (endOfPeriod.get(Calendar.DAY_OF_MONTH) <= 6) {
             Calendar fromDate = Calendar.getInstance();
             fromDate.setTime(endOfPeriod.getTime());
             fromDate.set(Calendar.DAY_OF_WEEK, 1);
 
-            weekPeriodTextDate =fromDate.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(fromDate.getTime())+
+            weekPeriodTextDate = fromDate.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(fromDate.getTime()) +
                     " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
-        }
-        else {
+        } else {
             weekPeriodTextDate = (endOfPeriod.get(Calendar.DAY_OF_MONTH) - 6) + " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
         }
 
@@ -95,8 +94,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        TabFragment fragment = (TabFragment)object;
-        if(fragment != null)
+        TabFragment fragment = (TabFragment) object;
+        if (fragment != null)
             fragment.updateTabFragment(getStringDate(), operations);
 
         return super.getItemPosition(object);
