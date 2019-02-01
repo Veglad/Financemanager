@@ -1,33 +1,37 @@
 package com.example.vlad.financemanager;
 
-import android.graphics.Path;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter{
+public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    CharSequence Titles[];
-    int NumbofTubs;
-    Calendar  currDay;
-    PeriodsOfTime periods;
-    ArrayList<Operation> operations;
+    private static final int TABS_NUMBER = 2;
+    private static final int DAYS_IN_WEEK = 7;
+    private static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
+    private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
+    private static final String DATE_YEAR_PATTERN = "yyyy";
 
-    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbofTabs){
+    private static final SimpleDateFormat mediumDateFormat = new SimpleDateFormat(DATE_MEDIUM_PATTERN, Locale.getDefault());
+    private static final SimpleDateFormat monthAndYearDateFormat = new SimpleDateFormat(DATE_MONTH_AND_YEAR_PATTERN, Locale.getDefault());
+    private static final SimpleDateFormat yearDateFormat = new SimpleDateFormat(DATE_YEAR_PATTERN, Locale.getDefault());
 
+    private List<String> titles;
+    private Calendar currDay;
+    private PeriodsOfTime periods;
+    private ArrayList<Operation> operations;
+
+    public ViewPagerAdapter(FragmentManager fm, List<String> titles) {
         super(fm);
 
-        Titles = mTitles;
-        NumbofTubs = mNumbofTabs;
+        this.titles = titles;
         periods = PeriodsOfTime.DAY;
-
         currDay = Calendar.getInstance();
     }
 
@@ -35,14 +39,11 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
     public Fragment getItem(int position) {
         String textDate = getStringDate();
 
-
-        if(position == 0)
-            return TabFragment.newInstance(textDate, operations, false);/////////
-        else
-            return TabFragment.newInstance(textDate, operations, true);///////////
+        return position == 0 ? TabFragment.newInstance(textDate, operations, false) :
+                TabFragment.newInstance(textDate, operations, true);
     }
 
-    public void setOperations(List<Operation> operations){
+    public void setOperations(List<Operation> operations) {
         this.operations = new ArrayList<>();
         this.operations.addAll(operations);
     }
@@ -50,19 +51,19 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
     //Get text date for chosen period
     private String getStringDate() {
         String textDate = "";
-        switch (periods){
+        switch (periods) {
             case DAY:
-                textDate = new SimpleDateFormat("E, dd MMMM").format(currDay.getTime());
+                textDate = mediumDateFormat.format(currDay.getTime());
                 break;
             case WEEK:
-                Calendar endOfPeriod = CalendarSettings.getEndOfPeriod(currDay ,periods);
+                Calendar endOfPeriod = CalendarSettings.getEndOfPeriod(currDay, periods);
                 textDate = getTextDateForWeek(endOfPeriod);
                 break;
             case MONTH:
-                textDate = new SimpleDateFormat("MMMM, yyyy").format(currDay.getTime());
+                textDate = monthAndYearDateFormat.format(currDay.getTime());
                 break;
             case YEAR:
-                textDate = new SimpleDateFormat("yyyy").format(currDay.getTime());
+                textDate = yearDateFormat.format(currDay.getTime());
                 break;
             case ALL_TIME:
                 textDate = "All";
@@ -73,50 +74,58 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter{
 
     //Get text date if chosen period is week
     private String getTextDateForWeek(Calendar endOfPeriod) {
+        StringBuilder weekPeriodTextDateBuilder = new StringBuilder();
 
-        String weekPeriodTextDate;
-
-        if(endOfPeriod.get(Calendar.DAY_OF_MONTH ) <= 6){
+        if (endOfPeriod.get(Calendar.DAY_OF_MONTH) < DAYS_IN_WEEK) {
             Calendar fromDate = Calendar.getInstance();
             fromDate.setTime(endOfPeriod.getTime());
             fromDate.set(Calendar.DAY_OF_WEEK, 1);
 
-            weekPeriodTextDate =fromDate.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(fromDate.getTime())+
-                    " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
-        }
-        else {
-            weekPeriodTextDate = (endOfPeriod.get(Calendar.DAY_OF_MONTH) - 6) + " - " + endOfPeriod.get(Calendar.DAY_OF_MONTH) + " " + new SimpleDateFormat("MMMM, yyyy").format(endOfPeriod.getTime());
+            weekPeriodTextDateBuilder.append(fromDate.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(fromDate.getTime()))
+                    .append(" - ")
+                    .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(endOfPeriod.getTime()));
+
+        } else {
+            weekPeriodTextDateBuilder.append(endOfPeriod.get(Calendar.DAY_OF_MONTH) - (DAYS_IN_WEEK - 1))
+                    .append(" - ")
+                    .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
+                    .append(" ")
+                    .append(monthAndYearDateFormat.format(endOfPeriod.getTime()));
         }
 
 
-        return weekPeriodTextDate;
+        return weekPeriodTextDateBuilder.toString();
     }
 
 
-    public void updateTab(Calendar currDay, PeriodsOfTime periods, List<Operation> operations){
+    public void updateTab(Calendar currDay, PeriodsOfTime periods, List<Operation> operations) {
         this.currDay = currDay;
         this.periods = periods;
         setOperations(operations);
 
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     @Override
-    public int getItemPosition(Object object){
-        TabFragment fragment = (TabFragment)object;
-        if(fragment != null)
+    public int getItemPosition(Object object) {
+        TabFragment fragment = (TabFragment) object;
+        if (fragment != null)
             fragment.updateTabFragment(getStringDate(), operations);
 
         return super.getItemPosition(object);
     }
 
     @Override
-    public CharSequence getPageTitle(int position){
-        return Titles[position];
+    public CharSequence getPageTitle(int position) {
+        return titles.get(position);
     }
 
     @Override
     public int getCount() {
-        return NumbofTubs;
+        return TABS_NUMBER;
     }
 }

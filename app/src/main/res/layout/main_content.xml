@@ -4,39 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <include
-        android:id="@+id/mainScreenToolbar"
-        layout="@layout/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/pieChartTabs"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/mainScreenToolbar"
-        app:layout_constraintTop_toBottomOf="@+id/mainScreenToolbar"
-        app:pstsDividerColor="@color/colorAccent"
-        app:pstsIndicatorHeight="2dp"
-        app:pstsUnderlineColor="@color/colorAccent" />
-
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pieChartViewPager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/leftButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/pieChartTabs"
-        app:layout_constraintTop_toBottomOf="@+id/pieChartTabs" />
-
+    android:orientation="vertical"
+    android:paddingBottom="28dp">
 
     <Button
         android:id="@+id/leftButton"
