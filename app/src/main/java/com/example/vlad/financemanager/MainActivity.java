@@ -138,8 +138,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         viewPager.setAdapter(viewPagerAdapter);
 
         // Attach the view pager to the tab strip
-        tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(0)));
-        tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(1)));
+        for(int i = 0; i < TAB_TITLES.size(); i++) {
+            tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(i)));
+        }
+
         tabsStrip.setupWithViewPager(viewPager);
 
         /**Toggle action bar**/
