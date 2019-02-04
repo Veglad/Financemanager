@@ -17,7 +17,7 @@ public class DatePickerFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Calendar c;
-        if(calendar == null)
+        if (calendar == null)
             c = Calendar.getInstance();
         else
             c = calendar;
@@ -27,12 +27,12 @@ public class DatePickerFragment extends DialogFragment {
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         //The max date is today
-        DatePickerDialog dpd = new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener)getActivity(), year, month, day);
+        DatePickerDialog dpd = new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
         dpd.getDatePicker().setMaxDate(new Date().getTime());
         return dpd;
     }
 
-    public void setCalendar(Date date){
+    public void setCalendar(Date date) {
         calendar = Calendar.getInstance();
         calendar.setTime(date);
     }
