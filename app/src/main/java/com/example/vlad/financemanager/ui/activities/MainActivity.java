@@ -49,6 +49,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.DATE_KEY;
+
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
 
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             }
         });
         recyclerView.setAdapter(mOperationsAdapter);
-        
+
         /**Sliding tabs**/
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TAB_TITLES);
@@ -327,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         Bundle extras = new Bundle();
         extras.putSerializable("accounts", getAccountsFromDBForSpinner());
         extras.putSerializable("categories", getCategoriesFromDBForSpinner(isIncome));
-        extras.putLong("currDate", lastSelectedDay.getTimeInMillis());
+        extras.putLong(DATE_KEY, lastSelectedDay.getTimeInMillis());
         intent.putExtras(extras);
 
         startActivityForResult(intent, 0);
@@ -457,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         extras.putSerializable("categories", getCategoriesFromDBForSpinner(operation.getCategory().getIsInputCategory()));
 
         intent.putExtras(extras);
+        intent.putExtra(DATE_KEY, operation.getOperationDate().getTime());
         intent.putExtra("msg", "operation");
         intent.putExtra("amount", operation.getAmount().toString());
 

@@ -38,6 +38,7 @@ import butterknife.ButterKnife;
 public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation, DatePickerDialog.OnDateSetListener{
 
     private PresenterMoneyCalc presenter;
+    public static final String DATE_KEY = "date_key";
 
     @BindView(R.id.calculationResultTextView) TextView resultText;
     @BindView(R.id.commentMoneyActivityEditText) EditText comment;
@@ -133,7 +134,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     private void initDateTimePicker(Bundle extras) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(extras.getLong("currDate"));
+        calendar.setTimeInMillis(extras.getLong(DATE_KEY));
         if(calendar != null){
             operDate = calendar.getTime();
             if(calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
