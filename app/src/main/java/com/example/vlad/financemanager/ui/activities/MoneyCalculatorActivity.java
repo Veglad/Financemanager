@@ -23,7 +23,7 @@ import com.example.vlad.financemanager.PresenterMoneyCalc;
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
-import com.example.vlad.financemanager.ui.adapters.CustomSpinnerAdapter;
+import com.example.vlad.financemanager.ui.adapters.IconAndTextSpinnerAdapter;
 import com.example.vlad.financemanager.ui.fragments.DatePickerFragment;
 
 import java.math.BigDecimal;
@@ -306,8 +306,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         spinnerCategories.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
-        CustomSpinnerAdapter adapter_Account = new CustomSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountsItems);
-        CustomSpinnerAdapter adapter_Categories = new CustomSpinnerAdapter(this,R.layout.spinner_item, spinnerCategoriesItems);
+        IconAndTextSpinnerAdapter adapter_Account = new IconAndTextSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountsItems);
+        IconAndTextSpinnerAdapter adapter_Categories = new IconAndTextSpinnerAdapter(this,R.layout.spinner_item, spinnerCategoriesItems);
 
         spinnerAccounts.setAdapter(adapter_Account);
         spinnerCategories.setAdapter(adapter_Categories);

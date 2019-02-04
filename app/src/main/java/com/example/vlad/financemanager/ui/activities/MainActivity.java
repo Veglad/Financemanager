@@ -34,7 +34,7 @@ import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
-import com.example.vlad.financemanager.ui.adapters.CustomSpinnerAdapter;
+import com.example.vlad.financemanager.ui.adapters.IconAndTextSpinnerAdapter;
 import com.example.vlad.financemanager.ui.adapters.OperationsAdapter;
 import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter;
 import com.example.vlad.financemanager.utils.DateUtils;
@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         accountsSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountItems);
+        IconAndTextSpinnerAdapter adapter = new IconAndTextSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountItems);
         accountsSpinner.setAdapter(adapter);
 
         //OnItemSelected
