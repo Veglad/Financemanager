@@ -2,6 +2,7 @@ package com.example.vlad.financemanager.utils;
 
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +46,21 @@ public class DateUtils {
 
     public static String getStringDate(Date date, String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
+    }
+
+    public static Date getDateFromString(String dateString, String pattern) throws ParseException {
+        return new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
+    }
+
+    public static Calendar getCalendarFromString(String dateString, String pattern) throws ParseException {
+        Date date = new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
+        return dateToCalendar(date);
+    }
+
+    public static Calendar dateToCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
     }
 
     //Get text date if chosen period is week
