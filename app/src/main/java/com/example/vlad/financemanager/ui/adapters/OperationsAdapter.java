@@ -14,9 +14,7 @@ import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.utils.DateUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,6 +24,8 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
 
     private Context mContext;
     private List<Operation> operationList;
+    private ItemLongClick itemLongClickListener;
+    private ItemClick itemClickListener;
 
 
     public OperationsAdapter(Context context, List<Operation> operations) {
@@ -33,7 +33,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         operationList = operations;
     }
 
-    public class OperationViewHolder extends RecyclerView.ViewHolder {
+    public class OperationViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.itemCategoryNameTextView)
         TextView categoryText;
         @BindView(R.id.itemAmountTextView)
@@ -49,7 +49,40 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         public OperationViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if(itemClickListener != null)
+                        itemClickListener.onItemClick(position);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int position = getAdapterPosition();
+                    if(itemLongClickListener != null)
+                        itemLongClickListener.onItemLongClick(position);
+                    return true;
+                }
+            });
         }
+    }
+
+    public interface ItemClick {
+        void onItemClick(int position);
+    }
+
+    public interface ItemLongClick {
+        void onItemLongClick(int position);
+    }
+
+    public void setOnItemClickListener(ItemClick listener) {
+        itemClickListener = listener;
+    }
+
+    public void setOnItemLongClickListener(ItemLongClick listener) {
+        itemLongClickListener = listener;
     }
 
     @NonNull

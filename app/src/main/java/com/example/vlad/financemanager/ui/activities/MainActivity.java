@@ -26,7 +26,6 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vlad.financemanager.ui.OperRecyclerTouchListener;
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.database.DatabaseHelper;
 import com.example.vlad.financemanager.data.models.Account;
@@ -123,9 +122,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         operationList = new ArrayList<>();
 
         mOperationsAdapter = new OperationsAdapter(this, operationList);
+        mOperationsAdapter.setOnItemClickListener(new OperationsAdapter.ItemClick() {
+            @Override
+            public void onItemClick(int position) {
+                changeOperation(position);
+            }
+        });
+        mOperationsAdapter.setOnItemLongClickListener(new OperationsAdapter.ItemLongClick() {
+            @Override
+            public void onItemLongClick(int position) {
+                showActionDialog(position);
+            }
+        });
         recyclerView.setAdapter(mOperationsAdapter);
 
-        recyclerView.addOnItemTouchListener(new OperRecyclerTouchListener(this,
+        /*recyclerView.addOnItemTouchListener(new OperRecyclerTouchListener(this,
                 recyclerView, new OperRecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -133,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             }
 
             @Override
-            public void onLingClick(View view, int position) {
+            public void onLongClick(View view, int position) {
                 showActionDialog(position);
             }
         }));
