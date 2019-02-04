@@ -26,8 +26,6 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,9 +38,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener, IMainActivity{
+public class MainActivity extends AppCompatActivity implements OnClickListener {
 
-    private MainActivityPresenter presenter;
     private final String textBalance = "Balance: ";
     private final List<String> TAB_TITLES = Arrays.asList("Outcome", "Income");
 
@@ -98,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         lastSelectedDay = Calendar.getInstance();
         lastSelectedDay.setTime(new Date());
         selectedPeriod = PeriodsOfTime.DAY;
-        presenter = new MainActivityPresenter(this,getApplicationContext());
 
         //DB init
         database= new DatabaseHelper(this);
