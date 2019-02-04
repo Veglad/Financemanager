@@ -2,6 +2,7 @@ package com.example.vlad.financemanager.ui.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,7 +23,6 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,51 +33,46 @@ import butterknife.Unbinder;
 
 public class TabFragment extends Fragment {
     private Unbinder unbinder;
-    private View view;
-    @BindView(R.id.datePieChartFragmentTextView) TextView textDate;
-    @BindView(R.id.pieChart) PieChart pieChart;
-    boolean isIncome;
-    private ArrayList<Operation> operations;
-    String text;
-    private static final String tabDateTextKey = "TabDateText";
-    private static final String tabIsIncomeKey = "TabIsIncome";
-    private static final String tabOperationsKey = "OperationsKey";
+    @BindView(R.id.datePieChartFragmentTextView)
+    TextView textDate;
+    @BindView(R.id.pieChart)
+    PieChart pieChart;
+    private static final String DATE_TEXT_KEY = "TabDateText";
+    private static final String IS_INCOME_KEY = "TabIsIncome";
+    private static final String OPERATIONS_KEY = "OperationsKey";
+    private static final String PIE_CHART_LABEL = "pieChartLabel";
+    private static final int EMPTY_CHART_COLOR = Color.rgb(186, 195, 209);
 
     public static TabFragment newInstance(String str, ArrayList<Operation> operations, boolean isIncome) {
         Bundle args = new Bundle();
-        args.putString(tabDateTextKey, str);
-        args.putBoolean(tabIsIncomeKey, isIncome);
-        args.putSerializable(tabOperationsKey, operations);
+        args.putString(DATE_TEXT_KEY, str);
+        args.putBoolean(IS_INCOME_KEY, isIncome);
+        args.putSerializable(OPERATIONS_KEY, operations);
 
         TabFragment fragment = new TabFragment();
         fragment.setArguments(args);
-        fragment.isIncome = isIncome;
 
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanse){
-        view = inflater.inflate(R.layout.fragment_tab, container, false );
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanse) {
+        View view = inflater.inflate(R.layout.fragment_tab, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
-        unbinder = ButterKnife.bind(this,view);
-
-        text = getArguments().getString(tabDateTextKey);
-        textDate.setText(text);
-
-        operations = (ArrayList<Operation>)getArguments().getSerializable(tabOperationsKey);
-        boolean isIncome = getArguments().getBoolean(tabIsIncomeKey);
+        textDate.setText(getArguments().getString(DATE_TEXT_KEY));
 
         pieChart.setUsePercentValues(true);
+        ArrayList<Operation> operations = (ArrayList<Operation>) getArguments().getSerializable(OPERATIONS_KEY);
 
-        drawPieChart(isIncome);
+        drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
 
-        return  view;
+        return view;
     }
 
     @Override
@@ -87,31 +82,29 @@ public class TabFragment extends Fragment {
     }
 
     //Full tab fragment update
-    public void updateTabFragment(String textDate, ArrayList<Operation> operations){
-        this.operations = operations;
+    public void updateTabFragment(String textDate, ArrayList<Operation> operations) {
         this.textDate.setText(textDate);
-        drawPieChart(isIncome);
+        drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
     }
 
-    private void drawPieChart(boolean isIncome){
-        List<PieEntry> entries = getPieEntries(isIncome);
+    private void drawPieChart(boolean isIncome, ArrayList<Operation> operations) {
+        List<PieEntry> entries = getPieEntries(isIncome, operations);
 
-        PieDataSet dataSet = new PieDataSet(entries, "Some text");
-        if(isIncome)
-            dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-        else
+        PieDataSet dataSet = new PieDataSet(entries, PIE_CHART_LABEL);
+        if (isIncome)
             dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        else
+            dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         dataSet.setSliceSpace(3);
 
         PieData data = new PieData(dataSet);
 
-        if(entries.size() == 0){
-            entries.add(setEmptyEntrie());
-            dataSet.setColor(Color.rgb(186,195,209));
+        if (entries.size() == 0) {
+            entries.add(setEmptyEntry());
+            dataSet.setColor(EMPTY_CHART_COLOR);
             dataSet.setDrawValues(false);
-        }
-        else
+        } else
             data.setValueFormatter(new PercentFormatter());
 
         pieChart.setData(data);
@@ -126,18 +119,31 @@ public class TabFragment extends Fragment {
     }
 
     //get pie entries for current operation list
-    private List<PieEntry> getPieEntries(boolean isIncome) {
+    private List<PieEntry> getPieEntries(boolean isIncome, ArrayList<Operation> operations) {
         List<PieEntry> entries = new ArrayList<>();
+        HashMap<String, BigDecimal> categoriesMap = getCategoryToAmountMap(isIncome, operations);
 
+        //Loop all hashMap and get entries
+        for (Map.Entry<String, BigDecimal> pair : categoriesMap.entrySet()) {
+            float amountOfMoney = Float.parseFloat(pair.getValue().toString());
+            String categoryName = pair.getKey();
+            entries.add(new PieEntry(amountOfMoney, categoryName));
+        }
+
+        return entries;
+    }
+
+    @NonNull
+    private HashMap<String, BigDecimal> getCategoryToAmountMap(boolean isIncome, ArrayList<Operation> operations) {
         //getting amount for every category
         HashMap<String, BigDecimal> categoriesMap = new HashMap<>();
-        for(Operation operation : operations){
+        for (Operation operation : operations) {
             //Example: If we are looping through the income operations and curr operations is outcome
-            if(isIncome != operation.getIsOperationIncome())
+            if (isIncome != operation.getIsOperationIncome())
                 continue;
 
             BigDecimal lastValue;
-            if(categoriesMap.get(operation.getCategory().getName()) == null)
+            if (categoriesMap.get(operation.getCategory().getName()) == null)
                 lastValue = new BigDecimal(0);
             else
                 lastValue = categoriesMap.get(operation.getCategory().getName());
@@ -146,22 +152,10 @@ public class TabFragment extends Fragment {
 
             categoriesMap.put(operation.getCategory().getName(), newValue);
         }
-
-        //Loop all hashMap and get entries
-
-        Iterator<Map.Entry<String, BigDecimal>> iterator = categoriesMap.entrySet().iterator();
-        while (iterator.hasNext()){
-            Map.Entry<String, BigDecimal> pair = iterator.next();
-            //Entry is category name and the amount for this category
-            entries.add(new PieEntry(Float.parseFloat(pair.getValue().toString()), pair.getKey()));
-        }
-
-        return entries;
+        return categoriesMap;
     }
 
-    private PieEntry setEmptyEntrie() {
-        PieEntry entry = new PieEntry(1, "");
-        return entry;
+    private PieEntry setEmptyEntry() {
+        return new PieEntry(1, "");
     }
-
 }
