@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         /**Sliding tabs**/
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TAB_TITLES);
-        viewPagerAdapter.setOperations(operationList);
+        viewPagerAdapter.setOperationList(operationList);
         viewPager.setAdapter(viewPagerAdapter);
 
         // Attach the view pager to the tab strip
