@@ -4,6 +4,7 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class DateUtils {
@@ -40,6 +41,10 @@ public class DateUtils {
 
     public static String getStringDate(Calendar calendar, String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.getTime());
+    }
+
+    public static String getStringDate(Date date, String pattern) {
+        return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
     }
 
     //Get text date if chosen period is week

@@ -4,6 +4,8 @@ import android.provider.BaseColumns;
 
 public class FinanceManagerContract {
 
+    public static final String DATABASE_DATE_PATTERN = "yyyy-MM-dd";
+
     public FinanceManagerContract(){}
 
     public static final class Users implements BaseColumns{
