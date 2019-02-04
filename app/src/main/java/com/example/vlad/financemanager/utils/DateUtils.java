@@ -39,7 +39,7 @@ public class DateUtils {
     }
 
     public static String getStringDate(Calendar calendar, String pattern) {
-        return new SimpleDateFormat(pattern, Locale.getDefault()).format(calendar);
+        return new SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.getTime());
     }
 
     //Get text date if chosen period is week
