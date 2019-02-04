@@ -2,6 +2,11 @@ package com.example.vlad.financemanager;
 
 import android.content.Context;
 
+import com.example.vlad.financemanager.data.enums.CalcOperations;
+import com.example.vlad.financemanager.data.models.Category;
+import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.ui.IMoneyCalculation;
+
 import java.math.BigDecimal;
 
 public class PresenterMoneyCalc {

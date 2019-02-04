@@ -1,5 +1,8 @@
 package com.example.vlad.financemanager;
 
+import com.example.vlad.financemanager.data.enums.CalcOperations;
+import com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 

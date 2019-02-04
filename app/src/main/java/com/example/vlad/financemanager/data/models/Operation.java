@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.data.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

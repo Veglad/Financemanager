@@ -1,4 +1,6 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui;
+
+import com.example.vlad.financemanager.data.models.Operation;
 
 import java.util.Date;
 

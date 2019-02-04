@@ -1,6 +1,7 @@
 package com.example.vlad.financemanager;
 
-import org.junit.After;
+import com.example.vlad.financemanager.data.enums.CalcOperations;
+
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,9 +8,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.example.vlad.financemanager.R;
+import com.example.vlad.financemanager.data.models.SpinnerItem;
 
-import butterknife.ButterKnife;
+import java.util.ArrayList;
 
 public class CustomSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 

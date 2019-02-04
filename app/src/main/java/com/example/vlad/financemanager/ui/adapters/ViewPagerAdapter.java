@@ -1,8 +1,13 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.example.vlad.financemanager.utils.CalendarSettings;
+import com.example.vlad.financemanager.ui.fragments.TabFragment;
+import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

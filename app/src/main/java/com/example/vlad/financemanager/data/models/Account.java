@@ -1,7 +1,6 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.data.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Account {
 

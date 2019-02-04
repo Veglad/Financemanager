@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.data.database;
 
 import android.provider.BaseColumns;
 

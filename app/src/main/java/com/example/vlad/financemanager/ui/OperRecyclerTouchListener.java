@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

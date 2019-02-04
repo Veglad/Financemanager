@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

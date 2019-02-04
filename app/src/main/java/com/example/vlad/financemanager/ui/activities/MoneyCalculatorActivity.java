@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -17,6 +17,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.vlad.financemanager.ui.IMoneyCalculation;
+import com.example.vlad.financemanager.PresenterMoneyCalc;
+import com.example.vlad.financemanager.R;
+import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.data.models.SpinnerItem;
+import com.example.vlad.financemanager.ui.adapters.CustomSpinnerAdapter;
+import com.example.vlad.financemanager.ui.fragments.DatePickerFragment;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

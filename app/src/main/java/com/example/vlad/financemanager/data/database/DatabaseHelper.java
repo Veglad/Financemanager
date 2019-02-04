@@ -1,15 +1,18 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.data.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.content.res.ResourcesCompat;
-import android.text.format.DateUtils;
-import android.util.Log;
 
-import com.example.vlad.financemanager.FinanceManagerContract.*;
+import com.example.vlad.financemanager.data.models.Account;
+import com.example.vlad.financemanager.utils.CalendarSettings;
+import com.example.vlad.financemanager.data.models.Category;
+import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
+import com.example.vlad.financemanager.R;
+import com.example.vlad.financemanager.data.database.FinanceManagerContract.*;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -25,6 +25,19 @@ import android.widget.Spinner;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.vlad.financemanager.ui.OperRecyclerTouchListener;
+import com.example.vlad.financemanager.R;
+import com.example.vlad.financemanager.data.database.DatabaseHelper;
+import com.example.vlad.financemanager.data.models.Account;
+import com.example.vlad.financemanager.data.models.Category;
+import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
+import com.example.vlad.financemanager.data.models.SpinnerItem;
+import com.example.vlad.financemanager.ui.adapters.CustomSpinnerAdapter;
+import com.example.vlad.financemanager.ui.adapters.OperationsAdapter;
+import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter;
+import com.example.vlad.financemanager.utils.CalendarSettings;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

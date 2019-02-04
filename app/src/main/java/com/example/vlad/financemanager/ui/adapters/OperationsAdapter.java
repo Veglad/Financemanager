@@ -1,4 +1,4 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.ui.adapters;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.vlad.financemanager.R;
+import com.example.vlad.financemanager.data.models.Operation;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

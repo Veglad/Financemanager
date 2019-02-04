@@ -1,4 +1,6 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.utils;
+
+import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.util.Calendar;
 
