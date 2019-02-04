@@ -12,8 +12,11 @@ import android.widget.TextView;
 
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
+import com.example.vlad.financemanager.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -25,17 +28,22 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     private List<Operation> operationList;
 
 
-    public OperationsAdapter(Context context, List<Operation> operations){
+    public OperationsAdapter(Context context, List<Operation> operations) {
         mContext = context;
         operationList = operations;
     }
 
-    public class OperationViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.itemCategoryNameTextView) TextView categoryText;
-        @BindView(R.id.itemAmountTextView) TextView amountText;
-        @BindView(R.id.itemCommentTextView) TextView commentText;
-        @BindView(R.id.dateOperationRecyclerItemTextView) TextView textDate;
-        @BindView(R.id.circleIconImageView) ImageView categoryImg;
+    public class OperationViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.itemCategoryNameTextView)
+        TextView categoryText;
+        @BindView(R.id.itemAmountTextView)
+        TextView amountText;
+        @BindView(R.id.itemCommentTextView)
+        TextView commentText;
+        @BindView(R.id.dateOperationRecyclerItemTextView)
+        TextView textDate;
+        @BindView(R.id.circleIconImageView)
+        ImageView categoryImg;
 
 
         public OperationViewHolder(View itemView) {
@@ -49,7 +57,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     public OperationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_operation_recycler,parent, false);
+        View view = inflater.inflate(R.layout.item_operation_recycler, parent, false);
 
         return new OperationViewHolder(view);
     }
@@ -59,19 +67,20 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         Operation operation = operationList.get(position);
 
         holder.commentText.setText(operation.getComment());
-
         holder.categoryText.setText(operation.getCategory().getName());
 
-        if(operation.getIsOperationIncome()){
-            holder.amountText.setText("+"+operation.getAmount().toString() + " ₴");
-            holder.amountText.setTextColor(ContextCompat.getColor( mContext, R.color.colorLiteGreen));
-        }
-        else {
-            holder.amountText.setText("-"+operation.getAmount().toString() + " ₴");
-            holder.amountText.setTextColor(ContextCompat.getColor( mContext, R.color.colorLiteRed));
+        if (operation.getIsOperationIncome()) {
+            holder.amountText.setText("+" + operation.getAmount().toString() + " ₴");
+            holder.amountText.setTextColor(ContextCompat.getColor(mContext, R.color.colorLiteGreen));
+        } else {
+            holder.amountText.setText("-" + operation.getAmount().toString() + " ₴");
+            holder.amountText.setTextColor(ContextCompat.getColor(mContext, R.color.colorLiteRed));
         }
 
-        String resultDateText = new SimpleDateFormat("MM.dd.yyyy").format(operation.getOperationDate());
+        Calendar operationDate = Calendar.getInstance();
+        operationDate.setTime(operation.getOperationDate());
+
+        String resultDateText = DateUtils.getStringDate(operationDate, DateUtils.DATE_FULL_PATTERN);
         holder.textDate.setText(resultDateText);
         holder.categoryImg.setImageResource(operation.getCategory().getIcon());
     }
