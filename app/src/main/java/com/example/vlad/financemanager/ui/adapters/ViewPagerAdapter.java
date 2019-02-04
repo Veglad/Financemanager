@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.vlad.financemanager.utils.CalendarSettings;
+import com.example.vlad.financemanager.utils.DateUtils;
 import com.example.vlad.financemanager.ui.fragments.TabFragment;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
@@ -61,7 +61,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 textDate = mediumDateFormat.format(currDay.getTime());
                 break;
             case WEEK:
-                Calendar endOfPeriod = CalendarSettings.getEndOfPeriod(currDay, periods);
+                Calendar endOfPeriod = DateUtils.getEndOfPeriod(currDay, periods);
                 textDate = getTextDateForWeek(endOfPeriod);
                 break;
             case MONTH:

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.vlad.financemanager.data.models.Account;
-import com.example.vlad.financemanager.utils.CalendarSettings;
+import com.example.vlad.financemanager.utils.DateUtils;
 import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
@@ -301,7 +301,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         List<Operation> operationsList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = null;
-        cursor = getCursorForSelectedTime(accountId, CalendarSettings.getEndOfPeriod(currDay,period), db, period);
+        cursor = getCursorForSelectedTime(accountId, DateUtils.getEndOfPeriod(currDay,period), db, period);
 
         Cursor cursor1;
 

@@ -37,7 +37,7 @@ import com.example.vlad.financemanager.data.models.SpinnerItem;
 import com.example.vlad.financemanager.ui.adapters.CustomSpinnerAdapter;
 import com.example.vlad.financemanager.ui.adapters.OperationsAdapter;
 import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter;
-import com.example.vlad.financemanager.utils.CalendarSettings;
+import com.example.vlad.financemanager.utils.DateUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -278,8 +278,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private boolean isOutOfPeriod(Date operationDate) {
         Calendar operDate = Calendar.getInstance();
         operDate.setTime(operationDate);
-        Calendar endOfPeriod = CalendarSettings.getEndOfPeriod(operDate, selectedPeriod);
-        Calendar startPeriod = CalendarSettings.getStartOfPeriod(operDate, selectedPeriod);
+        Calendar endOfPeriod = DateUtils.getEndOfPeriod(operDate, selectedPeriod);
+        Calendar startPeriod = DateUtils.getStartOfPeriod(operDate, selectedPeriod);
 
         boolean result;
 

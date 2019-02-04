@@ -4,7 +4,7 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.util.Calendar;
 
-public class CalendarSettings {
+public class DateUtils {
 
     static public Calendar getEndOfPeriod(Calendar currDate, PeriodsOfTime periods) {
         Calendar endOfPeriod = Calendar.getInstance();
