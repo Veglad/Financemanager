@@ -22,51 +22,15 @@ import butterknife.ButterKnife;
 
 public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.OperationViewHolder> {
 
-    private Context mContext;
+    private Context context;
     private List<Operation> operationList;
     private ItemLongClick itemLongClickListener;
     private ItemClick itemClickListener;
 
 
     public OperationsAdapter(Context context, List<Operation> operations) {
-        mContext = context;
+        this.context = context;
         operationList = operations;
-    }
-
-    public class OperationViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.itemCategoryNameTextView)
-        TextView categoryText;
-        @BindView(R.id.itemAmountTextView)
-        TextView amountText;
-        @BindView(R.id.itemCommentTextView)
-        TextView commentText;
-        @BindView(R.id.dateOperationRecyclerItemTextView)
-        TextView textDate;
-        @BindView(R.id.circleIconImageView)
-        ImageView categoryImg;
-
-
-        public OperationViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if(itemClickListener != null)
-                        itemClickListener.onItemClick(position);
-                }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getAdapterPosition();
-                    if(itemLongClickListener != null)
-                        itemLongClickListener.onItemLongClick(position);
-                    return true;
-                }
-            });
-        }
     }
 
     public interface ItemClick {
@@ -88,38 +52,70 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     @NonNull
     @Override
     public OperationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.item_operation_recycler, parent, false);
-
         return new OperationViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OperationViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull OperationViewHolder holder, final int position) {
         Operation operation = operationList.get(position);
 
         holder.commentText.setText(operation.getComment());
         holder.categoryText.setText(operation.getCategory().getName());
 
         if (operation.getIsOperationIncome()) {
-            holder.amountText.setText("+" + operation.getAmount().toString() + " ₴");
-            holder.amountText.setTextColor(ContextCompat.getColor(mContext, R.color.colorLiteGreen));
+            holder.amountText.setText(String.format("+%s ₴", operation.getAmount().toString()));
+            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.colorLiteGreen));
         } else {
-            holder.amountText.setText("-" + operation.getAmount().toString() + " ₴");
-            holder.amountText.setTextColor(ContextCompat.getColor(mContext, R.color.colorLiteRed));
+            holder.amountText.setText(String.format("-%s ₴", operation.getAmount().toString()));
+            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.colorLiteRed));
         }
 
-        Calendar operationDate = Calendar.getInstance();
-        operationDate.setTime(operation.getOperationDate());
-
-        String resultDateText = DateUtils.getStringDate(operationDate, DateUtils.DATE_FULL_PATTERN);
+        String resultDateText = DateUtils.getStringDate(operation.getOperationDate(), DateUtils.DATE_FULL_PATTERN);
         holder.textDate.setText(resultDateText);
         holder.categoryImg.setImageResource(operation.getCategory().getIcon());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(position);
+                }
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (itemLongClickListener != null) {
+                    itemLongClickListener.onItemLongClick(position);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return operationList.size();
+    }
+
+    class OperationViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.itemCategoryNameTextView)
+        TextView categoryText;
+        @BindView(R.id.itemAmountTextView)
+        TextView amountText;
+        @BindView(R.id.itemCommentTextView)
+        TextView commentText;
+        @BindView(R.id.dateOperationRecyclerItemTextView)
+        TextView textDate;
+        @BindView(R.id.circleIconImageView)
+        ImageView categoryImg;
+
+
+        OperationViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
     }
 }

@@ -21,7 +21,7 @@ public class ModelMoneyCalcTest {
     @Test
     public void mul_1_5_by_10_eq_15() {
         model.setResultText(new BigDecimal(1.5));
-        model.mathOperBtnClick(CalcOperations.Mul);
+        model.mathOperBtnClick(CalcOperations.MUL);
         model.setResultText(new BigDecimal(10));
         model.calculatePress();
 
@@ -32,7 +32,7 @@ public class ModelMoneyCalcTest {
     @Test
     public void div_25_by_10_eq_2_5() {
         model.setResultText(new BigDecimal(25));
-        model.mathOperBtnClick(CalcOperations.Div);
+        model.mathOperBtnClick(CalcOperations.DIV);
         model.setResultText(new BigDecimal(10));
         model.calculatePress();
 
@@ -43,7 +43,7 @@ public class ModelMoneyCalcTest {
     @Test
     public void div_25_by_0_eq_0() {
         model.setResultText(new BigDecimal(25));
-        model.mathOperBtnClick(CalcOperations.Div);
+        model.mathOperBtnClick(CalcOperations.DIV);
         model.setResultText(new BigDecimal(0));
         model.calculatePress();
 
@@ -54,7 +54,7 @@ public class ModelMoneyCalcTest {
     @Test
     public void add_2_33_and_17_52_eq_19_85() {
         model.setResultText(new BigDecimal("2.33"));
-        model.mathOperBtnClick(CalcOperations.Add);
+        model.mathOperBtnClick(CalcOperations.ADD);
         model.setResultText(new BigDecimal("17.52"));
         model.calculatePress();
 
@@ -65,9 +65,9 @@ public class ModelMoneyCalcTest {
     @Test
     public void add_2_and_2_mul_2_eq_6() {
         model.setResultText(new BigDecimal(2));
-        model.mathOperBtnClick(CalcOperations.Add);
+        model.mathOperBtnClick(CalcOperations.ADD);
         model.setResultText(new BigDecimal(2));
-        model.mathOperBtnClick(CalcOperations.Mul);
+        model.mathOperBtnClick(CalcOperations.MUL);
         model.setResultText(new BigDecimal(2));
         model.calculatePress();
 

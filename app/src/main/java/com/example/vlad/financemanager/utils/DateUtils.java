@@ -8,40 +8,43 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateUtils {
+public final class DateUtils {
 
     private static final int DAYS_IN_WEEK = 7;
-    public static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
-    public static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
-    public static final String DATE_YEAR_PATTERN = "yyyy";
+    private static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
+    private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
+    private static final String DATE_YEAR_PATTERN = "yyyy";
     public static final String DATE_FULL_PATTERN = "MM.dd.yyyy";
+
+    private static final SimpleDateFormat DATE_MONTH_YEAR_FORMAT = new SimpleDateFormat(DATE_MONTH_AND_YEAR_PATTERN, Locale.getDefault());
+
+    private DateUtils() {
+    }
 
     //Get text date for chosen period
     public static String getStringDateByPeriod(PeriodsOfTime periodOfTIme, Calendar date) {
         String textDate = "";
         switch (periodOfTIme) {
             case DAY:
-                textDate = getStringDate(date, DATE_MEDIUM_PATTERN);
+                textDate = getStringDate(date.getTime(), DATE_MEDIUM_PATTERN);
                 break;
             case WEEK:
                 Calendar endOfPeriod = getEndOfPeriod(date, periodOfTIme);
                 textDate = getStringDateForWeek(endOfPeriod);
                 break;
             case MONTH:
-                textDate = getStringDate(date, DATE_MONTH_AND_YEAR_PATTERN);
+                textDate = getStringDate(date.getTime(), DATE_MONTH_AND_YEAR_PATTERN);
                 break;
             case YEAR:
-                textDate = getStringDate(date, DATE_YEAR_PATTERN);
+                textDate = getStringDate(date.getTime(), DATE_YEAR_PATTERN);
                 break;
             case ALL_TIME:
-                textDate = "All";
+                textDate = "All"; //TODO: extract to string resources
+            default:
+                break;
         }
 
         return textDate;
-    }
-
-    public static String getStringDate(Calendar calendar, String pattern) {
-        return new SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.getTime());
     }
 
     public static String getStringDate(Date date, String pattern) {
@@ -53,19 +56,8 @@ public class DateUtils {
             return new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new Date();
         }
-    }
-
-    public static Calendar getCalendarFromString(String dateString, String pattern) throws ParseException {
-        Date date = new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
-        return dateToCalendar(date);
-    }
-
-    public static Calendar dateToCalendar(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
     }
 
     //Get text date if chosen period is week
@@ -79,18 +71,18 @@ public class DateUtils {
 
             weekPeriodTextDateBuilder.append(fromDate.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(getStringDate(fromDate, DATE_MONTH_AND_YEAR_PATTERN))
+                    .append(DATE_MONTH_YEAR_FORMAT.format(fromDate))
                     .append(" - ")
                     .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(getStringDate(endOfPeriod, DATE_MONTH_AND_YEAR_PATTERN));
+                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod));
 
         } else {
             weekPeriodTextDateBuilder.append(endOfPeriod.get(Calendar.DAY_OF_MONTH) - (DAYS_IN_WEEK - 1))
                     .append(" - ")
                     .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(getStringDate(endOfPeriod, DATE_MONTH_AND_YEAR_PATTERN));
+                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod));
         }
 
 
@@ -112,6 +104,8 @@ public class DateUtils {
             case YEAR:
                 endOfPeriod.set(Calendar.DAY_OF_YEAR, endOfPeriod.getActualMaximum(Calendar.DAY_OF_YEAR));
                 break;
+            default:
+                break;
         }
 
         return endOfPeriod;
@@ -130,9 +124,9 @@ public class DateUtils {
                 break;
             case YEAR:
                 startOfPeriod.set(Calendar.DAY_OF_YEAR, 1);
+                break;
             default:
-                startOfPeriod = null;
-
+                break;
         }
 
         return startOfPeriod;

@@ -41,7 +41,7 @@
         android:layout_width="0dp"
         android:layout_height="70dp"
         android:background="@drawable/sharp_arrow_right_black_48"
-        android:onClick="buttonRigthClick"
+        android:onClick="buttonRightClick"
         android:textColor="@color/colorPrimary"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"

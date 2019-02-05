@@ -1,6 +1,7 @@
 package com.example.vlad.financemanager.ui.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,27 +14,27 @@ import com.example.vlad.financemanager.data.models.SpinnerItem;
 
 import java.util.ArrayList;
 
-public class IconAndTextSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
+public class SimpleSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
-    public IconAndTextSpinnerAdapter(Context context, int resource, ArrayList<SpinnerItem> spinnerItems){
-        super(context,resource, spinnerItems);
+    public SimpleSpinnerAdapter(Context context, int resource, ArrayList<SpinnerItem> spinnerItems) {
+        super(context, resource, spinnerItems);
     }
 
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent){
-        View view = InitView(position, convertView, parent);
-        return view;
+    public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+        return initView(position, convertView, parent);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        View view = InitView(position, convertView, parent);
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        View view = initView(position, convertView, parent);
         view.setBackgroundResource(R.drawable.spinner_shape);
         return view;
     }
 
-    private View InitView(int position, View convertView, ViewGroup parent){
-        if(convertView == null){
+    private View initView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.spinner_item, parent, false);
         }
@@ -43,7 +44,7 @@ public class IconAndTextSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
         SpinnerItem currentItem = getItem(position);
 
-        if(currentItem != null){
+        if (currentItem != null) {
             image.setImageResource(currentItem.getImage());
             accountName.setText(currentItem.getName());
         }

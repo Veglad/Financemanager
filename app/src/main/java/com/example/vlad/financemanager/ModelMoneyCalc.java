@@ -46,8 +46,8 @@ public class ModelMoneyCalc {
         resultText = "0";
         accumulator = new BigDecimal(0);
         secondOperand = new BigDecimal(0);
-        operation = CalcOperations.None;
-        tempOperation = CalcOperations.None;
+        operation = CalcOperations.NONE;
+        tempOperation = CalcOperations.NONE;
         isTempOperEmpty = true;
         justCount = false;
         multiSamePriorityOper = false;
@@ -70,17 +70,17 @@ public class ModelMoneyCalc {
         boolean result = true;
 
        switch (chosenOperation){
-            case Add:
-                result = SubOrAddOperChosen(CalcOperations.Add);
+            case ADD:
+                result = SubOrAddOperChosen(CalcOperations.ADD);
                 break;
-            case Sub:
-                result = SubOrAddOperChosen(CalcOperations.Sub);
+            case SUB:
+                result = SubOrAddOperChosen(CalcOperations.SUB);
                 break;
-            case Mul:
-                result = MulOrDivOperChosen(CalcOperations.Mul);
+            case MUL:
+                result = MulOrDivOperChosen(CalcOperations.MUL);
                 break;
-            case Div:
-                result = MulOrDivOperChosen(CalcOperations.Div);
+            case DIV:
+                result = MulOrDivOperChosen(CalcOperations.DIV);
                 break;
         }
         if(isTempOperEmpty && !multiSamePriorityOper)
@@ -95,7 +95,7 @@ public class ModelMoneyCalc {
      */
     private boolean SubOrAddOperChosen(CalcOperations chosenOperation){
         boolean result = true;
-        if(operation != CalcOperations.None){
+        if(operation != CalcOperations.NONE){
             multiSamePriorityOper = true;
             result = calculate();
         }
@@ -119,15 +119,15 @@ public class ModelMoneyCalc {
             operation = chosenOperation;
             result = calculate();
         }
-        else if(operation == CalcOperations.Sub || operation == CalcOperations.Add) {
+        else if(operation == CalcOperations.SUB || operation == CalcOperations.ADD) {
             isTempOperEmpty = false;
             tempOperand = accumulator;
             accumulator = new BigDecimal(resultText);
             resultText = "0";
             //saving current operation
-            tempOperation = operation == CalcOperations.Add ? CalcOperations.Add : CalcOperations.Sub;
+            tempOperation = operation == CalcOperations.ADD ? CalcOperations.ADD : CalcOperations.SUB;
         }
-        else if(operation != CalcOperations.None){
+        else if(operation != CalcOperations.NONE){
             multiSamePriorityOper = true;
             result = calculate();
         }
@@ -146,17 +146,17 @@ public class ModelMoneyCalc {
     public boolean calculate(){
         secondOperand = new BigDecimal(resultText);
         switch (operation){
-            case Add:
+            case ADD:
                 accumulator = accumulator.add(secondOperand);
                 break;
-            case Sub:
+            case SUB:
                 accumulator = accumulator.subtract(secondOperand);
                 break;
-            case Mul:
+            case MUL:
                 accumulator = accumulator.multiply(secondOperand);
                 accumulator = accumulator.setScale(2,BigDecimal.ROUND_HALF_EVEN);
                 break;
-            case Div:
+            case DIV:
                 //division by zero
                 if(secondOperand.compareTo(zeroBDvalue) == 0)
                     return  false;
@@ -204,7 +204,7 @@ public class ModelMoneyCalc {
         isTempOperEmpty = true;
         accumulator = new BigDecimal(0);
         secondOperand = new BigDecimal(0);
-        operation = CalcOperations.None;
+        operation = CalcOperations.NONE;
 
 
 
@@ -252,8 +252,8 @@ public class ModelMoneyCalc {
         resultText = "0";
 
         isTempOperEmpty = true;
-        tempOperation = CalcOperations.None;
-        operation = CalcOperations.None;
+        tempOperation = CalcOperations.NONE;
+        operation = CalcOperations.NONE;
         multiSamePriorityOper = false;
         justCount = false;
 

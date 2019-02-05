@@ -15,27 +15,26 @@ import java.util.List;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int TABS_NUMBER = 2;
+    private static final int TABS_COUNT = 2;
 
-    private List<String> titles;
-    private Calendar currDay;
+    private List<String> tabTitles;
+    private Calendar today;
     private PeriodsOfTime period;
     private ArrayList<Operation> operationList;
 
-    public ViewPagerAdapter(FragmentManager fm, List<String> titles) {
-        super(fm);
+    public ViewPagerAdapter(FragmentManager fragmentManager, List<String> titles) {
+        super(fragmentManager);
 
-        this.titles = titles;
+        this.tabTitles = titles;
         period = PeriodsOfTime.DAY;
-        currDay = Calendar.getInstance();
+        today = Calendar.getInstance();
     }
 
     @Override
     public Fragment getItem(int position) {
-        String textDate = DateUtils.getStringDateByPeriod(period, currDay);
+        String textDate = DateUtils.getStringDateByPeriod(period, today);
 
-        return position == 0 ? TabFragment.newInstance(textDate, operationList, false) :
-                TabFragment.newInstance(textDate, operationList, true);
+        return TabFragment.newInstance(textDate, operationList, position != 0 );
     }
 
     public void setOperationList(List<Operation> operationList) {
@@ -43,13 +42,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         this.operationList.addAll(operationList);
     }
 
-
-    public void updateTab(Calendar currDay, PeriodsOfTime periods, List<Operation> operations) {
-        this.currDay = currDay;
+    public void updateTab(Calendar currDay, PeriodsOfTime periods) {
+        this.today = currDay;
         this.period = periods;
-        setOperationList(operations);
-
-        notifyDataSetChanged();
     }
 
     //This method is invoked after notifyDataSetChanged method invocation
@@ -57,7 +52,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public int getItemPosition(Object object) {
         TabFragment fragment = (TabFragment) object;
         if (fragment != null) {
-            String stringDateByPeriod = DateUtils.getStringDateByPeriod(period, currDay);
+            String stringDateByPeriod = DateUtils.getStringDateByPeriod(period, today);
             fragment.updateTabFragment(stringDateByPeriod, operationList);
         }
 
@@ -66,11 +61,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return titles.get(position);
+        return tabTitles.get(position);
     }
 
     @Override
     public int getCount() {
-        return TABS_NUMBER;
+        return TABS_COUNT;
     }
 }

@@ -23,7 +23,7 @@ import com.example.vlad.financemanager.PresenterMoneyCalc;
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
-import com.example.vlad.financemanager.ui.adapters.IconAndTextSpinnerAdapter;
+import com.example.vlad.financemanager.ui.adapters.SimpleSpinnerAdapter;
 import com.example.vlad.financemanager.ui.fragments.DatePickerFragment;
 
 import java.math.BigDecimal;
@@ -35,10 +35,12 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation, DatePickerDialog.OnDateSetListener{
-
-    private PresenterMoneyCalc presenter;
+public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation, DatePickerDialog.OnDateSetListener {
     public static final String DATE_KEY = "date_key";
+    private static final String DATE_PICKER_TAG = "date picker";
+
+    private final SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMMM");
+    private final SimpleDateFormat sdfWithYear = new SimpleDateFormat("E, MMMM dd, yyyy");
 
     @BindView(R.id.calculationResultTextView) TextView resultText;
     @BindView(R.id.commentMoneyActivityEditText) EditText comment;
@@ -48,19 +50,18 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     @BindView(R.id.categorySpinner) Spinner spinnerCategories;
     @BindView(R.id.operationDateButton) Button setDateButton;
     @BindView(R.id.calculatorBackButton) Button btnBack;
-    private Date operDate;
-    final SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMMM");
-    final SimpleDateFormat sdfWithYear = new SimpleDateFormat("E, MMMM dd, yyyy");
-    private boolean isOperationInput;
-    private boolean opernForChange;
-    private Operation operationForChange;
 
-    private int accountId;
-    private int categoryId;
+    private PresenterMoneyCalc presenter;
+    private Date operationDate;
+    private Operation operationForChange;
 
     private ArrayList<SpinnerItem> spinnerCategoriesItems;
     private ArrayList<SpinnerItem> spinnerAccountsItems;
 
+    private boolean isOperationInput;
+    private boolean openForChange;
+    private int accountId;
+    private int categoryId;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -70,9 +71,9 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         ButterKnife.bind(this);
 
         presenter = new PresenterMoneyCalc(this, this);
-        operDate = new Date();
+        operationDate = new Date();
 
-        opernForChange = false;
+        openForChange = false;
 
         //Setting long clear button press;
         btnBack.getBackground().setColorFilter(R.color.darkGrey, PorterDuff.Mode.SRC_ATOP);
@@ -88,18 +89,18 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         initSpinners();
 
         //datePicker Button
-        setDateButton.setText(sdf.format( new Date()));
+        setDateButton.setText(sdf.format(new Date()));
         setDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerFragment df = new DatePickerFragment();
-                if(opernForChange)
+                if (openForChange)
                     df.setCalendar(operationForChange.getOperationDate());
                 else
-                    df.setCalendar(operDate);
+                    df.setCalendar(operationDate);
 
                 DialogFragment datePicker = df;
-                datePicker.show(getSupportFragmentManager(),"date picker");
+                datePicker.show(getSupportFragmentManager(), DATE_PICKER_TAG);
             }
         });
 
@@ -108,72 +109,56 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener(){
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 finish();
             }
         });
 
         //Getting intent extras
         Bundle extras = getIntent().getExtras();
-        String str = (String)extras.get("msg");
+        String str = (String) extras.get(MainActivity.MESSAGE_KEY);
         initDateTimePicker(extras);
-        if(str.equals("operation")){
+        if (str.equals(MainActivity.OPERATION_VALUE)) {
             str = OperationChange();
-            opernForChange = true;
+            openForChange = true;
         }
 
 
         toolbarTitle.setText(str);
 
-        isOperationInput = str.equals("Income");
-
-
+        isOperationInput = str.equals(MainActivity.INCOME_VALUE);
     }
 
     private void initDateTimePicker(Bundle extras) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(extras.getLong(DATE_KEY));
-        if(calendar != null){
-            operDate = calendar.getTime();
-            if(calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
-                setDateButton.setText(sdfWithYear.format(calendar.getTime()));
-            else
-                setDateButton.setText(sdf.format(calendar.getTime()));
+
+        operationDate = calendar.getTime();
+        if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR)) {
+            setDateButton.setText(sdfWithYear.format(calendar.getTime()));
+        } else {
+            setDateButton.setText(sdf.format(calendar.getTime()));
         }
     }
 
     //Methods that implements interface
-
-    /**
-     * Method - getting value in the category's name input
-     * @return category's name value
-     */
     @Override
     public int getCategoryId() {
         return categoryId;
     }
-    /**
-     * Method - getting value in the account's name input
-     * @return account's name value
-     */
+
     @Override
     public int getAccountId() {
         return accountId;
     }
-    /**
-     * Method - getting date when the operation performed
-     * @return date
-     */
+
     @Override
     public Date getOperationDate() {
-        return operDate;
+        return operationDate;
     }
-    /**
-     * Method - getting users's comment for this operation
-     * @return comment as string
-     */
+
     @Override
     public String getComment() {
         return comment.getText().toString();
@@ -184,46 +169,29 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         return isOperationInput;
     }
 
-    /**
-     * Method - updating the value in the calculator
-     * @param result -  new number
-     */
     @Override
     public void setCalcResultText(String result) {
         this.resultText.setText(result);
     }
 
-    /**
-     * Handler for input buttons click in the calculator
-     * @param v - View representation of the sender
-     */
-    public void calculatorBtnOnClick(View v){
-        Button btn = (Button)v;
+    public void calculatorBtnOnClick(View v) {
+        Button btn = (Button) v;
         presenter.calculatorBtnOnClick(v.getId(), btn.getText().toString());
     }
-    /**
-     * Handler for 'save' button click
-     * @param v - View representation of the sender
-     */
-    public void btnSaveOnClick(View v){
+
+    public void btnSaveOnClick(View v) {
         presenter.btnSaveOnClick();
     }
 
-    /**
-     * Finish this activity
-     */
-    public void finishActivity(){
+    public void finishActivity() {
         finish();
     }
 
-    /**
-     *  Method - Signals to the user that calculation failed
-     */
-    public void calculationErrorSignal(){
-        Toast.makeText(this,"Incorrect input", Toast.LENGTH_SHORT).show();
+    public void calculationErrorSignal() {
+        Toast.makeText(this, getString(R.string.incorrect_input), Toast.LENGTH_SHORT).show();
     }
 
-    public void calculationErrorSignal(String msg){
+    public void calculationErrorSignal(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -232,8 +200,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         Intent intent = new Intent();
         String amount = operation.getAmount().toString();
         Bundle extras = new Bundle();
-        extras.putString("amount", amount);
-        extras.putSerializable("operation",operation);
+        extras.putString(MainActivity.AMOUNT_KEY, amount);
+        extras.putSerializable(MainActivity.OPERATION_KEY, operation);
         intent.putExtras(extras);
 
         setResult(0, intent);
@@ -244,12 +212,12 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        operDate = calendar.getTime();
+        operationDate = calendar.getTime();
         String selectedDate;
 
-        if(calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
+        if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
             selectedDate = sdfWithYear.format(calendar.getTime());
         else
             selectedDate = sdf.format(calendar.getTime());
@@ -257,10 +225,10 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         setDateButton.setText(selectedDate);
     }
 
-    public String OperationChange(){
+    public String OperationChange() {
         Bundle extras = getIntent().getExtras();
-        Operation operation = (Operation)extras.getSerializable("operation");
-        operation.setAmount(new BigDecimal(getIntent().getExtras().get("amount").toString()));
+        Operation operation = (Operation) extras.getSerializable(MainActivity.OPERATION_KEY);
+        operation.setAmount(new BigDecimal(getIntent().getExtras().get(MainActivity.AMOUNT_KEY).toString()));
         operationForChange = operation;
 
         comment.setText(operation.getComment());
@@ -268,47 +236,46 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         presenter.settingResultText(operation.getAmount());
 
         //Setting category & account
-        for(int i= 0; i < spinnerCategoriesItems.size(); i++){
-            if(spinnerCategoriesItems.get(i).getId() == operation.getCategory().getId())
+        for (int i = 0; i < spinnerCategoriesItems.size(); i++) {
+            if (spinnerCategoriesItems.get(i).getId() == operation.getCategory().getId())
                 spinnerCategories.setSelection(i);
         }
 
-        for(int i= 0; i < spinnerAccountsItems.size(); i++){
-            if(spinnerAccountsItems.get(i).getId() == operation.getAccountId())
+        for (int i = 0; i < spinnerAccountsItems.size(); i++) {
+            if (spinnerAccountsItems.get(i).getId() == operation.getAccountId())
                 spinnerAccounts.setSelection(i);
         }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(operation.getOperationDate());
-        if(calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
+        if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
             setDateButton.setText(sdfWithYear.format(operation.getOperationDate()));
         else
             setDateButton.setText(sdf.format(operation.getOperationDate()));
 
 
-        return operation.getIsOperationIncome()?"Income":"Outcome";
+        return operation.getIsOperationIncome() ? getString(R.string.income) : getString(R.string.outcome);
     }
 
-    public void initSpinners(){
+    public void initSpinners() {
 
         Bundle extras = getIntent().getExtras();
+        if(extras == null) return;
 
-
-        spinnerAccountsItems = (ArrayList<SpinnerItem>) extras.getSerializable("accounts");
+        spinnerAccountsItems = (ArrayList<SpinnerItem>) extras.getSerializable(MainActivity.ACCOUNTS_KEY);
         spinnerAccountsItems.remove(0);
-        spinnerCategoriesItems = (ArrayList<SpinnerItem>) extras.getSerializable("categories");
-        if(spinnerCategoriesItems == null || spinnerAccountsItems == null){
-            calculationErrorSignal("Error with getting categories and accounts");
+        spinnerCategoriesItems = (ArrayList<SpinnerItem>) extras.getSerializable(MainActivity.CATEGORIES_KEY);
+        if (spinnerCategoriesItems == null || spinnerAccountsItems == null) {
+            calculationErrorSignal(getString(R.string.error_spinner_item_getting));
             return;
         }
-
 
 
         spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         spinnerCategories.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
-        IconAndTextSpinnerAdapter adapter_Account = new IconAndTextSpinnerAdapter(this,R.layout.spinner_item, spinnerAccountsItems);
-        IconAndTextSpinnerAdapter adapter_Categories = new IconAndTextSpinnerAdapter(this,R.layout.spinner_item, spinnerCategoriesItems);
+        SimpleSpinnerAdapter adapter_Account = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerAccountsItems);
+        SimpleSpinnerAdapter adapter_Categories = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerCategoriesItems);
 
         spinnerAccounts.setAdapter(adapter_Account);
         spinnerCategories.setAdapter(adapter_Categories);
@@ -318,8 +285,9 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
 
-                accountId =((SpinnerItem)parent.getItemAtPosition(selectedItemPosition)).getId();
+                accountId = ((SpinnerItem) parent.getItemAtPosition(selectedItemPosition)).getId();
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
@@ -329,8 +297,9 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
 
-                categoryId =((SpinnerItem)parent.getItemAtPosition(selectedItemPosition)).getId();
+                categoryId = ((SpinnerItem) parent.getItemAtPosition(selectedItemPosition)).getId();
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });

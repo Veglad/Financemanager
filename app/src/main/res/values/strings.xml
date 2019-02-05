@@ -4,6 +4,7 @@
     <string name="close">Close</string>
     <string name="slide_left_label">"&lt;&lt;"</string>
     <string name="slide_right_label">"&gt;&gt;"</string>
+    <string name="balance_placeholder">"Balance: %s ₴"</string>
 
     <string name="period_of_time_title">Period</string>
 
@@ -16,6 +17,16 @@
     <string name="category_title">Category</string>
     <string name="account_title">Account</string>
     <string name="comment_title">Comment</string>
+
+    <string name="delete_dialog_text">Do you really want to delete this operation?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="operation_save_error">Operation saving error</string>
+    <string name="operation_add_error">Operation add error</string>
+    <string name="operation_insert_error">operation insert error</string>
+
+    <string name="all">All</string>
 
     <!-- Calculator strings -->
     <string name="one_calculator_button_text">1</string>
@@ -35,6 +46,9 @@
     <string name="addition_calculator_button_text">+</string>
     <string name="equals_calculator_button_text">=</string>
     <string name="separator_calculator_button_text">.</string>
+
+    <string name="incorrect_input">Incorrect input</string>
+    <string name="error_spinner_item_getting">Error with spinner items getting</string>
 
     <string-array name="accounts_titles">
         <item>Credit</item>

@@ -31,28 +31,28 @@ public class PresenterMoneyCalc {
                 view.setCalcResultText(model.clearLast());
                 break;
             case R.id.aditionCalculatorButton:
-                if(!model.mathOperBtnClick(CalcOperations.Add)){
+                if(!model.mathOperBtnClick(CalcOperations.ADD)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
             case R.id.substractionCalculatorButton:
-                if(!model.mathOperBtnClick(CalcOperations.Sub)){
+                if(!model.mathOperBtnClick(CalcOperations.SUB)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
             case R.id.multiplicationCalculatorButton:
-                if(!model.mathOperBtnClick(CalcOperations.Mul)){
+                if(!model.mathOperBtnClick(CalcOperations.MUL)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
                 view.setCalcResultText(model.getResulText());
                 break;
             case R.id.divisionCalculatorButton:
-                if(!model.mathOperBtnClick(CalcOperations.Div)){
+                if(!model.mathOperBtnClick(CalcOperations.DIV)){
                     model.clearNumber();
                     view.calculationErrorSignal();
                 }
