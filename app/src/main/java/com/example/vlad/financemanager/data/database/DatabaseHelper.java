@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Operations.COLUMN_DATE + " TEXT NOT NULL, " +
                 Operations.COLUMN_COMMENT + " TEXT NOT NULL, " +
                 Operations.COLUMN_CATEGORY_ID + " INTEGER NOT NULL, " +
-                Operations.COLUMN_ISINCOME + " INTEGER NOT NULL, " +
+                Operations.COLUMN_IS_INCOME + " INTEGER NOT NULL, " +
                 Operations.COLUMN_USER_ID + " INTEGER NOT NULL, " +
                 Operations.COLUMN_TIME_STAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                 Operations.COLUMN_ACCOUNT_ID + " INTEGER NOT NULL" +
@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
         cv.put(Operations.COLUMN_AMOUNT, amount);
-        cv.put(Operations.COLUMN_ISINCOME, isIncome ? 1 : 0);
+        cv.put(Operations.COLUMN_IS_INCOME, isIncome ? 1 : 0);
         cv.put(Operations.COLUMN_COMMENT, comment);
         cv.put(Operations.COLUMN_DATE, dateString);
         cv.put(Operations.COLUMN_CATEGORY_ID, categoryId);
@@ -165,7 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Cursor getOperationCursor(long operationId, int userId, SQLiteDatabase db) {
         return db.query(Operations.TABLE_NAME,
                 new String[]{Operations.COLUMN_ID, Operations.COLUMN_AMOUNT,
-                        Operations.COLUMN_ISINCOME, Operations.COLUMN_COMMENT,
+                        Operations.COLUMN_IS_INCOME, Operations.COLUMN_COMMENT,
                         Operations.COLUMN_DATE, Operations.COLUMN_TIME_STAMP,
                         Operations.COLUMN_CATEGORY_ID, Operations.COLUMN_USER_ID, Operations.COLUMN_ACCOUNT_ID},
                 Operations.COLUMN_ID + " = ?" + " AND " + Operations.COLUMN_USER_ID + " = ?",
@@ -203,7 +203,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new BigDecimal(cursorOperations.getString(cursorOperations.getColumnIndex(Operations.COLUMN_AMOUNT))),
                 operationDate,
                 cursorOperations.getString(cursorOperations.getColumnIndex(Operations.COLUMN_COMMENT)),
-                cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_ISINCOME)) > 0,
+                cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_IS_INCOME)) > 0,
                 category);
     }
 
@@ -398,7 +398,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
         cv.put(Operations.COLUMN_AMOUNT, operation.getAmount().toString());
-        cv.put(Operations.COLUMN_ISINCOME, operation.getIsOperationIncome() ? 1 : 0);
+        cv.put(Operations.COLUMN_IS_INCOME, operation.getIsOperationIncome() ? 1 : 0);
         cv.put(Operations.COLUMN_COMMENT, operation.getComment());
         cv.put(Operations.COLUMN_DATE, dateString);
         cv.put(Operations.COLUMN_CATEGORY_ID, operation.getCategory().getId());
