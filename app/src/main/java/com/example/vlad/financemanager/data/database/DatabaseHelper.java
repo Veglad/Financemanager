@@ -16,7 +16,6 @@ import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.database.FinanceManagerContract.*;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -143,9 +142,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
-
-
     public Operation getOperation(long operationId, int userId) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -153,10 +149,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Category category = null;
         if (operationCursor.moveToFirst()) {
-            category = getCategoryByOperationCursor(db, operationCursor);
+            int categoryId = operationCursor.getInt(operationCursor.getColumnIndex(Operations.COLUMN_CATEGORY_ID));
+            category = getCategory(categoryId);
         }
 
-        Date operationDate = getDateFromCursor(operationCursor, Operations.COLUMN_DATE);
+        String dateString = operationCursor.getString(operationCursor.getColumnIndex(Operations.COLUMN_DATE));
+        Date operationDate = convertStringFromDbtoDate(dateString);
 
         Operation operation = getOperationFromCursor(operationCursor, category, operationDate);
         operationCursor.close();
@@ -174,24 +172,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(operationId), String.valueOf(userId)}, null, null, null, null);
     }
 
-    private Category getCategoryByOperationCursor(SQLiteDatabase db, Cursor operationCursor) {
-        Category category = null;
-
-        int categoryId = operationCursor.getInt(operationCursor.getColumnIndex(Operations.COLUMN_CATEGORY_ID));
-        Cursor categoryCursor = getCategoryCursor(db, categoryId);
-
-        if (categoryCursor.moveToFirst()) {
-            category = getCategoryFromCursor(categoryCursor);
-        }
-
-        return category;
-    }
-
     private Cursor getCategoryCursor(SQLiteDatabase db, int categoryId) {
         return db.query(Categories.TABLE_NAME,
                 new String[]{Categories.COLUMN_ID, Categories.COLUMN_NAME,
                         Categories.COLUMN_ICON, Categories.COLUMN_IS_CUSTOM,
-                        Categories.COLUMN_IS_INPUT_CATEGORY},
+                        Categories.COLUMN_IS_INPUT_CATEGORY, Categories.COLUMN_USER_ID},
                 Categories.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(categoryId)}, null, null, null, null);
     }
@@ -210,17 +195,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return category;
     }
 
-    private Date getDateFromCursor(Cursor cursor, String columnName) {
-        String dateString = cursor.getString(cursor.getColumnIndex(columnName));
-        Date operationDate = new Date();
-        try {
-            operationDate = getDateFromDbString(dateString);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return operationDate;
-    }
-
     @NonNull
     private Operation getOperationFromCursor(Cursor cursorOperations, Category category, Date operationDate) {
         return new Operation(
@@ -234,31 +208,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
-
     public List<Category> getAllCategories(int userId, boolean isIncome) {
         List<Category> categoryList = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(Categories.TABLE_NAME,
+        Cursor categoriesCursor = getCategoriesCursor(userId, isIncome, db);
+
+        if (categoriesCursor.moveToFirst()) {
+            do {
+                Category category = getCategoryFromCursor(categoriesCursor);
+                categoryList.add(category);
+            } while (categoriesCursor.moveToNext());
+        }
+        return categoryList;
+    }
+
+    private Cursor getCategoriesCursor(int userId, boolean isIncome, SQLiteDatabase db) {
+        return db.query(Categories.TABLE_NAME,
                 new String[]{Categories.COLUMN_ID, Categories.COLUMN_NAME,
                         Categories.COLUMN_ICON, Categories.COLUMN_IS_CUSTOM,
                         Categories.COLUMN_IS_INPUT_CATEGORY, Categories.COLUMN_USER_ID},
                 Categories.COLUMN_USER_ID + " = ?" + " AND " + Categories.COLUMN_IS_INPUT_CATEGORY + " = ?",
                 new String[]{String.valueOf(userId), String.valueOf(isIncome ? 1 : 0)}, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                Category category = new Category(cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndex(Categories.COLUMN_NAME)),
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_ICON)),
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_IS_CUSTOM)) > 0,
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_IS_INPUT_CATEGORY)) > 0);
-
-                categoryList.add(category);
-            } while (cursor.moveToNext());
-        }
-        return categoryList;
     }
 
     public List<Account> getAllAccounts(int userId) {
@@ -266,66 +238,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(Accounts.TABLE_NAME,
-                new String[]{Accounts.COLUMN_ID, Accounts.COLUMN_NAME,
-                        Accounts.COLUMN_ICON, Accounts.COLUMN_USER_ID},
-                Accounts.COLUMN_USER_ID + " = ?",
-                new String[]{String.valueOf(userId)}, null, null, null, null);
+        Cursor cursor = getAccountsCursor(userId, db);
         if (cursor.moveToFirst()) {
             do {
-                Account account = new Account(cursor.getInt(cursor.getColumnIndex(Accounts.COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndex(Accounts.COLUMN_NAME)),
-                        cursor.getInt(cursor.getColumnIndex(Accounts.COLUMN_ICON)));
-
+                Account account = getAccountFormCursor(cursor);
                 accountList.add(account);
             } while (cursor.moveToNext());
         }
         return accountList;
     }
 
+    private Cursor getAccountsCursor(int id, SQLiteDatabase db) {
+        return db.query(Accounts.TABLE_NAME,
+                new String[]{Accounts.COLUMN_ID, Accounts.COLUMN_NAME,
+                        Accounts.COLUMN_ICON, Accounts.COLUMN_USER_ID},
+                Accounts.COLUMN_USER_ID + " = ?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+    }
+
     public Account getAccount(int id) {
         SQLiteDatabase db = getReadableDatabase();
         Account account = null;
 
-        Cursor cursor = db.query(Accounts.TABLE_NAME,
-                new String[]{Accounts.COLUMN_ID, Accounts.COLUMN_NAME,
-                        Accounts.COLUMN_ICON, Accounts.COLUMN_USER_ID},
-                Accounts.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                account = new Account(cursor.getInt(cursor.getColumnIndex(Accounts.COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndex(Accounts.COLUMN_NAME)),
-                        cursor.getInt(cursor.getColumnIndex(Accounts.COLUMN_ICON)));
-            } while (cursor.moveToNext());
+        Cursor accountCursor = getAccountCursor(id, db);
+        if (accountCursor.moveToFirst()) {
+            account = getAccountFormCursor(accountCursor);
         }
         return account;
     }
 
-    public Category getCategory(int id) {
+    @NonNull
+    private Account getAccountFormCursor(Cursor accountCursor) {
+        Account account;
+        account = new Account(accountCursor.getInt(accountCursor.getColumnIndex(Accounts.COLUMN_ID)),
+                accountCursor.getString(accountCursor.getColumnIndex(Accounts.COLUMN_NAME)),
+                accountCursor.getInt(accountCursor.getColumnIndex(Accounts.COLUMN_ICON)));
+        return account;
+    }
+
+    private Cursor getAccountCursor(int id, SQLiteDatabase db) {
+        return db.query(Accounts.TABLE_NAME,
+                new String[]{Accounts.COLUMN_ID, Accounts.COLUMN_NAME,
+                        Accounts.COLUMN_ICON, Accounts.COLUMN_USER_ID},
+                Accounts.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+    }
+
+    public Category getCategory(int categoryId) {
         SQLiteDatabase db = getReadableDatabase();
         Category category = null;
 
-        Cursor cursor = db.query(Categories.TABLE_NAME,
-                new String[]{Categories.COLUMN_ID, Categories.COLUMN_NAME,
-                        Categories.COLUMN_ICON, Categories.COLUMN_IS_CUSTOM,
-                        Categories.COLUMN_IS_INPUT_CATEGORY, Categories.COLUMN_USER_ID},
-                Categories.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                category = new Category(cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndex(Categories.COLUMN_NAME)),
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_ICON)),
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_IS_CUSTOM)) > 0,
-                        cursor.getInt(cursor.getColumnIndex(Categories.COLUMN_IS_INPUT_CATEGORY)) > 0);
+        Cursor cursorCategory = getCategoryCursor(db, categoryId);
 
-            } while (cursor.moveToNext());
+        if (cursorCategory.moveToFirst()) {
+            category = getCategoryFromCursor(cursorCategory);
         }
         return category;
     }
-
-
 
 
     // If accountId < 0 method selects all accounts
@@ -337,9 +306,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Looping through the operations cursor, init category and operation, add operation to list
         if (operationsCursor.moveToFirst()) {
             do {
-                Category category = getCategoryByOperationCursor(db, operationsCursor);
+                int categoryId = operationsCursor.getInt(operationsCursor.getColumnIndex(Operations.COLUMN_CATEGORY_ID));
+                Category category = getCategory(categoryId);
 
-                Date operationDate = getDateFromCursor(operationsCursor, Operations.COLUMN_DATE);
+                String dateString = operationsCursor.getString(operationsCursor.getColumnIndex(Operations.COLUMN_DATE));
+                Date operationDate = convertStringFromDbtoDate(dateString);
 
                 Operation operation = getOperationFromCursor(operationsCursor, category, operationDate);
                 operationsList.add(operation);
@@ -357,24 +328,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         switch (period) {
             case ALL_TIME:
-                if(accountId > 0){
-                    selectionArgs = new String[]{accountId+""};
+                if (accountId > 0) {
+                    selectionArgs = new String[]{accountId + ""};
                     selectionString = Operations.COLUMN_ACCOUNT_ID + " = ?";
                 }
                 break;
             case DAY:
-                if(accountId < 0){
+                if (accountId < 0) {
                     selectionArgs = new String[]{endOfPeriodDateString};
                     selectionString = Operations.COLUMN_DATE + " = ?";
-                }else {
-                    selectionArgs = new String[]{accountId+"", endOfPeriodDateString};
+                } else {
+                    selectionArgs = new String[]{accountId + "", endOfPeriodDateString};
                     selectionString = Operations.COLUMN_ACCOUNT_ID + " = ?" + " AND " + Operations.COLUMN_DATE + " = ?";
                 }
                 break;
             default:
                 Calendar startDate = DateUtils.getStartOfPeriod(endOfPeriod, period);
 
-                if(accountId < 0) {
+                if (accountId < 0) {
                     selectionString = Operations.COLUMN_DATE + " BETWEEN " + "?" + " AND " + "?";
                     String startOfPeriodDateString = getDateStringForDb(startDate.getTime());
                     selectionArgs = new String[]{startOfPeriodDateString, endOfPeriodDateString};
@@ -382,7 +353,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     selectionString = Operations.COLUMN_ACCOUNT_ID + " = ?" + " AND " +
                             Operations.COLUMN_DATE + " BETWEEN " + "?" + " AND " + "?";
                     String startOfPeriodDateString = getDateStringForDb(startDate.getTime());
-                    selectionArgs = new String[]{accountId+"", startOfPeriodDateString, endOfPeriodDateString};
+                    selectionArgs = new String[]{accountId + "", startOfPeriodDateString, endOfPeriodDateString};
                 }
         }
 
@@ -444,7 +415,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return DateUtils.getStringDate(date, FinanceManagerContract.DATABASE_DATE_PATTERN);
     }
 
-    private Date getDateFromDbString(String dbDateString) {
+    private Date convertStringFromDbtoDate(String dbDateString) {
         return DateUtils.getDateFromString(dbDateString, FinanceManagerContract.DATABASE_DATE_PATTERN);
     }
 
