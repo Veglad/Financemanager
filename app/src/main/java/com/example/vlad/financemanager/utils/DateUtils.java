@@ -48,8 +48,13 @@ public class DateUtils {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
     }
 
-    public static Date getDateFromString(String dateString, String pattern) throws ParseException {
-        return new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
+    public static Date getDateFromString(String dateString, String pattern) {
+        try {
+            return new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static Calendar getCalendarFromString(String dateString, String pattern) throws ParseException {
@@ -125,6 +130,8 @@ public class DateUtils {
                 break;
             case YEAR:
                 startOfPeriod.set(Calendar.DAY_OF_YEAR, 1);
+            default:
+                startOfPeriod = null;
 
         }
 

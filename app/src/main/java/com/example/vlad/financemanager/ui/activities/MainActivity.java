@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     private void initOperationList() {
-        operationList.addAll(database.getAllOperations(-1, PeriodsOfTime.DAY, Calendar.getInstance()));
+        operationList.addAll(database.getOperations(-1, PeriodsOfTime.DAY, Calendar.getInstance()));
     }
 
 
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     accountId = -1;
 
                 operationList.clear();
-                operationList.addAll(database.getAllOperations(accountId, selectedPeriod, lastSelectedDay));
+                operationList.addAll(database.getOperations(accountId, selectedPeriod, lastSelectedDay));
                 mOperationsAdapter.notifyDataSetChanged();
                 fullBalanceAndChartUpdate();
 
@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private void fullUpdate() {
         operationList.clear();
         int accId = spinnerAccountItems.get(accountsSpinner.getSelectedItemPosition()).getId();
-        operationList.addAll(database.getAllOperations(accId, selectedPeriod, lastSelectedDay));
+        operationList.addAll(database.getOperations(accId, selectedPeriod, lastSelectedDay));
         mOperationsAdapter.notifyDataSetChanged();
 
         fullBalanceAndChartUpdate();
