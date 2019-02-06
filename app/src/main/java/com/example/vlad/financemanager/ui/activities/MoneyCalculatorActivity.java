@@ -77,7 +77,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
         databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
 
-        presenter = new PresenterMoneyCalc(this, this);
+        presenter = new PresenterMoneyCalc(this);
         operationDate = new Date();
 
         openForChange = false;
@@ -236,7 +236,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         Bundle extras = getIntent().getExtras();
         Operation operation = (Operation) extras.getSerializable(MainActivity.OPERATION_KEY);
         operation.setAmount(new BigDecimal(getIntent().getExtras().get(MainActivity.AMOUNT_KEY).toString()));
-        operationForChange = operation;
+        presenter.setModifyingOperationId(operation.getId());
 
         comment.setText(operation.getComment());
         resultText.setText(operation.getAmount().toString());

@@ -131,4 +131,11 @@ public final class DateUtils {
 
         return startOfPeriod;
     }
+
+    public static boolean isOutOfPeriod(Date checkedDate, PeriodsOfTime period, Calendar endOfPeriodCalendar) {
+        Date startOfPeriod = getStartOfPeriod(endOfPeriodCalendar, period).getTime();
+        Date endOfPeriod = endOfPeriodCalendar.getTime();
+
+        return checkedDate.compareTo(startOfPeriod) < 0 || checkedDate.compareTo(endOfPeriod) > 0;
+    }
 }

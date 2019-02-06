@@ -102,18 +102,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //returns ID of inserted operation
-    public long insertOperation(String amount, boolean isIncome, String comment, Date operationDate,
-                                int categoryId, int userId, int accountId) {
+    public long insertOperation(Operation operation, int userId, int accountId) {
         SQLiteDatabase db = getWritableDatabase();
 
-        String dateString = getDateStringForDb(operationDate);
+        String dateString = getDateStringForDb(operation.getOperationDate());
 
         ContentValues cv = new ContentValues();
-        cv.put(Operations.COLUMN_AMOUNT, amount);
-        cv.put(Operations.COLUMN_IS_INCOME, isIncome ? 1 : 0);
-        cv.put(Operations.COLUMN_COMMENT, comment);
+        cv.put(Operations.COLUMN_AMOUNT, operation.getAmount().toString());
+        cv.put(Operations.COLUMN_IS_INCOME, operation.getIsOperationIncome() ? 1 : 0);
+        cv.put(Operations.COLUMN_COMMENT, operation.getComment());
         cv.put(Operations.COLUMN_DATE, dateString);
-        cv.put(Operations.COLUMN_CATEGORY_ID, categoryId);
+        cv.put(Operations.COLUMN_CATEGORY_ID, operation.getCategory().getId());
         cv.put(Operations.COLUMN_USER_ID, userId);
         cv.put(Operations.COLUMN_ACCOUNT_ID, accountId);
 

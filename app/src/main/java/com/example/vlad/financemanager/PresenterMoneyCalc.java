@@ -1,7 +1,5 @@
 package com.example.vlad.financemanager;
 
-import android.content.Context;
-
 import com.example.vlad.financemanager.data.enums.CalcOperations;
 import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
@@ -14,8 +12,9 @@ public class PresenterMoneyCalc {
 
     private IMoneyCalculation view;
     private ModelMoneyCalc model;
+    private int modifyingOperationId;
 
-    public PresenterMoneyCalc(IMoneyCalculation view, Context context){
+    public PresenterMoneyCalc(IMoneyCalculation view){
         this.view = view;
         model = new ModelMoneyCalc();
     }
@@ -93,7 +92,7 @@ public class PresenterMoneyCalc {
             return;
         }
 
-        Operation operation = new Operation(0, view.getAccountId(),new BigDecimal(model.getResulText()), view.getOperationDate(),
+        Operation operation = new Operation(modifyingOperationId, view.getAccountId(),new BigDecimal(model.getResulText()), view.getOperationDate(),
                 view.getComment().trim(), view.getIsOperationInput(), category);
 
         view.sendNewOperation(operation);
@@ -103,5 +102,9 @@ public class PresenterMoneyCalc {
 
     public void settingResultText(BigDecimal result){
         model.initFotChangeOperation(result);
+    }
+
+    public void setModifyingOperationId(int modifyingOperationId) {
+        this.modifyingOperationId = modifyingOperationId;
     }
 }
