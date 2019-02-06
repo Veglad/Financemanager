@@ -13,10 +13,11 @@ import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
-    public SimpleSpinnerAdapter(Context context, int resource, ArrayList<SpinnerItem> spinnerItems) {
+    public SimpleSpinnerAdapter(Context context, int resource, List<SpinnerItem> spinnerItems) {
         super(context, resource, spinnerItems);
     }
 

@@ -26,9 +26,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "finance_manager.db";
     private static final int DB_VERSION = 1;
     private static final int USER_ID_PRIMARY = 0;
+    private static DatabaseHelper databaseHelper;
 
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+    }
+
+    public static DatabaseHelper getInstance(Context context) {
+        if(databaseHelper == null){
+            databaseHelper = new DatabaseHelper(context);
+        }
+
+        return databaseHelper;
     }
 
 

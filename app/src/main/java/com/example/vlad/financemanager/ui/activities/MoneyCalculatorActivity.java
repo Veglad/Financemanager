@@ -18,6 +18,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vlad.financemanager.data.database.DatabaseHelper;
+import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper;
+import com.example.vlad.financemanager.data.models.Account;
+import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.ui.IMoneyCalculation;
 import com.example.vlad.financemanager.PresenterMoneyCalc;
 import com.example.vlad.financemanager.R;
@@ -28,9 +32,9 @@ import com.example.vlad.financemanager.ui.fragments.DatePickerFragment;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,9 +58,10 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     private PresenterMoneyCalc presenter;
     private Date operationDate;
     private Operation operationForChange;
+    private DatabaseHelper databaseHelper;
 
-    private ArrayList<SpinnerItem> spinnerCategoriesItems;
-    private ArrayList<SpinnerItem> spinnerAccountsItems;
+    List<SpinnerItem> categorySpinnerItemList;
+    List<SpinnerItem> accountSpinnerItemList;
 
     private boolean isOperationInput;
     private boolean openForChange;
@@ -69,6 +74,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_money_calculator);
         ButterKnife.bind(this);
+
+        databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
 
         presenter = new PresenterMoneyCalc(this, this);
         operationDate = new Date();
@@ -236,13 +243,13 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         presenter.settingResultText(operation.getAmount());
 
         //Setting category & account
-        for (int i = 0; i < spinnerCategoriesItems.size(); i++) {
-            if (spinnerCategoriesItems.get(i).getId() == operation.getCategory().getId())
+        for (int i = 0; i < categorySpinnerItemList.size(); i++) {
+            if (categorySpinnerItemList.get(i).getId() == operation.getCategory().getId())
                 spinnerCategories.setSelection(i);
         }
 
-        for (int i = 0; i < spinnerAccountsItems.size(); i++) {
-            if (spinnerAccountsItems.get(i).getId() == operation.getAccountId())
+        for (int i = 0; i < accountSpinnerItemList.size(); i++) {
+            if (accountSpinnerItemList.get(i).getId() == operation.getAccountId())
                 spinnerAccounts.setSelection(i);
         }
 
@@ -262,20 +269,19 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         Bundle extras = getIntent().getExtras();
         if(extras == null) return;
 
-        spinnerAccountsItems = (ArrayList<SpinnerItem>) extras.getSerializable(MainActivity.ACCOUNTS_KEY);
-        spinnerAccountsItems.remove(0);
-        spinnerCategoriesItems = (ArrayList<SpinnerItem>) extras.getSerializable(MainActivity.CATEGORIES_KEY);
-        if (spinnerCategoriesItems == null || spinnerAccountsItems == null) {
-            calculationErrorSignal(getString(R.string.error_spinner_item_getting));
-            return;
-        }
+        List<Account> accountList = databaseHelper.getAllAccounts(extras.getInt(MainActivity.USER_ID_KEY));
+        accountSpinnerItemList = SpinnerItemMapper.mapAccountsToSpinnerItems(accountList);
 
+        int userId = extras.getInt(MainActivity.USER_ID_KEY);
+        boolean areInputCategories = extras.getBoolean(MainActivity.ARE_CATEGORIES_INPUT_KEY);
+        List<Category> categoryList = databaseHelper.getAllCategories(userId, areInputCategories);
+        categorySpinnerItemList = SpinnerItemMapper.mapCategoryToSpinnerItems(categoryList);
 
         spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         spinnerCategories.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
-        SimpleSpinnerAdapter adapter_Account = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerAccountsItems);
-        SimpleSpinnerAdapter adapter_Categories = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerCategoriesItems);
+        SimpleSpinnerAdapter adapter_Account = new SimpleSpinnerAdapter(this, R.layout.spinner_item, accountSpinnerItemList);
+        SimpleSpinnerAdapter adapter_Categories = new SimpleSpinnerAdapter(this, R.layout.spinner_item, categorySpinnerItemList);
 
         spinnerAccounts.setAdapter(adapter_Account);
         spinnerCategories.setAdapter(adapter_Categories);

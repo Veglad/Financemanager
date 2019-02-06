@@ -82,7 +82,7 @@ public class TabFragment extends Fragment {
     }
 
     //Full tab fragment update
-    public void updateTabFragment(String textDate, ArrayList<Operation> operations) {
+    public void updateTabFragment(String textDate, ArrayList<Operation> operations) {//TODO: create method for updating one operation
         this.textDate.setText(textDate);
         drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
     }
