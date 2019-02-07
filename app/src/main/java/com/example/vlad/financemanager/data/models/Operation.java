@@ -1,10 +1,10 @@
-package com.example.vlad.financemanager;
+package com.example.vlad.financemanager.data.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Operation implements Serializable{
+public class Operation implements Serializable {
 
     private transient BigDecimal amount;
     private Date operationDate;
@@ -14,8 +14,14 @@ public class Operation implements Serializable{
     private int id;
     private int accountId;
 
-    public Operation(int id, int accountId, BigDecimal amount, Date operationDate, String comment,
-                     boolean isOperationIncome, Category category){
+
+    public Operation() {
+        initOperation(0, 0, new BigDecimal(0), new Date(),
+                "", false, new Category());
+    }
+
+    public void initOperation(int id, int accountId, BigDecimal amount, Date operationDate, String comment,
+                              boolean isOperationIncome, Category category) {
         this.id = id;
         this.accountId = accountId;
         this.amount = amount;
@@ -25,11 +31,9 @@ public class Operation implements Serializable{
         this.category = category;
     }
 
-    public Operation(){
-        this(0,0, new BigDecimal(0), new Date(), "NoComment", false, new Category());
+    public int getId() {
+        return id;
     }
-
-    public int getId(){return id;}
 
     public BigDecimal getAmount() {
         return amount;
@@ -71,11 +75,11 @@ public class Operation implements Serializable{
         this.category = category;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getAccountId(){
-        return  accountId;
+    public int getAccountId() {
+        return accountId;
     }
 }
