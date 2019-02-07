@@ -188,14 +188,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @NonNull
     private Operation getOperationFromCursor(Cursor cursorOperations, Category category, Date operationDate) {
-        return new Operation(
-                cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_ID)),
+        Operation operation = new Operation();
+        operation.initOperation(cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_ID)),
                 cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_ACCOUNT_ID)),
                 new BigDecimal(cursorOperations.getString(cursorOperations.getColumnIndex(Operations.COLUMN_AMOUNT))),
                 operationDate,
                 cursorOperations.getString(cursorOperations.getColumnIndex(Operations.COLUMN_COMMENT)),
                 cursorOperations.getInt(cursorOperations.getColumnIndex(Operations.COLUMN_IS_INCOME)) > 0,
                 category);
+        return operation;
     }
 
 
