@@ -6,6 +6,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 class ModelMoneyCalculator {
+    private static final int NOT_FOUND_INDEX = -1;
+    private static final int DECIMAL_PLACES_MAX_COUNT = 2;
+    private final int RESULT_MAX_LENGTH = 8;
+    private final BigDecimal maxAllowedValue = new BigDecimal("99999999");
+    public final BigDecimal zeroBigDecimalValue = new BigDecimal("0");
+
     private String resultText;
     /**
      * First operand (Accumulator)
@@ -40,9 +46,6 @@ class ModelMoneyCalculator {
      */
     private boolean multiSamePriorityOperation;
 
-    private final BigDecimal maxAllowedValue = new BigDecimal("99999999");
-    final BigDecimal zeroBigDecimalValue = new BigDecimal("0");
-
     ModelMoneyCalculator() {
         resultText = "0";
         accumulator = new BigDecimal(0);
@@ -63,16 +66,16 @@ class ModelMoneyCalculator {
 
         switch (chosenOperation) {
             case ADD:
-                result = SubOrAddOperationChosen(CalculatorOperations.ADD);
+                result = countLowPriorityOperation(CalculatorOperations.ADD);
                 break;
             case SUB:
-                result = SubOrAddOperationChosen(CalculatorOperations.SUB);
+                result = countLowPriorityOperation(CalculatorOperations.SUB);
                 break;
             case MUL:
-                result = MulOrDivOperationChosen(CalculatorOperations.MUL);
+                result = countHighPriorityOperation(CalculatorOperations.MUL);
                 break;
             case DIV:
-                result = MulOrDivOperationChosen(CalculatorOperations.DIV);
+                result = countHighPriorityOperation(CalculatorOperations.DIV);
                 break;
         }
         if (isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0";
@@ -80,7 +83,7 @@ class ModelMoneyCalculator {
         return result;
     }
 
-    private boolean SubOrAddOperationChosen(CalculatorOperations chosenOperation) {
+    private boolean countLowPriorityOperation(CalculatorOperations chosenOperation) {
         boolean result = true;
         if (operation != CalculatorOperations.NONE) {
             multiSamePriorityOperation = true;
@@ -93,7 +96,7 @@ class ModelMoneyCalculator {
         return result;
     }
 
-    private boolean MulOrDivOperationChosen(CalculatorOperations chosenOperation) {
+    private boolean countHighPriorityOperation(CalculatorOperations chosenOperation) {
         boolean result = true;
 
         //Example 2+3*4* = 2+12*
@@ -176,16 +179,15 @@ class ModelMoneyCalculator {
 
         if (newChar == '.' && resultText.contains("."))
             return false;
-        if (lastIndexOfSeparator != -1 && lastIndexOfSeparator <= resultText.length() - 3)
+        if (lastIndexOfSeparator != NOT_FOUND_INDEX && lastIndexOfSeparator <= resultText.length() - (DECIMAL_PLACES_MAX_COUNT - 1))
             return false;
-        if (lastIndexOfSeparator == -1 && resultText.length() == 8 && newChar != '.')
+        if (lastIndexOfSeparator == NOT_FOUND_INDEX && resultText.length() == RESULT_MAX_LENGTH && newChar != '.')
             return false;
 
         return true;
     }
 
-    String clearLast() {
-
+    String clearLastSymbol() {
         if (resultText.length() == 1 || resultText.contains("E") || resultText.contains("e"))
             resultText = "0";
         else

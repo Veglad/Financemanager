@@ -95,7 +95,7 @@ public class ModelMoneyCalculatorTest {
     @Test
     public void num_2dot22_clearLast_eq_2dot2() {
         model.setResultText(new BigDecimal("2.22"));
-        model.clearLast();
+        model.clearLastSymbol();
 
         assertFalse(model.getResultText() == "2.2");
     }
@@ -103,7 +103,7 @@ public class ModelMoneyCalculatorTest {
     @Test
     public void num_2dot2_clearLast_eq_2dot() {
         model.setResultText(new BigDecimal("2.2"));
-        model.clearLast();
+        model.clearLastSymbol();
 
         assertFalse(model.getResultText() == "2.");
     }

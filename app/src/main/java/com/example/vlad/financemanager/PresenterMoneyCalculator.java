@@ -1,5 +1,7 @@
 package com.example.vlad.financemanager;
 
+import android.support.annotation.IdRes;
+
 import com.example.vlad.financemanager.data.enums.CalculatorOperations;
 import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
@@ -25,37 +27,25 @@ public class PresenterMoneyCalculator {
      * @param btnId       Clicked button
      * @param numberValue Text value of this button (0,1,2..9, .)
      */
-    public void calculatorBtnOnClick(int btnId, String numberValue) {
+    public void calculatorBtnOnClick(@IdRes int btnId, String numberValue) {
         switch (btnId) {
             case R.id.calculatorBackButton:
-                view.setCalcResultText(model.clearLast());
+                view.setCalcResultText(model.clearLastSymbol());
                 break;
-            case R.id.aditionCalculatorButton:
-                if (!model.mathOperationBtnClick(CalculatorOperations.ADD)) {
-                    model.clearNumber();
-                    view.calculationErrorSignal();
-                }
+            case R.id.additionCalculatorButton:
+                performOperation(CalculatorOperations.ADD);
                 view.setCalcResultText(model.getResultText());
                 break;
             case R.id.substractionCalculatorButton:
-                if (!model.mathOperationBtnClick(CalculatorOperations.SUB)) {
-                    model.clearNumber();
-                    view.calculationErrorSignal();
-                }
+                performOperation(CalculatorOperations.SUB);
                 view.setCalcResultText(model.getResultText());
                 break;
             case R.id.multiplicationCalculatorButton:
-                if (!model.mathOperationBtnClick(CalculatorOperations.MUL)) {
-                    model.clearNumber();
-                    view.calculationErrorSignal();
-                }
+                performOperation(CalculatorOperations.MUL);
                 view.setCalcResultText(model.getResultText());
                 break;
             case R.id.divisionCalculatorButton:
-                if (!model.mathOperationBtnClick(CalculatorOperations.DIV)) {
-                    model.clearNumber();
-                    view.calculationErrorSignal();
-                }
+                performOperation(CalculatorOperations.DIV);
                 view.setCalcResultText(model.getResultText());
                 break;
             case R.id.equalsCalculatorButton:
@@ -74,6 +64,13 @@ public class PresenterMoneyCalculator {
 
     }
 
+    private void performOperation(CalculatorOperations add) {
+        if (!model.mathOperationBtnClick(add)) {
+            model.clearNumber();
+            view.calculationErrorSignal();
+        }
+    }
+
     /**
      * Clears number, reset calculator
      */
@@ -84,7 +81,7 @@ public class PresenterMoneyCalculator {
     /**
      * Saving user's data as a new operation
      */
-    public void btnSaveOnClick() {
+    public void onButtonSaveClick() {
         Category category = new Category();
         category.setId(view.getCategoryId());
 
@@ -93,7 +90,8 @@ public class PresenterMoneyCalculator {
             return;
         }
 
-        Operation operation = new Operation(modifyingOperationId, view.getAccountId(), new BigDecimal(model.getResultText()), view.getOperationDate(),
+        Operation operation = new Operation();
+        operation.initOperation(modifyingOperationId, view.getAccountId(), new BigDecimal(model.getResultText()), view.getOperationDate(),
                 view.getComment().trim(), view.getIsOperationInput(), category);
 
         view.sendNewOperation(operation);

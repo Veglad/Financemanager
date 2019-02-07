@@ -329,16 +329,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     public PeriodsOfTime getPeriodBySpinnerSelected(int positionInSpinner) {
         switch (positionInSpinner) {
-            case 0:
-                return PeriodsOfTime.DAY;
-            case 1:
-                return PeriodsOfTime.WEEK;
-            case 2:
-                return PeriodsOfTime.MONTH;
-            case 3:
-                return PeriodsOfTime.YEAR;
-            default:
-                return PeriodsOfTime.ALL_TIME;
+            case SpinnerItem.POSITION_DAY: return PeriodsOfTime.DAY;
+            case SpinnerItem.POSITION_WEEK: return PeriodsOfTime.WEEK;
+            case SpinnerItem.POSITION_MONTH: return PeriodsOfTime.MONTH;
+            case SpinnerItem.POSITION_YEAR: return PeriodsOfTime.YEAR;
+            default: return PeriodsOfTime.ALL_TIME;
         }
     }
 

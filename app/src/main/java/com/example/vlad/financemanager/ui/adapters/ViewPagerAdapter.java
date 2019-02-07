@@ -47,7 +47,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public int getItemPosition(Object object) {
         TabFragment fragment = (TabFragment) object;
         if (fragment != null) {
-
             fragment.updateTabFragment(dateString, operationList);
         }
 

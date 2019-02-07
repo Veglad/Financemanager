@@ -56,7 +56,6 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     private PresenterMoneyCalculator presenter;
     private Date operationDate = new Date();
-    private Operation operationForChange;
     private DatabaseHelper databaseHelper;
 
     List<SpinnerItem> categorySpinnerItemList;
@@ -174,7 +173,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     }
 
     public void btnSaveOnClick(View v) {
-        presenter.btnSaveOnClick();
+        presenter.onButtonSaveClick();
     }
 
     public void finishActivity() {
@@ -261,7 +260,6 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         Operation operation = (Operation) extras.getSerializable(MainActivity.OPERATION_KEY);
         operation.setAmount(new BigDecimal(getIntent().getExtras().get(MainActivity.AMOUNT_KEY).toString()));
         presenter.setModifyingOperationId(operation.getId());
-        operationForChange = operation;
         return operation;
     }
 

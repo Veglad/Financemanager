@@ -32,16 +32,16 @@ import butterknife.Unbinder;
 
 
 public class TabFragment extends Fragment {
-    private Unbinder unbinder;
-    @BindView(R.id.datePieChartFragmentTextView)
-    TextView textDate;
-    @BindView(R.id.pieChart)
-    PieChart pieChart;
     private static final String DATE_TEXT_KEY = "TabDateText";
     private static final String IS_INCOME_KEY = "TabIsIncome";
     private static final String OPERATIONS_KEY = "OperationsKey";
     private static final String PIE_CHART_LABEL = "pieChartLabel";
     private static final int EMPTY_CHART_COLOR = Color.rgb(186, 195, 209);
+
+    @BindView(R.id.datePieChartFragmentTextView) TextView textDate;
+    @BindView(R.id.pieChart) PieChart pieChart;
+
+    private Unbinder unbinder;
 
     public static TabFragment newInstance(String str, ArrayList<Operation> operations, boolean isIncome) {
         Bundle args = new Bundle();
@@ -65,12 +65,13 @@ public class TabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tab, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        textDate.setText(getArguments().getString(DATE_TEXT_KEY));
-
+        Bundle extras = getArguments();
+        if (extras != null) {
+            textDate.setText(extras.getString(DATE_TEXT_KEY));
+            ArrayList<Operation> operations = (ArrayList<Operation>) extras.getSerializable(OPERATIONS_KEY);
+            drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
+        }
         pieChart.setUsePercentValues(true);
-        ArrayList<Operation> operations = (ArrayList<Operation>) getArguments().getSerializable(OPERATIONS_KEY);
-
-        drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
 
         return view;
     }
@@ -84,17 +85,17 @@ public class TabFragment extends Fragment {
     //Full tab fragment update
     public void updateTabFragment(String textDate, ArrayList<Operation> operations) {//TODO: create method for updating one operation
         this.textDate.setText(textDate);
-        drawPieChart(getArguments().getBoolean(IS_INCOME_KEY), operations);
+        Bundle extras = getArguments();
+        if (extras != null) {
+            drawPieChart(extras.getBoolean(IS_INCOME_KEY), operations);
+        }
     }
 
     private void drawPieChart(boolean isIncome, ArrayList<Operation> operations) {
         List<PieEntry> entries = getPieEntries(isIncome, operations);
 
         PieDataSet dataSet = new PieDataSet(entries, PIE_CHART_LABEL);
-        if (isIncome)
-            dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        else
-            dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataSet.setColors(isIncome ? ColorTemplate.MATERIAL_COLORS : ColorTemplate.COLORFUL_COLORS);
 
         dataSet.setSliceSpace(3);
 

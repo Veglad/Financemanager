@@ -2,6 +2,7 @@ package com.example.vlad.financemanager.data.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class User {
     /**
@@ -19,11 +20,11 @@ public class User {
     /**
      * users's accounts
      */
-    private ArrayList<Account> accounts;
+    private List<Account> accounts;
     /**
      * collection of the user's custom categories
      */
-    private ArrayList<Category> userCategories;
+    private List<Category> userCategories;
 
     public User(BigDecimal balance, String name) {
         accounts = new ArrayList<>();
@@ -55,7 +56,7 @@ public class User {
         this.name = name;
     }
 
-    public ArrayList<Account> getAccaunts() {
+    public List<Account> getAccaunts() {
         return accounts;
     }
 
@@ -84,9 +85,9 @@ public class User {
      * @return success of the deleting
      */
     public boolean deleteAccount(int accountId) {
-        for (int i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).getId() == accountId) {
-                accounts.remove(i);
+        for (Account account : accounts) {
+            if (account.getId() == accountId) {
+                accounts.remove(account);
                 return true;
             }
         }
@@ -131,7 +132,7 @@ public class User {
         return false;
     }
 
-    public ArrayList<Category> getUserCategories() {
+    public List<Category> getUserCategories() {
         return userCategories;
     }
 

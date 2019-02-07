@@ -108,7 +108,6 @@ public final class DateUtils {
             default:
                 break;
         }
-
         setMaxTimeOfADay(endOfPeriod);
 
         return endOfPeriod;
@@ -137,12 +136,15 @@ public final class DateUtils {
             default:
                 break;
         }
+        setMinTimeOfADay(startOfPeriod);
 
+        return startOfPeriod;
+    }
+
+    public static void setMinTimeOfADay(Calendar startOfPeriod) {
         startOfPeriod.set(Calendar.HOUR_OF_DAY, 0);
         startOfPeriod.set(Calendar.MINUTE, 0);
         startOfPeriod.set(Calendar.SECOND, 0);
-
-        return startOfPeriod;
     }
 
     public static boolean isOutOfPeriod(Date checkedDate, PeriodsOfTime period, Calendar endOfPeriodCalendar) {

@@ -14,8 +14,14 @@ public class Operation implements Serializable {
     private int id;
     private int accountId;
 
-    public Operation(int id, int accountId, BigDecimal amount, Date operationDate, String comment,
-                     boolean isOperationIncome, Category category) {
+
+    public Operation() {
+        initOperation(0, 0, new BigDecimal(0), new Date(),
+                "", false, new Category());
+    }
+
+    public void initOperation(int id, int accountId, BigDecimal amount, Date operationDate, String comment,
+                              boolean isOperationIncome, Category category) {
         this.id = id;
         this.accountId = accountId;
         this.amount = amount;
@@ -23,10 +29,6 @@ public class Operation implements Serializable {
         this.comment = comment;
         this.isOperationIncome = isOperationIncome;
         this.category = category;
-    }
-
-    public Operation() {
-        this(0, 0, new BigDecimal(0), new Date(), "NoComment", false, new Category());
     }
 
     public int getId() {

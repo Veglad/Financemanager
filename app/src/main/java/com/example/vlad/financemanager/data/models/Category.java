@@ -1,5 +1,7 @@
 package com.example.vlad.financemanager.data.models;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public class Category implements Serializable {
@@ -37,11 +39,10 @@ public class Category implements Serializable {
         return name;
     }
 
-    public void setName(String name) throws IllegalArgumentException {
-        if (name != "")
+    public void setName(String name) {
+        if (!TextUtils.isEmpty(name)) {
             this.name = name;
-        else
-            throw new IllegalArgumentException();
+        }
     }
 
     public int getIcon() {

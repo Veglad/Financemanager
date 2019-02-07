@@ -27,7 +27,6 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     private ItemLongClick itemLongClickListener;
     private ItemClick itemClickListener;
 
-
     public OperationsAdapter(Context context, List<Operation> operations) {
         this.context = context;
         operationList = operations;
@@ -58,7 +57,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OperationViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final OperationViewHolder holder, int position) {
         Operation operation = operationList.get(position);
 
         holder.commentText.setText(operation.getComment());
@@ -80,7 +79,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
             @Override
             public void onClick(View view) {
                 if (itemClickListener != null) {
-                    itemClickListener.onItemClick(position);
+                    itemClickListener.onItemClick(holder.getAdapterPosition());
                 }
             }
         });
@@ -88,7 +87,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
             @Override
             public boolean onLongClick(View view) {
                 if (itemLongClickListener != null) {
-                    itemLongClickListener.onItemLongClick(position);
+                    itemLongClickListener.onItemLongClick(holder.getAdapterPosition());
                 }
                 return true;
             }
