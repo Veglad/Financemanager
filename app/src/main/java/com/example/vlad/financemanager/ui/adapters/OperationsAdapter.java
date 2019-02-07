@@ -101,16 +101,11 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
     }
 
     class OperationViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.itemCategoryNameTextView)
-        TextView categoryText;
-        @BindView(R.id.itemAmountTextView)
-        TextView amountText;
-        @BindView(R.id.itemCommentTextView)
-        TextView commentText;
-        @BindView(R.id.dateOperationRecyclerItemTextView)
-        TextView textDate;
-        @BindView(R.id.circleIconImageView)
-        ImageView categoryImg;
+        @BindView(R.id.itemCategoryNameTextView) TextView categoryText;
+        @BindView(R.id.itemAmountTextView) TextView amountText;
+        @BindView(R.id.itemCommentTextView) TextView commentText;
+        @BindView(R.id.dateOperationRecyclerItemTextView) TextView textDate;
+        @BindView(R.id.circleIconImageView) ImageView categoryImg;
 
 
         OperationViewHolder(View itemView) {

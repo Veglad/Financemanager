@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private void initSupportActionBar() {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void initAccountsSpinner() {
@@ -135,8 +135,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View itemSelected,
                                        int selectedItemPosition, long selectedId) {
-                int selectedAccountId = ((SpinnerItem)parent.getSelectedItem()).getId();
-                if(accountId != selectedAccountId) {
+                int selectedAccountId = ((SpinnerItem) parent.getSelectedItem()).getId();
+                if (accountId != selectedAccountId) {
                     accountId = selectedAccountId;
                 }
                 fullUpdate();
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bundle extras;
-        if(data == null ) return;
+        if (data == null) return;
         if (resultCode != 0 || (extras = data.getExtras()) == null) {
             Toast.makeText(this, getString(R.string.operation_save_error), Toast.LENGTH_SHORT).show();
             return;
@@ -261,10 +261,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation) {
-        int currentAccId = ((SpinnerItem)accountsSpinner.getSelectedItem()).getId();
+        int currentAccId = ((SpinnerItem) accountsSpinner.getSelectedItem()).getId();
         boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(), currentPeriod, endOfPeriod);
         boolean isSuiteToCurrentAccount = currentAccId == operation.getAccountId() || currentAccId == ACCOUNT_ALL_ID;
-        return  isInPeriod && isSuiteToCurrentAccount;
+        return isInPeriod && isSuiteToCurrentAccount;
     }
 
     private void recountBalanceViaOperation(Operation operation, boolean isModifiedOperation) {
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             case R.id.outcomeButton:
                 intent.putExtra(IS_OPERATION_INCOME, false);
                 break;
-            default: 
+            default:
                 break;
         }
         intent.putExtra(IS_MODIFYING_OPERATION, false);
@@ -329,16 +329,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     public PeriodsOfTime getPeriodBySpinnerSelected(int positionInSpinner) {
         switch (positionInSpinner) {
-            case 0: return PeriodsOfTime.DAY;
-            case 1: return PeriodsOfTime.WEEK;
-            case 2: return PeriodsOfTime.MONTH;
-            case 3: return PeriodsOfTime.YEAR;
-            default: return PeriodsOfTime.ALL_TIME;
+            case 0:
+                return PeriodsOfTime.DAY;
+            case 1:
+                return PeriodsOfTime.WEEK;
+            case 2:
+                return PeriodsOfTime.MONTH;
+            case 3:
+                return PeriodsOfTime.YEAR;
+            default:
+                return PeriodsOfTime.ALL_TIME;
         }
     }
 
     private void fullUpdate() {
-        int accountId = ((SpinnerItem)accountsSpinner.getSelectedItem()).getId();
+        int accountId = ((SpinnerItem) accountsSpinner.getSelectedItem()).getId();
         List<Operation> operationList = database.getOperations(accountId, currentPeriod, endOfPeriod);
         updateUiOperationsList(operationList);
 

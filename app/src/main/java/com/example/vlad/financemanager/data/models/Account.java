@@ -9,16 +9,16 @@ public class Account {
     ArrayList<Operation> operations;
     String name;
 
-    public Account(ArrayList<Operation> operations, String name){
+    public Account(ArrayList<Operation> operations, String name) {
         this.name = name;
         this.operations = operations;
     }
 
-    public Account(){
+    public Account() {
         this(new ArrayList<Operation>(), "Unknown");
     }
 
-    public Account(int id, String name, int icon){
+    public Account(int id, String name, int icon) {
         this.id = id;
         operations = new ArrayList<>();
         this.name = name;
@@ -26,26 +26,31 @@ public class Account {
 
     }
 
-    public int getIcon(){return icon;}
+    public int getIcon() {
+        return icon;
+    }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
 
-    public int getId(){
+    public int getId() {
         return id;
     }
-    /** collection of the operation for current account*/
-    ArrayList<Operation> getOperations(){
+
+    /**
+     * collection of the operation for current account
+     */
+    ArrayList<Operation> getOperations() {
         return operations;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 }

@@ -130,7 +130,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
         String dateButtonTitle;
         if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR)) {
-           dateButtonTitle = sdfWithYear.format(calendar.getTime());
+            dateButtonTitle = sdfWithYear.format(calendar.getTime());
         } else {
             dateButtonTitle = sdf.format(calendar.getTime());
         }
@@ -221,7 +221,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         initSpinnersWithItemLists(accountSpinnerItemList, categorySpinnerItemList);
         initToolbar(isOperationIncome);
 
-        if(isModifyingOperation){//Init UI via operation
+        if (isModifyingOperation) {//Init UI via operation
             initUiViaOperationValues(extras);
         } else {
             primaryUiInit();
@@ -235,7 +235,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     }
 
     public void initUiViaOperationValues(Bundle extras) {
-        String dateButtonTitle;Operation operation = initOperationFromExtras(extras);
+        String dateButtonTitle;
+        Operation operation = initOperationFromExtras(extras);
         operation.setOperationDate(new Date(extras.getLong(DATE_KEY)));
 
         initDateTimePicker(new Date(operation.getOperationDate().getTime()));
@@ -250,7 +251,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     public void selectSpinnerItemMatchesToId(int id, List<SpinnerItem> categorySpinnerItemList, Spinner spinner) {
         for (int i = 0; i < categorySpinnerItemList.size(); i++) {
-            if(categorySpinnerItemList.get(i).getId() == id) {
+            if (categorySpinnerItemList.get(i).getId() == id) {
                 spinner.setSelection(i);
             }
         }

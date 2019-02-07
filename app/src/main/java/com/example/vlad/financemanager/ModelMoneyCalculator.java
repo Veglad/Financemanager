@@ -7,27 +7,43 @@ import java.math.RoundingMode;
 
 class ModelMoneyCalculator {
     private String resultText;
-    /** First operand (Accumulator)*/
+    /**
+     * First operand (Accumulator)
+     */
     private BigDecimal accumulator;
-    /** Second operand */
+    /**
+     * Second operand
+     */
     private BigDecimal secondOperand;
-    /** Field for keeping some data in specific situations */
+    /**
+     * Field for keeping some data in specific situations
+     */
     private BigDecimal tempOperand;
-    /** operation to perform */
+    /**
+     * operation to perform
+     */
     private CalculatorOperations operation;
-    /** Field for keeping name of operation */
+    /**
+     * Field for keeping name of operation
+     */
     private CalculatorOperations tempOperation;
-    /** is temp operand empty or no. Using for complex sequence of operations */
+    /**
+     * is temp operand empty or no. Using for complex sequence of operations
+     */
     private boolean isTempOperationEmpty;
-    /** Flag - used for identifying if calculation has just completed */
+    /**
+     * Flag - used for identifying if calculation has just completed
+     */
     private boolean justCount;
-    /** Flag - used for identifying if there is a sequence of the operations with the same prioriy */
+    /**
+     * Flag - used for identifying if there is a sequence of the operations with the same prioriy
+     */
     private boolean multiSamePriorityOperation;
 
     private final BigDecimal maxAllowedValue = new BigDecimal("99999999");
     final BigDecimal zeroBigDecimalValue = new BigDecimal("0");
 
-    ModelMoneyCalculator(){
+    ModelMoneyCalculator() {
         resultText = "0";
         accumulator = new BigDecimal(0);
         secondOperand = new BigDecimal(0);
@@ -38,14 +54,14 @@ class ModelMoneyCalculator {
         multiSamePriorityOperation = false;
     }
 
-    String getResultText(){
+    String getResultText() {
         return resultText;
     }
 
-    boolean mathOperationBtnClick(CalculatorOperations chosenOperation){
+    boolean mathOperationBtnClick(CalculatorOperations chosenOperation) {
         boolean result = true;
 
-       switch (chosenOperation){
+        switch (chosenOperation) {
             case ADD:
                 result = SubOrAddOperationChosen(CalculatorOperations.ADD);
                 break;
@@ -59,14 +75,14 @@ class ModelMoneyCalculator {
                 result = MulOrDivOperationChosen(CalculatorOperations.DIV);
                 break;
         }
-        if(isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0";
+        if (isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0";
 
         return result;
     }
 
-    private boolean SubOrAddOperationChosen(CalculatorOperations chosenOperation){
+    private boolean SubOrAddOperationChosen(CalculatorOperations chosenOperation) {
         boolean result = true;
-        if(operation != CalculatorOperations.NONE){
+        if (operation != CalculatorOperations.NONE) {
             multiSamePriorityOperation = true;
             result = calculate();
         } else {
@@ -77,27 +93,24 @@ class ModelMoneyCalculator {
         return result;
     }
 
-    private boolean MulOrDivOperationChosen(CalculatorOperations chosenOperation){
+    private boolean MulOrDivOperationChosen(CalculatorOperations chosenOperation) {
         boolean result = true;
 
         //Example 2+3*4* = 2+12*
-        if(!isTempOperationEmpty){
+        if (!isTempOperationEmpty) {
             operation = chosenOperation;
             result = calculate();
-        }
-        else if(operation == CalculatorOperations.SUB || operation == CalculatorOperations.ADD) {
+        } else if (operation == CalculatorOperations.SUB || operation == CalculatorOperations.ADD) {
             isTempOperationEmpty = false;
             tempOperand = accumulator;
             accumulator = new BigDecimal(resultText);
             resultText = "0";
             //saving current operation
             tempOperation = operation == CalculatorOperations.ADD ? CalculatorOperations.ADD : CalculatorOperations.SUB;
-        }
-        else if(operation != CalculatorOperations.NONE){
+        } else if (operation != CalculatorOperations.NONE) {
             multiSamePriorityOperation = true;
             result = calculate();
-        }
-        else{
+        } else {
             accumulator = new BigDecimal(resultText);
         }
         operation = chosenOperation;
@@ -105,9 +118,9 @@ class ModelMoneyCalculator {
         return result;
     }
 
-    private boolean calculate(){
+    private boolean calculate() {
         secondOperand = new BigDecimal(resultText);
-        switch (operation){
+        switch (operation) {
             case ADD:
                 accumulator = accumulator.add(secondOperand);
                 break;
@@ -116,38 +129,38 @@ class ModelMoneyCalculator {
                 break;
             case MUL:
                 accumulator = accumulator.multiply(secondOperand);
-                accumulator = accumulator.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+                accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 break;
             case DIV:
                 //division by zero
-                if(secondOperand.compareTo(zeroBigDecimalValue) == 0) return  false;
+                if (secondOperand.compareTo(zeroBigDecimalValue) == 0) return false;
 
-                accumulator = accumulator.divide(secondOperand,2, RoundingMode.CEILING);
+                accumulator = accumulator.divide(secondOperand, 2, RoundingMode.CEILING);
                 accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN);
                 break;
         }
         //If the new number is too big
-        if(accumulator.compareTo(maxAllowedValue) > 0) return false;
+        if (accumulator.compareTo(maxAllowedValue) > 0) return false;
 
         resultText = accumulator.toString();
         justCount = true;
         return true;
     }
 
-    boolean calculatePress(){
-        if(!calculate()) return  false;
+    boolean calculatePress() {
+        if (!calculate()) return false;
 
-        if(!isTempOperationEmpty){
+        if (!isTempOperationEmpty) {
             secondOperand = accumulator;
             accumulator = tempOperand;
             operation = tempOperation;
-            if(!calculate()) return false;
+            if (!calculate()) return false;
         }
 
         //If the result value is less or equals 0
-        if(accumulator.compareTo(zeroBigDecimalValue) <= 0) return false;
+        if (accumulator.compareTo(zeroBigDecimalValue) <= 0) return false;
         //If the new number is too big
-        if(accumulator.compareTo(maxAllowedValue) > 0) return false;
+        if (accumulator.compareTo(maxAllowedValue) > 0) return false;
 
         //Reset accumulator and second operand
         isTempOperationEmpty = true;
@@ -158,30 +171,30 @@ class ModelMoneyCalculator {
         return true;
     }
 
-    boolean isNewResultCorrect(char newChar){
+    boolean isNewResultCorrect(char newChar) {
         int lastIndexOfSeparator = resultText.lastIndexOf('.');
 
-        if(newChar == '.' && resultText.contains("."))
-                return false;
-        if(lastIndexOfSeparator != -1 && lastIndexOfSeparator <= resultText.length()-3)
+        if (newChar == '.' && resultText.contains("."))
             return false;
-        if(lastIndexOfSeparator == -1 && resultText.length() == 8 && newChar != '.')
+        if (lastIndexOfSeparator != -1 && lastIndexOfSeparator <= resultText.length() - 3)
+            return false;
+        if (lastIndexOfSeparator == -1 && resultText.length() == 8 && newChar != '.')
             return false;
 
         return true;
     }
 
-    String clearLast(){
+    String clearLast() {
 
-        if(resultText.length() == 1 || resultText.contains("E") || resultText.contains("e"))
+        if (resultText.length() == 1 || resultText.contains("E") || resultText.contains("e"))
             resultText = "0";
         else
-            resultText= resultText.substring(0,resultText.length()-1);
+            resultText = resultText.substring(0, resultText.length() - 1);
 
         return resultText;
     }
 
-    String clearNumber(){
+    String clearNumber() {
         resultText = "0";
 
         isTempOperationEmpty = true;
@@ -193,32 +206,31 @@ class ModelMoneyCalculator {
         accumulator = new BigDecimal(0);
         secondOperand = new BigDecimal(0);
 
-        return  resultText;
+        return resultText;
     }
 
-    String calculationError(){
+    String calculationError() {
         clearNumber();
-        return  resultText;
+        return resultText;
     }
 
-    String newResultText(char lastChar){
-        if(resultText.length() == 1 && resultText.charAt(0) == '0' && lastChar != '.' )
+    String newResultText(char lastChar) {
+        if (resultText.length() == 1 && resultText.charAt(0) == '0' && lastChar != '.')
             resultText = lastChar + "";
-        else if(justCount && lastChar != '.'){
+        else if (justCount && lastChar != '.') {
             justCount = false;
             resultText = lastChar + "";
-        }
-        else
+        } else
             resultText += lastChar;
 
-        return  resultText;
+        return resultText;
     }
 
-    void setResultText(BigDecimal newResult){
+    void setResultText(BigDecimal newResult) {
         resultText = newResult.toString();
     }
 
-    void initFotChangeOperation(BigDecimal newResult){
+    void initFotChangeOperation(BigDecimal newResult) {
         resultText = newResult.toString();
         accumulator = newResult;
     }

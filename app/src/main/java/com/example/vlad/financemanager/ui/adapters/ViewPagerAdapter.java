@@ -30,7 +30,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return TabFragment.newInstance(dateString, operationList, position != 0 );
+        return TabFragment.newInstance(dateString, operationList, position != 0);
     }
 
     public void setOperationList(List<Operation> operationList) {

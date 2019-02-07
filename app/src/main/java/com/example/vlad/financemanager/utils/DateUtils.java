@@ -146,7 +146,7 @@ public final class DateUtils {
     }
 
     public static boolean isOutOfPeriod(Date checkedDate, PeriodsOfTime period, Calendar endOfPeriodCalendar) {
-        if(PeriodsOfTime.ALL_TIME == period) return false;
+        if (PeriodsOfTime.ALL_TIME == period) return false;
         Date startOfPeriod = getStartOfPeriod(endOfPeriodCalendar, period).getTime();
         setMaxTimeOfADay(endOfPeriodCalendar);
         Date endOfPeriod = endOfPeriodCalendar.getTime();
