@@ -3,7 +3,6 @@ package com.example.vlad.financemanager.ui.activities;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.support.v4.app.DialogFragment;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,7 @@ import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper;
 import com.example.vlad.financemanager.data.models.Account;
 import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.ui.IMoneyCalculation;
-import com.example.vlad.financemanager.PresenterMoneyCalc;
+import com.example.vlad.financemanager.PresenterMoneyCalculator;
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
@@ -50,21 +49,20 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     @BindView(R.id.commentMoneyActivityEditText) EditText comment;
     @BindView(R.id.calculatorActivityToolbar) Toolbar toolbar;
     @BindView(R.id.toolbarTitleTextView) TextView toolbarTitle;
-    @BindView(R.id.accountSpinner) Spinner spinnerAccounts;
-    @BindView(R.id.categorySpinner) Spinner spinnerCategories;
-    @BindView(R.id.operationDateButton) Button setDateButton;
+    @BindView(R.id.accountSpinner) Spinner accountsSpinner;
+    @BindView(R.id.categorySpinner) Spinner categoriesSpinner;
+    @BindView(R.id.operationDateButton) Button dateButton;
     @BindView(R.id.calculatorBackButton) Button btnBack;
 
-    private PresenterMoneyCalc presenter;
-    private Date operationDate;
+    private PresenterMoneyCalculator presenter;
+    private Date operationDate = new Date();
     private Operation operationForChange;
     private DatabaseHelper databaseHelper;
 
     List<SpinnerItem> categorySpinnerItemList;
     List<SpinnerItem> accountSpinnerItemList;
 
-    private boolean isOperationInput;
-    private boolean openForChange;
+    private boolean isOperationIncome;
     private int accountId;
     private int categoryId;
 
@@ -76,13 +74,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         ButterKnife.bind(this);
 
         databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+        presenter = new PresenterMoneyCalculator(this);
 
-        presenter = new PresenterMoneyCalc(this);
-        operationDate = new Date();
-
-        openForChange = false;
-
-        //Setting long clear button press;
         btnBack.getBackground().setColorFilter(R.color.darkGrey, PorterDuff.Mode.SRC_ATOP);
         btnBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -92,26 +85,17 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             }
         });
 
-        //main views
-        initSpinners();
+        initUiViaExtras(getIntent().getExtras());
+    }
 
-        //datePicker Button
-        setDateButton.setText(sdf.format(new Date()));
-        setDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment df = new DatePickerFragment();
-                if (openForChange)
-                    df.setCalendar(operationForChange.getOperationDate());
-                else
-                    df.setCalendar(operationDate);
+    private void initSpinnersItemLists(int userId) {
+        List<Account> accountList = databaseHelper.getAllAccounts(userId);
+        accountSpinnerItemList = SpinnerItemMapper.mapAccountsToSpinnerItems(accountList);
+        List<Category> categoryList = databaseHelper.getAllCategories(userId, isOperationIncome);
+        categorySpinnerItemList = SpinnerItemMapper.mapCategoryToSpinnerItems(categoryList);
+    }
 
-                DialogFragment datePicker = df;
-                datePicker.show(getSupportFragmentManager(), DATE_PICKER_TAG);
-            }
-        });
-
-        //Toolbar settings
+    private void initToolbar(Boolean isIncome) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -123,34 +107,37 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             }
         });
 
-        //Getting intent extras
-        Bundle extras = getIntent().getExtras();
-        String str = (String) extras.get(MainActivity.MESSAGE_KEY);
-        initDateTimePicker(extras);
-        if (str.equals(MainActivity.OPERATION_VALUE)) {
-            str = OperationChange();
-            openForChange = true;
-        }
-
-
-        toolbarTitle.setText(str);
-
-        isOperationInput = str.equals(MainActivity.INCOME_VALUE);
+        String title = isIncome ? getString(R.string.income) : getString(R.string.outcome);
+        toolbarTitle.setText(title);
     }
 
-    private void initDateTimePicker(Bundle extras) {
+    private void initDateTimePicker(final Date operationDate) {
+        dateButton.setText(sdf.format(new Date()));
+        dateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment df = new DatePickerFragment();
+                df.setCalendar(operationDate);
+                df.show(getSupportFragmentManager(), DATE_PICKER_TAG);
+            }
+        });
+    }
+
+    private String getDateButtonTitleByDate(Long dateInMillis) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(extras.getLong(DATE_KEY));
-
+        calendar.setTimeInMillis(dateInMillis);
         operationDate = calendar.getTime();
+
+        String dateButtonTitle;
         if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR)) {
-            setDateButton.setText(sdfWithYear.format(calendar.getTime()));
+           dateButtonTitle = sdfWithYear.format(calendar.getTime());
         } else {
-            setDateButton.setText(sdf.format(calendar.getTime()));
+            dateButtonTitle = sdf.format(calendar.getTime());
         }
+
+        return dateButtonTitle;
     }
 
-    //Methods that implements interface
     @Override
     public int getCategoryId() {
         return categoryId;
@@ -173,7 +160,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     @Override
     public boolean getIsOperationInput() {
-        return isOperationInput;
+        return isOperationIncome;
     }
 
     @Override
@@ -222,72 +209,66 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         operationDate = calendar.getTime();
-        String selectedDate;
-
-        if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
-            selectedDate = sdfWithYear.format(calendar.getTime());
-        else
-            selectedDate = sdf.format(calendar.getTime());
-
-        setDateButton.setText(selectedDate);
+        dateButton.setText(getDateButtonTitleByDate(operationDate.getTime()));
     }
 
-    public String OperationChange() {
-        Bundle extras = getIntent().getExtras();
-        Operation operation = (Operation) extras.getSerializable(MainActivity.OPERATION_KEY);
-        operation.setAmount(new BigDecimal(getIntent().getExtras().get(MainActivity.AMOUNT_KEY).toString()));
-        presenter.setModifyingOperationId(operation.getId());
+    public void initUiViaExtras(Bundle extras) {
+        int userId = extras.getInt(MainActivity.USER_ID_KEY);
+        isOperationIncome = extras.getBoolean(MainActivity.IS_OPERATION_INCOME);
+        boolean isModifyingOperation = extras.getBoolean(MainActivity.IS_MODIFYING_OPERATION);
 
+        initSpinnersItemLists(userId);
+        initSpinnersWithItemLists(accountSpinnerItemList, categorySpinnerItemList);
+        initToolbar(isOperationIncome);
+
+        if(isModifyingOperation){//Init UI via operation
+            initUiViaOperationValues(extras);
+        } else {
+            primaryUiInit();
+        }
+    }
+
+    public void primaryUiInit() {
+        initDateTimePicker(new Date());
+        String dateButtonTitle = getDateButtonTitleByDate(new Date().getTime());
+        dateButton.setText(dateButtonTitle);
+    }
+
+    public void initUiViaOperationValues(Bundle extras) {
+        String dateButtonTitle;Operation operation = initOperationFromExtras(extras);
+        operation.setOperationDate(new Date(extras.getLong(DATE_KEY)));
+
+        initDateTimePicker(new Date(operation.getOperationDate().getTime()));
+        dateButtonTitle = getDateButtonTitleByDate(operation.getOperationDate().getTime());
+        dateButton.setText(dateButtonTitle);
         comment.setText(operation.getComment());
         resultText.setText(operation.getAmount().toString());
         presenter.settingResultText(operation.getAmount());
-
-        //Setting category & account
-        for (int i = 0; i < categorySpinnerItemList.size(); i++) {
-            if (categorySpinnerItemList.get(i).getId() == operation.getCategory().getId())
-                spinnerCategories.setSelection(i);
-        }
-
-        for (int i = 0; i < accountSpinnerItemList.size(); i++) {
-            if (accountSpinnerItemList.get(i).getId() == operation.getAccountId())
-                spinnerAccounts.setSelection(i);
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(operation.getOperationDate());
-        if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR))
-            setDateButton.setText(sdfWithYear.format(operation.getOperationDate()));
-        else
-            setDateButton.setText(sdf.format(operation.getOperationDate()));
-
-
-        return operation.getIsOperationIncome() ? getString(R.string.income) : getString(R.string.outcome);
+        selectSpinnerItemMatchesToId(operation.getCategory().getId(), categorySpinnerItemList, categoriesSpinner);
+        selectSpinnerItemMatchesToId(operation.getAccountId(), accountSpinnerItemList, accountsSpinner);
     }
 
-    public void initSpinners() {
+    public void selectSpinnerItemMatchesToId(int id, List<SpinnerItem> categorySpinnerItemList, Spinner spinner) {
+        for (int i = 0; i < categorySpinnerItemList.size(); i++) {
+            if(categorySpinnerItemList.get(i).getId() == id) {
+                spinner.setSelection(i);
+            }
+        }
+    }
 
-        Bundle extras = getIntent().getExtras();
-        if(extras == null) return;
+    public Operation initOperationFromExtras(Bundle extras) {
+        Operation operation = (Operation) extras.getSerializable(MainActivity.OPERATION_KEY);
+        operation.setAmount(new BigDecimal(getIntent().getExtras().get(MainActivity.AMOUNT_KEY).toString()));
+        presenter.setModifyingOperationId(operation.getId());
+        operationForChange = operation;
+        return operation;
+    }
 
-        List<Account> accountList = databaseHelper.getAllAccounts(extras.getInt(MainActivity.USER_ID_KEY));
-        accountSpinnerItemList = SpinnerItemMapper.mapAccountsToSpinnerItems(accountList);
-
-        int userId = extras.getInt(MainActivity.USER_ID_KEY);
-        boolean areInputCategories = extras.getBoolean(MainActivity.ARE_CATEGORIES_INPUT_KEY);
-        List<Category> categoryList = databaseHelper.getAllCategories(userId, areInputCategories);
-        categorySpinnerItemList = SpinnerItemMapper.mapCategoryToSpinnerItems(categoryList);
-
-        spinnerAccounts.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        spinnerCategories.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-
-        SimpleSpinnerAdapter adapter_Account = new SimpleSpinnerAdapter(this, R.layout.spinner_item, accountSpinnerItemList);
-        SimpleSpinnerAdapter adapter_Categories = new SimpleSpinnerAdapter(this, R.layout.spinner_item, categorySpinnerItemList);
-
-        spinnerAccounts.setAdapter(adapter_Account);
-        spinnerCategories.setAdapter(adapter_Categories);
-
-        //OnItemAccountSelected
-        spinnerAccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void initSpinnersWithItemLists(List<SpinnerItem> accountSpinnerItemList, List<SpinnerItem> categorySpinnerItemList) {
+        accountsSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        SimpleSpinnerAdapter accountSpinnerAdapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, accountSpinnerItemList);
+        accountsSpinner.setAdapter(accountSpinnerAdapter);
+        accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
 
@@ -298,8 +279,10 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             }
         });
 
-        //OnItemCategorySelected
-        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        categoriesSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        SimpleSpinnerAdapter categoriesSpinnerAdapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, categorySpinnerItemList);
+        categoriesSpinner.setAdapter(categoriesSpinnerAdapter);
+        categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
 

@@ -4,6 +4,7 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -108,7 +109,15 @@ public final class DateUtils {
                 break;
         }
 
+        setMaxTimeOfADay(endOfPeriod);
+
         return endOfPeriod;
+    }
+
+    public static void setMaxTimeOfADay(Calendar endOfPeriod) {
+        endOfPeriod.set(Calendar.HOUR_OF_DAY, 23);
+        endOfPeriod.set(Calendar.MINUTE, 59);
+        endOfPeriod.set(Calendar.SECOND, 59);
     }
 
     public static Calendar getStartOfPeriod(Calendar currDate, PeriodsOfTime period) {
@@ -129,11 +138,17 @@ public final class DateUtils {
                 break;
         }
 
+        startOfPeriod.set(Calendar.HOUR_OF_DAY, 0);
+        startOfPeriod.set(Calendar.MINUTE, 0);
+        startOfPeriod.set(Calendar.SECOND, 0);
+
         return startOfPeriod;
     }
 
     public static boolean isOutOfPeriod(Date checkedDate, PeriodsOfTime period, Calendar endOfPeriodCalendar) {
+        if(PeriodsOfTime.ALL_TIME == period) return false;
         Date startOfPeriod = getStartOfPeriod(endOfPeriodCalendar, period).getTime();
+        setMaxTimeOfADay(endOfPeriodCalendar);
         Date endOfPeriod = endOfPeriodCalendar.getTime();
 
         return checkedDate.compareTo(startOfPeriod) < 0 || checkedDate.compareTo(endOfPeriod) > 0;

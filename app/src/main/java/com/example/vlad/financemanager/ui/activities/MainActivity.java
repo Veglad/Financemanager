@@ -57,14 +57,10 @@ import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActiv
 public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     public static final String OPERATION_KEY = "operation";
-    public static final String ARE_CATEGORIES_INPUT_KEY = "are_categories_input";
-    public static final String MESSAGE_KEY = "message";
+    public static final String IS_OPERATION_INCOME = "is_operation_income";
     public static final String AMOUNT_KEY = "amount_key";
     public static final String USER_ID_KEY = "user_id_key";
-
-    public static final String INCOME_VALUE = "Income";
-    public static final String OUTCOME_VALUE = "Outcome";
-    public static final String OPERATION_VALUE = "operation";
+    public static final String IS_MODIFYING_OPERATION = "is_modifying_operation";
 
     public static final int ACCOUNT_ALL_ID = -1;
     public static final int NEW_OPERATION_REQUEST_CODE = 0;
@@ -212,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Bundle extras;
-        if (resultCode != 0 || data == null || (extras = data.getExtras()) == null) {
+        if(data == null ) return;
+        if (resultCode != 0 || (extras = data.getExtras()) == null) {
             Toast.makeText(this, getString(R.string.operation_save_error), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -226,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             database.updateOperation(operation, userId, operation.getAccountId());
             updateUiViaModifiedOperation(operation);
         }
+        updateUiRelatedToBalance();
     }
 
     private void updateUiViaModifiedOperation(Operation operation) {
@@ -233,10 +231,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             operationList.set(modifiedOperationIndex, operation);
             operationsAdapter.notifyItemChanged(modifiedOperationIndex);
             recountBalanceViaOperation(operation, true);
-            updateUiRelatedToBalance();
         } else {
             recountBalanceViaDeletedOperation(operation);
-            updateUiRelatedToBalance();
             removeOperationFromTheList(modifiedOperationIndex);
         }
     }
@@ -246,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             operationList.add(0, operation);
             operationsAdapter.notifyDataSetChanged();
             recountBalanceViaOperation(operation, false);
-            updateUiRelatedToBalance();
         }
     }
 
@@ -267,8 +262,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation) {
         int currentAccId = ((SpinnerItem)accountsSpinner.getSelectedItem()).getId();
-        return !DateUtils.isOutOfPeriod(operation.getOperationDate(), currentPeriod, endOfPeriod) &&
-                (currentAccId == operation.getAccountId() || currentAccId == ACCOUNT_ALL_ID);
+        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(), currentPeriod, endOfPeriod);
+        boolean isSuiteToCurrentAccount = currentAccId == operation.getAccountId() || currentAccId == ACCOUNT_ALL_ID;
+        return  isInPeriod && isSuiteToCurrentAccount;
     }
 
     private void recountBalanceViaOperation(Operation operation, boolean isModifiedOperation) {
@@ -304,21 +300,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
-        boolean isIncome = false;
         switch (v.getId()) {
             case R.id.incomeButton:
-                intent.putExtra(MESSAGE_KEY, INCOME_VALUE);
-                isIncome = true;
+                intent.putExtra(IS_OPERATION_INCOME, true);
                 break;
             case R.id.outcomeButton:
-                intent.putExtra(MESSAGE_KEY, OUTCOME_VALUE);
-                isIncome = false;
+                intent.putExtra(IS_OPERATION_INCOME, false);
                 break;
             default: 
                 break;
         }
+        intent.putExtra(IS_MODIFYING_OPERATION, false);
         Bundle extras = new Bundle();
-        extras.putBoolean(ARE_CATEGORIES_INPUT_KEY, isIncome);
         extras.putSerializable(USER_ID_KEY, userId);
         extras.putLong(DATE_KEY, endOfPeriod.getTimeInMillis());
         intent.putExtras(extras);
@@ -402,9 +395,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         extras.putSerializable(OPERATION_KEY, operation);
         extras.putSerializable(USER_ID_KEY, userId);
         extras.putSerializable(DATE_KEY, operation.getOperationDate().getTime());
-        extras.putSerializable(MESSAGE_KEY, OPERATION_VALUE);
+        extras.putSerializable(IS_MODIFYING_OPERATION, true);
+        extras.putSerializable(IS_OPERATION_INCOME, operation.getIsOperationIncome());
         extras.putSerializable(AMOUNT_KEY, operation.getAmount().toString());
-        extras.putBoolean(ARE_CATEGORIES_INPUT_KEY, operation.getCategory().getIsInputCategory());
         intent.putExtras(extras);
 
         operationBeforeChange = operation;
