@@ -17,6 +17,7 @@
     <string name="category_title">Category</string>
     <string name="account_title">Account</string>
     <string name="comment_title">Comment</string>
+    <string name="amount_title">Amount</string>
 
     <string name="delete_dialog_text">Do you really want to delete this operation?</string>
     <string name="delete">Delete</string>
@@ -25,6 +26,8 @@
     <string name="operation_save_error">Operation saving error</string>
     <string name="operation_add_error">Operation add error</string>
     <string name="operation_insert_error">operation insert error</string>
+
+    <string name="amount_edit_text_digits">0123456789.</string>
 
     <string name="all">All</string>
 
@@ -63,8 +66,6 @@
         <item>Year</item>
         <item>All time</item>
     </string-array>
-
-
 
 
 </resources>

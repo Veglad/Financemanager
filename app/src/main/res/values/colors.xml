@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimaryLight">#5eb8f1</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tabsScrollColor">#004D40</color>
-    <color name="white">#FFFFFF</color>
+    <color name="white">#ffffff</color>
     <color name="colorLiteGreen">#2CAA55</color>
     <color name="colorLiteRed">#D22C2C</color>
     <color name="colorOrange">#e28126</color>
     <color name="darkGrey">#4C4C4C</color>
+
+    <color name="primaryTransparent">#5b8495f7</color>
 </resources>

@@ -127,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public void initAccountsSpinner() {
         List<SpinnerItem> spinnerAccountItems = getAccountSpinnerItemListFromDb();
 
-        accountsSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-
         SimpleSpinnerAdapter adapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerAccountItems);
         accountsSpinner.setAdapter(adapter);
 

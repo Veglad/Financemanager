@@ -30,7 +30,6 @@ public class SimpleSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View view = initView(position, convertView, parent);
-        view.setBackgroundResource(R.drawable.spinner_shape);
         return view;
     }
 
