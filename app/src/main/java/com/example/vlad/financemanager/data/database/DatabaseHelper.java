@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.example.vlad.financemanager.data.models.Account;
 import com.example.vlad.financemanager.utils.DateUtils;
@@ -170,6 +171,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         operationCursor.close();
 
         return operation;
+    }
+
+    @Nullable
+    public Date getMinOperationDate(int userId) {//TODO: Optimize this
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor dateCursor = db.rawQuery("SELECT MIN("+Operations.COLUMN_DATE+") FROM "
+                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId+""});
+
+        Date date = new Date();
+        if(dateCursor.getColumnCount() > 0) {
+            if (dateCursor.moveToFirst()) {
+                String dateString = dateCursor.getString(0);
+                if(dateString == null) return null;
+                date = convertStringFromDbtoDate(dateString);
+            }
+        }
+
+        return date;
     }
 
     @NonNull

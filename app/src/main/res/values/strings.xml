@@ -4,7 +4,8 @@
     <string name="close">Close</string>
     <string name="slide_left_label">"&lt;&lt;"</string>
     <string name="slide_right_label">"&gt;&gt;"</string>
-    <string name="balance_placeholder">"Balance: %s ₴"</string>
+    <string name="income_balance_placeholder">"₴%s"</string>
+    <string name="outcome_balance_placeholder">"-₴%s"</string>
 
     <string name="period_of_time_title">Period</string>
 
@@ -66,6 +67,4 @@
         <item>Year</item>
         <item>All time</item>
     </string-array>
-
-
 </resources>

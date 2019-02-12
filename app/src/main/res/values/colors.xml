@@ -10,6 +10,9 @@
     <color name="colorLiteRed">#D22C2C</color>
     <color name="colorOrange">#e28126</color>
     <color name="darkGrey">#4C4C4C</color>
+    <color name="lightGray">#484848</color>
+    <color name="transparent">#00000000</color>
+    <color name="darkBlack">#000</color>
 
     <color name="primaryTransparent">#5b8495f7</color>
 </resources>

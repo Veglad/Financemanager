@@ -54,7 +54,7 @@
                 android:id="@+id/accountSpinner"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:background="@drawable/primary_transparent_oval_drawable"
+                android:background="@drawable/primary_spinner_background"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/operationDateButton" />
@@ -64,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/primary_transparent_oval_drawable"
+                android:background="@drawable/primary_spinner_background"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/accountSpinner" />

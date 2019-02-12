@@ -1,18 +1,20 @@
 package com.example.vlad.financemanager.utils;
 
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
+import com.example.vlad.financemanager.data.models.Operation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public final class DateUtils {
 
     private static final int DAYS_IN_WEEK = 7;
-    private static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
+    private static final String DATE_MEDIUM_PATTERN = "dd MMMM";
     private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
     private static final String DATE_YEAR_PATTERN = "yyyy";
     public static final String DATE_FULL_PATTERN = "MM.dd.yyyy";
@@ -46,6 +48,47 @@ public final class DateUtils {
         }
 
         return textDate;
+    }
+
+    public static boolean slideDateIfAble(Calendar currDate, boolean isRightSlide, PeriodsOfTime currentPeriod, Date firstOperationDate) { //TODO: Refactor this
+        if (currentPeriod == PeriodsOfTime.ALL_TIME)
+            return false;
+
+        int slideDays;
+        switch (currentPeriod) {
+            case DAY:
+                slideDays = 1;
+                break;
+            case WEEK:
+                slideDays = 7;
+                break;
+            case MONTH:
+                slideDays = currDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+                break;
+            default:
+                slideDays = currDate.getActualMaximum(Calendar.DAY_OF_YEAR);
+                break;
+        }
+
+        if (isRightSlide) {
+            currDate.add(Calendar.DAY_OF_YEAR, + slideDays);
+        } else {
+            currDate.add(Calendar.DAY_OF_YEAR, - slideDays);
+        }
+
+        setMinTimeOfADay(currDate);
+
+        //if a new date get out from the today date
+        if (currDate.getTime().compareTo(new Date()) > 0) {
+            currDate.setTime(new Date());
+            return false;
+        }
+        else if (currDate.getTime().compareTo(firstOperationDate) < 0) {
+            currDate.setTime(firstOperationDate);
+            return false;
+        }
+
+        return true;
     }
 
     public static String getStringDate(Date date, String pattern) {

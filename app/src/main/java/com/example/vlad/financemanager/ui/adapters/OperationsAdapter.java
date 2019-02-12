@@ -112,4 +112,8 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
             ButterKnife.bind(this, itemView);
         }
     }
+
+    public void setOperationList(List<Operation> operationList) {
+        this.operationList = operationList;
+    }
 }

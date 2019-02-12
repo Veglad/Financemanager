@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +31,7 @@ import com.example.vlad.financemanager.PresenterMoneyCalculator;
 import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
-import com.example.vlad.financemanager.ui.adapters.SimpleSpinnerAdapter;
+import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter;
 import com.example.vlad.financemanager.ui.fragments.DatePickerFragment;
 
 import java.math.BigDecimal;
@@ -309,7 +310,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     }
 
     public void initSpinnersWithItemLists(List<SpinnerItem> accountSpinnerItemList, List<SpinnerItem> categorySpinnerItemList) {
-        SimpleSpinnerAdapter accountSpinnerAdapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, accountSpinnerItemList);
+        ImageSpinnerAdapter accountSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, accountSpinnerItemList,
+                ContextCompat.getColor(this, R.color.darkGrey), ContextCompat.getColor(this, R.color.darkBlack));
         accountsSpinner.setAdapter(accountSpinnerAdapter);
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -322,7 +324,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             }
         });
 
-        SimpleSpinnerAdapter categoriesSpinnerAdapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, categorySpinnerItemList);
+        ImageSpinnerAdapter categoriesSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, categorySpinnerItemList,
+                ContextCompat.getColor(this, R.color.darkGrey), ContextCompat.getColor(this, R.color.darkBlack));
         categoriesSpinner.setAdapter(categoriesSpinnerAdapter);
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
