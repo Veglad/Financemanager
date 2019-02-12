@@ -22,10 +22,7 @@ import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.database.DatabaseHelper;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 import com.example.vlad.financemanager.data.models.Operation;
-import com.example.vlad.financemanager.data.models.SpinnerItem;
-import com.example.vlad.financemanager.ui.activities.MainActivity;
 import com.example.vlad.financemanager.ui.adapters.OperationsAdapter;
-import com.example.vlad.financemanager.utils.DateUtils;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -70,7 +67,8 @@ public class TabFragment extends Fragment {
     private PeriodsOfTime currentPeriod;
 
     private String dateTitle;
-    private boolean isIncome ;
+    private String balanceString;
+    private boolean isIncome;
     private int modifiedOperationIndex;
     private int accountId;
 
@@ -78,7 +76,7 @@ public class TabFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof IMainActivity) {
+        if (context instanceof IMainActivity) {
             iMainActivity = ((IMainActivity) context);
         }
     }
@@ -120,7 +118,7 @@ public class TabFragment extends Fragment {
             dateTitle = extras.getString(DATE_TITLE_KEY);
             isIncome = getArguments().getBoolean(IS_INCOME_KEY);
 
-            updateTabFragment(currentPeriod, currentEndOfPeriod, isIncome, accountId, dateTitle);
+            fullTabFragmentUpdate(currentPeriod, currentEndOfPeriod, isIncome, accountId, dateTitle);
         }
         pieChart.setUsePercentValues(true);
 
@@ -129,7 +127,7 @@ public class TabFragment extends Fragment {
 
     private BigDecimal getBalance(List<Operation> operationList) {
         BigDecimal balance = new BigDecimal(0);
-        for(Operation operation : operationList) {
+        for (Operation operation : operationList) {
             balance = balance.add(operation.getAmount());
         }
 
@@ -138,8 +136,8 @@ public class TabFragment extends Fragment {
 
     private List<Operation> getOperationsByIsIncome(boolean isIncome, List<Operation> operationList) {
         List<Operation> operationListFiltered = new ArrayList<>();
-        for(Operation operation : operationList) {
-            if(operation.getIsOperationIncome() == isIncome) {
+        for (Operation operation : operationList) {
+            if (operation.getIsOperationIncome() == isIncome) {
                 operationListFiltered.add(operation);
             }
         }
@@ -154,13 +152,17 @@ public class TabFragment extends Fragment {
     }
 
     //Full tab fragment update
-    public void updateTabFragment(PeriodsOfTime currentPeriod, Calendar endOfPeriod, boolean isIncome, int accountId, String dateTitle) {
+    public void fullTabFragmentUpdate(PeriodsOfTime currentPeriod, Calendar endOfPeriod, boolean isIncome, int accountId, String dateTitle) {
         operationList = database.getOperations(accountId, currentPeriod, endOfPeriod);
         operationList = getOperationsByIsIncome(isIncome, operationList);
         BigDecimal balance = getBalance(operationList);
         String placeholderBalanceString = getString(isIncome ? (R.string.income_balance_placeholder) : R.string.outcome_balance_placeholder);
-        String balanceString = String.format(placeholderBalanceString, balance);
+        balanceString = String.format(placeholderBalanceString, balance);
 
+        updateTabFragment(isIncome, dateTitle, balanceString, operationList);
+    }
+
+    public void updateTabFragment(boolean isIncome, String dateTitle, String balanceString, List<Operation> operationList) {
         pieChart.setCenterText(balanceString);
         drawPieChart(isIncome, operationList);
         dateTitleTextView.setText(dateTitle);
@@ -172,7 +174,7 @@ public class TabFragment extends Fragment {
     }
 
     private void drawPieChart(boolean isIncome, List<Operation> operations) {
-        List<PieEntry> entries = getPieEntries( operations);
+        List<PieEntry> entries = getPieEntries(operations);
 
         PieDataSet dataSet = new PieDataSet(entries, PIE_CHART_LABEL);
         dataSet.setColors(isIncome ? ColorTemplate.MATERIAL_COLORS : ColorTemplate.COLORFUL_COLORS);
@@ -288,6 +290,7 @@ public class TabFragment extends Fragment {
     private void removeOperationFromTheList(int position) {
         operationList.remove(position);
         operationsAdapter.notifyItemRemoved(position);
+        updateTabFragment(isIncome, dateTitle, balanceString, operationList);
     }
 
     private void updateOperationList(List<Operation> operationList) {
@@ -296,25 +299,14 @@ public class TabFragment extends Fragment {
     }
 
     public void updateUiViaModifiedOperation(Operation operation) {
-        if (isOperationFitsToCurrPeriodAndAccount(operation)) {
-            operationList.set(modifiedOperationIndex, operation);
-            operationsAdapter.notifyItemChanged(modifiedOperationIndex);
-        } else {
-            removeOperationFromTheList(modifiedOperationIndex);
-        }
+        operationList.set(modifiedOperationIndex, operation);
+        operationsAdapter.notifyItemChanged(modifiedOperationIndex);
+        updateTabFragment(isIncome, dateTitle, balanceString, operationList);
     }
 
     public void updateUiViaNewOperation(Operation operation) {
-        if (isOperationFitsToCurrPeriodAndAccount(operation)) {
-            operationList.add(0, operation);
-            operationsAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation) {
-        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(), currentPeriod, currentEndOfPeriod);
-        boolean isSuiteToCurrentAccount = accountId == operation.getAccountId() || accountId == MainActivity.ACCOUNT_ALL_ID;
-        return isInPeriod && isSuiteToCurrentAccount;
+        operationList.add(0, operation);
+        operationsAdapter.notifyDataSetChanged();//TODO: If operation date is less than min operation date
     }
 
     private PieEntry setEmptyEntry() {
@@ -327,6 +319,10 @@ public class TabFragment extends Fragment {
 
     public void setAccountId(int selectedAccountId) {
         accountId = selectedAccountId;
+    }
+
+    public void removeModifiedOperation() {
+        removeOperationFromTheList(modifiedOperationIndex);
     }
 
     public interface IMainActivity {
@@ -343,5 +339,9 @@ public class TabFragment extends Fragment {
 
     public String getDateTitle() {
         return dateTitle;
+    }
+
+    public PeriodsOfTime getCurrentPeriod() {
+        return currentPeriod;
     }
 }

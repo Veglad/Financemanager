@@ -192,6 +192,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return date;
     }
 
+    @Nullable
+    public int getMinOperationDateId(int userId) {//TODO: Optimize this
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor dateCursor = db.rawQuery("SELECT "+Operations.COLUMN_ID+", MIN("+Operations.COLUMN_DATE+") FROM "
+                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId+""});
+        int id = -1;
+        if(dateCursor.getColumnCount() > 0) {
+            if (dateCursor.moveToFirst()) {
+                id = dateCursor.getInt(0);
+            }
+        }
+
+        return id;
+    }
+
     @NonNull
     private Category getCategoryFromCursor(Cursor cursorCategory) {
         Category category;

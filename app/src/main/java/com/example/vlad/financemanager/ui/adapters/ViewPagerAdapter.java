@@ -54,7 +54,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public int getItemPosition(Object object) {
         TabFragment fragment = (TabFragment) object;
         if (fragment != null) {
-            fragment.updateTabFragment(currentPeriod, fragment.getCurrentEndOfPeriod(), isIncome, accountId, fragment.getDateTitle());
+            fragment.fullTabFragmentUpdate(currentPeriod, fragment.getCurrentEndOfPeriod(), isIncome, accountId, fragment.getDateTitle());
         }
 
         return super.getItemPosition(object);
@@ -85,6 +85,22 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return endOfPeriodList.size();
+    }
+
+    public List<Calendar> getEndOfPeriodList() {
+        return endOfPeriodList;
+    }
+
+    public void setEndOfPeriodList(List<Calendar> endOfPeriodList) {
+        this.endOfPeriodList = endOfPeriodList;
+    }
+
+    public List<String> getTabTitles() {
+        return tabTitles;
+    }
+
+    public void setTabTitles(List<String> tabTitles) {
+        this.tabTitles = tabTitles;
     }
 
     public void setIsIncome(boolean isIncome) {

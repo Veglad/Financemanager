@@ -1,18 +1,16 @@
 package com.example.vlad.financemanager.utils;
 
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
-import com.example.vlad.financemanager.data.models.Operation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public final class DateUtils {
 
+    private static final long MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
     private static final int DAYS_IN_WEEK = 7;
     private static final String DATE_MEDIUM_PATTERN = "dd MMMM";
     private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
@@ -50,7 +48,7 @@ public final class DateUtils {
         return textDate;
     }
 
-    public static boolean slideDateIfAble(Calendar currDate, boolean isRightSlide, PeriodsOfTime currentPeriod, Date firstOperationDate) { //TODO: Refactor this
+    public static boolean slideDateIfAble(Calendar currDate, boolean isRightSlide, PeriodsOfTime currentPeriod, Date minDate, Date maxDate) { //TODO: Refactor this
         if (currentPeriod == PeriodsOfTime.ALL_TIME)
             return false;
 
@@ -79,12 +77,12 @@ public final class DateUtils {
         setMinTimeOfADay(currDate);
 
         //if a new date get out from the today date
-        if (currDate.getTime().compareTo(new Date()) > 0) {
-            currDate.setTime(new Date());
+        if (currDate.getTime().compareTo(maxDate) > 0) {
+            currDate.setTime(maxDate);
             return false;
         }
-        else if (currDate.getTime().compareTo(firstOperationDate) < 0) {
-            currDate.setTime(firstOperationDate);
+        else if (currDate.getTime().compareTo(minDate) < 0) {
+            currDate.setTime(minDate);
             return false;
         }
 
@@ -154,6 +152,10 @@ public final class DateUtils {
         setMaxTimeOfADay(endOfPeriod);
 
         return endOfPeriod;
+    }
+
+    public static Date substractOneDay(Date date) {
+        return new Date(date.getTime() - MILLISECONDS_IN_DAY);
     }
 
     public static void setMaxTimeOfADay(Calendar endOfPeriod) {

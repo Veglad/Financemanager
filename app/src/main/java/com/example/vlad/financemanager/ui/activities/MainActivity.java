@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     public static final int ACCOUNT_ALL_ID = -1;
     public static final int NEW_OPERATION_REQUEST_CODE = 0;
     public static final int CHANGE_OPERATION_REQUEST_CODE = 1;
+    public static final int USER_ID = 0;
 
     @BindView(R.id.periodsSpinner) Spinner dateSpinner;
     @BindView(R.id.accountsSpinner) Spinner accountsSpinner;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @BindView(R.id.newOperationButton) FloatingActionButton operationFloatingActionButton;
     @BindView(R.id.pieChartViewPager) ViewPager viewPager;
 
-    private Calendar endOfPeriod;
+    private Calendar endOfPeriod; //TODO: remove this
 
     {
         endOfPeriod = Calendar.getInstance();
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private ViewPagerAdapter viewPagerAdapter;
     private PeriodsOfTime currentPeriod = PeriodsOfTime.DAY;
     private DatabaseHelper database;
+    private Date minOperationDate;
 
     private boolean isIncome = true;
-    private int userId = 0;
     private int accountId = ACCOUNT_ALL_ID;
 
     @SuppressLint("ResourceAsColor")
@@ -164,13 +164,23 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void initViewPagerWithTabs() {
-        Date minOperationDate = database.getMinOperationDate(userId);
+        minOperationDate = database.getMinOperationDate(USER_ID);
         if(minOperationDate == null) {
             minOperationDate = new Date();
         }
         List<String> titles = new ArrayList<>();
         List<Calendar> endOfPeriodList = new ArrayList<>();
+        Date maxDate = new Date();
 
+        initViewPagerEntriesByPeriod(titles, endOfPeriodList, minOperationDate, maxDate);
+
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles,
+                endOfPeriodList, currentPeriod, accountId, isIncome);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setCurrentItem(endOfPeriodList.size() - 1);
+    }
+
+    private void initViewPagerEntriesByPeriod(List<String> titles, List<Calendar> endOfPeriodList, Date minOperationDate, Date maxDate) {
         Calendar currentPagerListDate = Calendar.getInstance();
         currentPagerListDate.setTime(minOperationDate);
         currentPagerListDate = DateUtils.getEndOfPeriod(currentPagerListDate, currentPeriod);
@@ -182,12 +192,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             Calendar endOfPeriod = Calendar.getInstance();
             endOfPeriod.setTime(currentPagerListDate.getTime());
             endOfPeriodList.add(endOfPeriod);
-        } while(DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate));
-
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles,
-                endOfPeriodList, currentPeriod, accountId, isIncome);
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setCurrentItem(endOfPeriodList.size() - 1);
+        } while(DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate));
     }
 
     @Override
@@ -201,18 +206,58 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         Operation operation = getOperationFromExtras(extras);
         TabFragment currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+        PeriodsOfTime currentPeriod = currentTabFragment.getCurrentPeriod();
+        Calendar currentDate = currentTabFragment.getCurrentEndOfPeriod();
 
         if (requestCode == NEW_OPERATION_REQUEST_CODE) {
-            database.insertOperation(operation, userId, operation.getAccountId());
-            currentTabFragment.updateUiViaNewOperation(operation);
+            long id = database.insertOperation(operation, USER_ID, operation.getAccountId());
+            operation.setId((int)id);
+            if(isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
+                updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID));
+            } else {
+                currentTabFragment.updateUiViaNewOperation(operation);
+            }
         } else {
-            database.updateOperation(operation, userId, operation.getAccountId());
-            currentTabFragment.updateUiViaModifiedOperation(operation);
+            database.updateOperation(operation, USER_ID, operation.getAccountId());
+            if (isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate)) {
+                currentTabFragment.updateUiViaModifiedOperation(operation);
+            } else {
+                currentTabFragment.removeModifiedOperation();
+            }
         }
         viewPagerAdapter.notifyDataSetChanged();
     }
 
+    private boolean isNeedToUpdateViewPagerItems(Operation operation,  PeriodsOfTime currentPeriod,  Calendar currentDate) {
+        return operation.getId() == database.getMinOperationDateId(MainActivity.USER_ID) &&
+                !isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate);
+    }
+
+    private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation, PeriodsOfTime currentPeriod, Calendar currentDate) {
+
+        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(),
+                currentPeriod, currentDate);
+        boolean isSuiteToCurrentAccount = accountId == operation.getAccountId() || accountId == MainActivity.ACCOUNT_ALL_ID;
+        return isInPeriod && isSuiteToCurrentAccount;
+    }
+
+    private void updateViewPagerItemsAtStart(Date minOperationDate) {
+        List<String> newTabTitles = new ArrayList<>();
+        List<Calendar> newEndOfPeriodList = new ArrayList<>();
+        initViewPagerEntriesByPeriod(newTabTitles, newEndOfPeriodList, minOperationDate, DateUtils.substractOneDay(this.minOperationDate));
+        this.minOperationDate = minOperationDate;
+
+        int position = viewPager.getCurrentItem();
+        position += newTabTitles.size();
+
+        viewPagerAdapter.getTabTitles().addAll(0,newTabTitles);
+        viewPagerAdapter.getEndOfPeriodList().addAll(0, newEndOfPeriodList);
+        viewPagerAdapter.notifyDataSetChanged();
+        viewPager.setCurrentItem(position);
+    }
+
     private Operation getOperationFromExtras(Bundle extras) {
+
         Operation operation = (Operation) extras.getSerializable(OPERATION_KEY);
         String amountString = extras.getString(AMOUNT_KEY);
         operation.setAmount(new BigDecimal(amountString));
@@ -229,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         intent.putExtra(IS_OPERATION_INCOME, isIncome);
         intent.putExtra(IS_MODIFYING_OPERATION, false);
         Bundle extras = new Bundle();
-        extras.putSerializable(USER_ID_KEY, userId);
+        extras.putSerializable(USER_ID_KEY, USER_ID);
         extras.putLong(DATE_KEY, endOfPeriod.getTimeInMillis());
         intent.putExtras(extras);
 
@@ -250,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         Bundle extras = new Bundle();
         extras.putSerializable(OPERATION_KEY, operation);
-        extras.putSerializable(USER_ID_KEY, userId);
+        extras.putSerializable(USER_ID_KEY, USER_ID);
         extras.putSerializable(DATE_KEY, operation.getOperationDate().getTime());
         extras.putSerializable(IS_MODIFYING_OPERATION, true);
         extras.putSerializable(IS_OPERATION_INCOME, operation.getIsOperationIncome());
@@ -262,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     //Getting spinner items collection for accounts
     private List<SpinnerItem> getAccountSpinnerItemListFromDb() {
-        List<Account> accountList = new ArrayList<>(database.getAllAccounts(userId));
+        List<Account> accountList = new ArrayList<>(database.getAllAccounts(USER_ID));
         List<SpinnerItem> spinnerItemList = new ArrayList<>();
         spinnerItemList.add(new SpinnerItem(ACCOUNT_ALL_ID, getString(R.string.all), R.drawable.dollar));
         spinnerItemList.addAll(SpinnerItemMapper.mapAccountsToSpinnerItems(accountList));
