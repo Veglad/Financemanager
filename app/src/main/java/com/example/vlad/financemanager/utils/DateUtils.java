@@ -53,7 +53,7 @@ public final class DateUtils {
         if (currentPeriod == PeriodsOfTime.ALL_TIME)
             return false;
 
-        if(includeLast) {
+        if (includeLast) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(maxDate);
             maxDate = getEndOfPeriod(calendar, currentPeriod).getTime();
@@ -87,8 +87,7 @@ public final class DateUtils {
         if (currDate.getTime().compareTo(maxDate) > 0) {
             currDate.setTime(maxDate);
             return false;
-        }
-        else if (currDate.getTime().compareTo(minDate) < 0) {
+        } else if (currDate.getTime().compareTo(minDate) < 0) {
             currDate.setTime(minDate);
             return false;
         }
@@ -180,11 +179,11 @@ public final class DateUtils {
     }
 
     public static int getSutedDateIndexByDateFromList(Calendar date, List<Calendar> endOfPeriodList) {
-        if(endOfPeriodList.size() == 1) return 0;
+        if (endOfPeriodList.size() == 1) return 0;
 
         int position = endOfPeriodList.size() - 1;
         int i = position;
-        while (date.compareTo(endOfPeriodList.get(--i)) < 0) {
+        while (date.compareTo(endOfPeriodList.get(--i)) <= 0) {
             position = i;
         }
 

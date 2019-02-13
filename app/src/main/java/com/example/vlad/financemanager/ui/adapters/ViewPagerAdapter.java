@@ -11,6 +11,7 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.util.Calendar;
 import java.util.List;
+
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private PeriodsOfTime currentPeriod;

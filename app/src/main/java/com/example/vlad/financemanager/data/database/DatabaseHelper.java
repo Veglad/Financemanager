@@ -177,14 +177,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Date getMinOperationDate(int userId) {//TODO: Optimize this
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor dateCursor = db.rawQuery("SELECT MIN("+Operations.COLUMN_DATE+") FROM "
-                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId+""});
+        Cursor dateCursor = db.rawQuery("SELECT MIN(" + Operations.COLUMN_DATE + ") FROM "
+                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId + ""});
 
         Date date = new Date();
-        if(dateCursor.getColumnCount() > 0) {
+        if (dateCursor.getColumnCount() > 0) {
             if (dateCursor.moveToFirst()) {
                 String dateString = dateCursor.getString(0);
-                if(dateString == null) return null;
+                if (dateString == null) return null;
                 date = convertStringFromDbtoDate(dateString);
             }
         }
@@ -196,10 +196,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getMinOperationDateId(int userId) {//TODO: Optimize this
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor dateCursor = db.rawQuery("SELECT "+Operations.COLUMN_ID+", MIN("+Operations.COLUMN_DATE+") FROM "
-                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId+""});
+        Cursor dateCursor = db.rawQuery("SELECT " + Operations.COLUMN_ID + ", MIN(" + Operations.COLUMN_DATE + ") FROM "
+                + Operations.TABLE_NAME + " WHERE " + Operations.COLUMN_USER_ID + " = ?;", new String[]{userId + ""});
         int id = -1;
-        if(dateCursor.getColumnCount() > 0) {
+        if (dateCursor.getColumnCount() > 0) {
             if (dateCursor.moveToFirst()) {
                 id = dateCursor.getInt(0);
             }

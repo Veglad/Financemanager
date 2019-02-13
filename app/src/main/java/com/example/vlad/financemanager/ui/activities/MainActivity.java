@@ -153,6 +153,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 if (currentPeriod != selectedPeriod) {
                     currentPeriod = selectedPeriod;
                     viewPagerAdapter.setCurrentPeriod(selectedPeriod);
+                    TabFragment currentFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+                    if(currentFragment != null) {
+                        endOfPeriod = currentFragment.getCurrentEndOfPeriod();
+                    }
                     initViewPagerWithTabs();
                     viewPager.setCurrentItem(DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.getEndOfPeriodList()));
                 }
@@ -166,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     private void initViewPagerWithTabs() {
         minOperationDate = database.getMinOperationDate(USER_ID);
-        if(minOperationDate == null) {
+        if (minOperationDate == null) {
             minOperationDate = new Date();
         }
         List<String> titles = new ArrayList<>();
@@ -197,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             Calendar endOfPeriod = Calendar.getInstance();
             endOfPeriod.setTime(currentPagerListDate.getTime());
             endOfPeriodList.add(endOfPeriod);
-        } while(DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
+        }
+        while (DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
     }
 
     @Override
@@ -216,8 +221,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         if (requestCode == NEW_OPERATION_REQUEST_CODE) {
             long id = database.insertOperation(operation, USER_ID, operation.getAccountId());
-            operation.setId((int)id);
-            if(isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
+            operation.setId((int) id);
+            if (isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
                 updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID));
             } else {
                 currentTabFragment.updateUiViaNewOperation(operation);
@@ -233,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         viewPagerAdapter.notifyDataSetChanged();
     }
 
-    private boolean isNeedToUpdateViewPagerItems(Operation operation,  PeriodsOfTime currentPeriod,  Calendar currentDate) {
+    private boolean isNeedToUpdateViewPagerItems(Operation operation, PeriodsOfTime currentPeriod, Calendar currentDate) {
         return operation.getId() == database.getMinOperationDateId(MainActivity.USER_ID) &&
                 !isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate);
     }
@@ -293,11 +298,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     public PeriodsOfTime getPeriodBySpinnerSelected(int positionInSpinner) {
         switch (positionInSpinner) {
-            case SpinnerItem.POSITION_DAY: return PeriodsOfTime.DAY;
-            case SpinnerItem.POSITION_WEEK: return PeriodsOfTime.WEEK;
-            case SpinnerItem.POSITION_MONTH: return PeriodsOfTime.MONTH;
-            case SpinnerItem.POSITION_YEAR: return PeriodsOfTime.YEAR;
-            default: return PeriodsOfTime.ALL_TIME;
+            case SpinnerItem.POSITION_DAY:
+                return PeriodsOfTime.DAY;
+            case SpinnerItem.POSITION_WEEK:
+                return PeriodsOfTime.WEEK;
+            case SpinnerItem.POSITION_MONTH:
+                return PeriodsOfTime.MONTH;
+            case SpinnerItem.POSITION_YEAR:
+                return PeriodsOfTime.YEAR;
+            default:
+                return PeriodsOfTime.ALL_TIME;
         }
     }
 

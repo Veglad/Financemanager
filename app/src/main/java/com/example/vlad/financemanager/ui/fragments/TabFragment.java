@@ -56,7 +56,8 @@ public class TabFragment extends Fragment {
     @BindView(R.id.pieChart) PieChart pieChart;
     @BindView(R.id.viewPagerDateTextView) TextView dateTitleTextView;
     @BindView(R.id.operationsRecyclerView) RecyclerView recyclerView;
-    @BindView(R.id.fragmentTabScrollView) ScrollView scrollView;
+    @BindView(R.id.fragmentTabScrollView)
+    ScrollView scrollView;
 
     OperationsAdapter operationsAdapter;
 
@@ -166,7 +167,7 @@ public class TabFragment extends Fragment {
         return String.format(placeholderBalanceString, balance);
     }
 
-    public void  updateTabFragment(boolean isIncome, String dateTitle, String balanceString, List<Operation> operationList) {
+    public void updateTabFragment(boolean isIncome, String dateTitle, String balanceString, List<Operation> operationList) {
         updateOperationList(operationList);
 
         pieChart.setCenterText(balanceString);

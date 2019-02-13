@@ -99,7 +99,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         amountEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if(!((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER))) {
+                if (!((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER))) {
                     presenter.calculatorReset();
                 }
 
@@ -112,8 +112,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
             }
 
             @Override
-            public void onTextChanged (CharSequence s, int start, int before, int count) {
-                if(before > count) presenter.calculatorReset();
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (before > count) presenter.calculatorReset();
             }
 
             @Override
