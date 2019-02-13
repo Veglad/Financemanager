@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                                        int selectedItemPosition, long selectedId) {
                 int selectedAccountId = ((SpinnerItem) parent.getSelectedItem()).getId();
                 if (accountId != selectedAccountId) {
-                    TabFragment currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
-                    currentTabFragment.setAccountId(selectedAccountId);
+                    accountId = selectedAccountId;
+                    viewPagerAdapter.setAccountId(selectedAccountId);
                     viewPagerAdapter.notifyDataSetChanged();
                 }
             }
@@ -151,9 +151,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 PeriodsOfTime selectedPeriod = getPeriodBySpinnerSelected(position);
                 if (currentPeriod != selectedPeriod) {
-                    TabFragment currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
-                    currentTabFragment.setCurrentPeriod(selectedPeriod);
-                    viewPagerAdapter.notifyDataSetChanged();
+                    currentPeriod = selectedPeriod;
+                    viewPagerAdapter.setCurrentPeriod(selectedPeriod);
+                    initViewPagerWithTabs();
+                    viewPager.setCurrentItem(DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.getEndOfPeriodList()));
                 }
             }
 
@@ -171,16 +172,20 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         List<String> titles = new ArrayList<>();
         List<Calendar> endOfPeriodList = new ArrayList<>();
         Date maxDate = new Date();
+        initViewPagerEntriesByPeriod(titles, endOfPeriodList, minOperationDate, maxDate, true);
 
-        initViewPagerEntriesByPeriod(titles, endOfPeriodList, minOperationDate, maxDate);
+        initViewPagerWithEntries(titles, endOfPeriodList);
+    }
 
+    private void initViewPagerWithEntries(List<String> titles, List<Calendar> endOfPeriodList) {
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles,
                 endOfPeriodList, currentPeriod, accountId, isIncome);
         viewPager.setAdapter(viewPagerAdapter);
+        viewPagerAdapter.notifyDataSetChanged();
         viewPager.setCurrentItem(endOfPeriodList.size() - 1);
     }
 
-    private void initViewPagerEntriesByPeriod(List<String> titles, List<Calendar> endOfPeriodList, Date minOperationDate, Date maxDate) {
+    private void initViewPagerEntriesByPeriod(List<String> titles, List<Calendar> endOfPeriodList, Date minOperationDate, Date maxDate, boolean includeLast) {
         Calendar currentPagerListDate = Calendar.getInstance();
         currentPagerListDate.setTime(minOperationDate);
         currentPagerListDate = DateUtils.getEndOfPeriod(currentPagerListDate, currentPeriod);
@@ -192,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             Calendar endOfPeriod = Calendar.getInstance();
             endOfPeriod.setTime(currentPagerListDate.getTime());
             endOfPeriodList.add(endOfPeriod);
-        } while(DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate));
+        } while(DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
     }
 
     @Override
@@ -244,15 +249,20 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private void updateViewPagerItemsAtStart(Date minOperationDate) {
         List<String> newTabTitles = new ArrayList<>();
         List<Calendar> newEndOfPeriodList = new ArrayList<>();
-        initViewPagerEntriesByPeriod(newTabTitles, newEndOfPeriodList, minOperationDate, DateUtils.substractOneDay(this.minOperationDate));
+        initViewPagerEntriesByPeriod(newTabTitles, newEndOfPeriodList, minOperationDate,
+                DateUtils.substractOneDay(this.minOperationDate), false);
+
+        List<String> tabTitles = viewPagerAdapter.getTabTitles();
+        tabTitles.addAll(0, newTabTitles);
+        List<Calendar> endOfPeriodList = viewPagerAdapter.getEndOfPeriodList();
+        endOfPeriodList.addAll(0, newEndOfPeriodList);
+
         this.minOperationDate = minOperationDate;
 
         int position = viewPager.getCurrentItem();
         position += newTabTitles.size();
 
-        viewPagerAdapter.getTabTitles().addAll(0,newTabTitles);
-        viewPagerAdapter.getEndOfPeriodList().addAll(0, newEndOfPeriodList);
-        viewPagerAdapter.notifyDataSetChanged();
+        initViewPagerWithEntries(tabTitles, endOfPeriodList);
         viewPager.setCurrentItem(position);
     }
 

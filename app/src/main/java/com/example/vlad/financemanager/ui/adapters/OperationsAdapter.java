@@ -61,6 +61,10 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         Operation operation = operationList.get(position);
 
         holder.commentText.setText(operation.getComment());
+        if(operation.getComment().isEmpty()) {
+            holder.commentText.setVisibility(View.GONE);
+        }
+
         holder.categoryText.setText(operation.getCategory().getName());
 
         if (operation.getIsOperationIncome()) {

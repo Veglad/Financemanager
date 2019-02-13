@@ -7,6 +7,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
+    android:paddingStart="8dp"
     app:cardCornerRadius="8dp">
 
     <android.support.constraint.ConstraintLayout
@@ -19,8 +20,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/square_shape"
             android:padding="5dp"
@@ -49,6 +49,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/itemCommentTextView"
             app:layout_constraintStart_toStartOf="@+id/itemCategoryNameTextView"
             app:layout_constraintTop_toBottomOf="@+id/itemCategoryNameTextView"
             tools:text="02.15.18" />
@@ -72,8 +74,7 @@
             android:id="@+id/itemCommentTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/circleIconImageView"

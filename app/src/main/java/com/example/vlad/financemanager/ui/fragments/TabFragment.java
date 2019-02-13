@@ -156,17 +156,22 @@ public class TabFragment extends Fragment {
         operationList = database.getOperations(accountId, currentPeriod, endOfPeriod);
         operationList = getOperationsByIsIncome(isIncome, operationList);
         BigDecimal balance = getBalance(operationList);
-        String placeholderBalanceString = getString(isIncome ? (R.string.income_balance_placeholder) : R.string.outcome_balance_placeholder);
-        balanceString = String.format(placeholderBalanceString, balance);
+        balanceString = getBalanceString(isIncome, balance);
 
         updateTabFragment(isIncome, dateTitle, balanceString, operationList);
     }
 
-    public void updateTabFragment(boolean isIncome, String dateTitle, String balanceString, List<Operation> operationList) {
+    public String getBalanceString(boolean isIncome, BigDecimal balance) {
+        String placeholderBalanceString = getString(isIncome ? (R.string.income_balance_placeholder) : R.string.outcome_balance_placeholder);
+        return String.format(placeholderBalanceString, balance);
+    }
+
+    public void  updateTabFragment(boolean isIncome, String dateTitle, String balanceString, List<Operation> operationList) {
+        updateOperationList(operationList);
+
         pieChart.setCenterText(balanceString);
         drawPieChart(isIncome, operationList);
         dateTitleTextView.setText(dateTitle);
-        updateOperationList(operationList);
     }
 
     public void scrollToTop() {
@@ -283,8 +288,7 @@ public class TabFragment extends Fragment {
         Operation operationToRemove = operationList.get(position);
         database.deleteOperation(operationToRemove);
 
-        drawPieChart(isIncome, operationList);
-        removeOperationFromTheList(position);
+        fullTabFragmentUpdate(currentPeriod, currentEndOfPeriod, isIncome, accountId, dateTitle);
     }
 
     private void removeOperationFromTheList(int position) {
@@ -311,14 +315,6 @@ public class TabFragment extends Fragment {
 
     private PieEntry setEmptyEntry() {
         return new PieEntry(1, "");
-    }
-
-    public void setCurrentPeriod(PeriodsOfTime selectedPeriod) {
-        currentPeriod = selectedPeriod;
-    }
-
-    public void setAccountId(int selectedAccountId) {
-        accountId = selectedAccountId;
     }
 
     public void removeModifiedOperation() {
