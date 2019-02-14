@@ -245,7 +245,7 @@ public class TabFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
 
         operationsAdapter = new OperationsAdapter(getContext(), operationList);
-        operationsAdapter.setOnItemClickListener(new OperationsAdapter.ItemClick() {
+        operationsAdapter.setOnItemClickListener(new OperationsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 changeOperationClick(position);
