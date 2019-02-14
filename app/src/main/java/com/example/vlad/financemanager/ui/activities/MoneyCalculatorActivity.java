@@ -298,7 +298,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     public void initSpinnersWithItemLists(List<SpinnerItem> accountSpinnerItemList, List<SpinnerItem> categorySpinnerItemList) {
         ImageSpinnerAdapter accountSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, accountSpinnerItemList,
-                ContextCompat.getColor(this, R.color.dark_gray), ContextCompat.getColor(this, R.color.dark_black));
+                R.color.dark_gray, R.color.dark_black);
         accountsSpinner.setAdapter(accountSpinnerAdapter);
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -312,7 +312,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         });
 
         ImageSpinnerAdapter categoriesSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, categorySpinnerItemList,
-                ContextCompat.getColor(this, R.color.dark_gray), ContextCompat.getColor(this, R.color.dark_black));
+                 R.color.dark_gray, R.color.dark_black);
         categoriesSpinner.setAdapter(categoriesSpinnerAdapter);
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -345,7 +345,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     }
 
-    @OnTextChanged({R.id.newOperationButton})
+    @OnTextChanged({R.id.amountMoneyActivityEditText})
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (before > count) presenter.calculatorReset();
