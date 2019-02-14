@@ -256,10 +256,10 @@ public class TabFragment extends Fragment {
                 changeOperationClick(position);
             }
         });
-        operationsAdapter.setOnItemLongClickListener(new OperationsAdapter.ItemLongClick() {
+        operationsAdapter.setOnItemDeleteClickListener(new OperationsAdapter.itemDeleteClick() {
             @Override
-            public void onItemLongClick(int position) {
-                showDeleteDialog(position);
+            public void onItemDeleteClick(int position) {
+                deleteOperation(position);
             }
         });
         recyclerView.setAdapter(operationsAdapter);
@@ -269,20 +269,6 @@ public class TabFragment extends Fragment {
         modifiedOperationIndex = position;
         Operation operation = operationList.get(position);
         iMainActivity.onChangeOperationClick(operation);
-    }
-
-    private void showDeleteDialog(final int position) {
-        CharSequence[] buttonsDialog = new CharSequence[]{getString(R.string.delete), getString(R.string.cancel)};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(getString(R.string.delete_dialog_text));
-        builder.setItems(buttonsDialog, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) deleteOperation(position);
-            }
-        });
-        builder.show();
     }
 
     private void deleteOperation(int position) {

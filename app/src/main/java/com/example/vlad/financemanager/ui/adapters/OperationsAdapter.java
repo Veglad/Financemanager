@@ -1,6 +1,9 @@
 package com.example.vlad.financemanager.ui.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
+import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -14,7 +17,6 @@ import com.example.vlad.financemanager.R;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.utils.DateUtils;
 
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,7 +26,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
 
     private Context context;
     private List<Operation> operationList;
-    private ItemLongClick itemLongClickListener;
+    private itemDeleteClick itemDeleteClickListener;
     private ItemClick itemClickListener;
 
     public OperationsAdapter(Context context, List<Operation> operations) {
@@ -36,16 +38,16 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         void onItemClick(int position);
     }
 
-    public interface ItemLongClick {
-        void onItemLongClick(int position);
+    public interface itemDeleteClick {
+        void onItemDeleteClick(int position);
     }
 
     public void setOnItemClickListener(ItemClick listener) {
         itemClickListener = listener;
     }
 
-    public void setOnItemLongClickListener(ItemLongClick listener) {
-        itemLongClickListener = listener;
+    public void setOnItemDeleteClickListener(itemDeleteClick listener) {
+        itemDeleteClickListener = listener;
     }
 
     @NonNull
@@ -87,15 +89,29 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
                 }
             }
         });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                if (itemLongClickListener != null) {
-                    itemLongClickListener.onItemLongClick(holder.getAdapterPosition());
-                }
-                return true;
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(context, holder.moreButton);
+                popup.inflate(R.menu.more_operation_menu);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.deleteMoreMenuAction:
+                                if (itemDeleteClickListener != null) {
+                                    itemDeleteClickListener.onItemDeleteClick(holder.getAdapterPosition());
+                                }
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popup.show();
             }
         });
+
     }
 
     @Override
@@ -109,6 +125,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
         @BindView(R.id.itemCommentTextView) TextView commentText;
         @BindView(R.id.dateOperationRecyclerItemTextView) TextView textDate;
         @BindView(R.id.circleIconImageView) ImageView categoryImg;
+        @BindView(R.id.moreButton) ImageButton moreButton;
 
 
         OperationViewHolder(View itemView) {

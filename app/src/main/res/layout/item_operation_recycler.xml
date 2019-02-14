@@ -21,7 +21,6 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/square_shape"
             android:padding="5dp"
             android:src="@drawable/cash"
@@ -60,14 +59,13 @@
             android:layout_width="65dp"
             android:layout_height="18dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
             android:gravity="center_horizontal"
             android:textColor="@color/colorLiteRed"
             android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="@+id/dateOperationRecyclerItemTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemCategoryNameTextView"
+            app:layout_constraintBottom_toBottomOf="@+id/moreButton"
+            app:layout_constraintEnd_toStartOf="@+id/moreButton"
+            app:layout_constraintTop_toTopOf="@+id/moreButton"
             tools:text="-15.00 $" />
 
         <TextView
@@ -80,6 +78,19 @@
             app:layout_constraintStart_toStartOf="@+id/circleIconImageView"
             app:layout_constraintTop_toBottomOf="@+id/dateOperationRecyclerItemTextView"
             tools:text="Some comment" />
+
+        <ImageButton
+            android:id="@+id/moreButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_more_vert_gray_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/dateOperationRecyclerItemTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/itemCategoryNameTextView" />
 
     </android.support.constraint.ConstraintLayout>
 
