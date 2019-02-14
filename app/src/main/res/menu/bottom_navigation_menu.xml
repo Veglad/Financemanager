@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_income"
+        android:enabled="true"
+        android:icon="@drawable/ic_income_white_48dp"
+        android:title="@string/income"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_outcome"
+        android:enabled="true"
+        android:icon="@drawable/ic_outcome_white_48dp"
+        android:title="@string/outcome"
+        app:showAsAction="ifRoom" />
+</menu>

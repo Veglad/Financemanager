@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorPrimary">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/iconSpinnerItem"
-        android:layout_width="23dp"
-        android:layout_height="23dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="5dp"
         android:layout_marginStart="8dp"
+        android:background="@drawable/round_image_drawable"
         android:src="@drawable/cash"
         app:layout_constraintBottom_toBottomOf="@+id/accountTypeTextView"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,13 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="8dp"
+        android:paddingEnd="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iconSpinnerItem"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="111111" />
+        tools:text="Credit card" />
 
 </android.support.constraint.ConstraintLayout>

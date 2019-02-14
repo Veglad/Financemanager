@@ -5,9 +5,9 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,13 +16,13 @@ import com.example.vlad.financemanager.data.models.SpinnerItem;
 
 import java.util.List;
 
-public class SimpleSpinnerAdapter extends ArrayAdapter<String> {
+public class ImageSpinnerAdapter extends ArrayAdapter<SpinnerItem> {
 
     @ColorRes private int dropDownTextColor;
     @ColorRes private int selectedTextColor;
 
-    public SimpleSpinnerAdapter(Context context, int resource, String[] spinnerItems,
-                                @ColorRes int selectedTextColor, @ColorRes int dropDownTextColor) {
+    public ImageSpinnerAdapter(Context context, int resource, List<SpinnerItem> spinnerItems,
+                               @ColorRes int selectedTextColor, @ColorRes int dropDownTextColor) {
         super(context, resource, spinnerItems);
         this.selectedTextColor = selectedTextColor;
         this.dropDownTextColor = dropDownTextColor;
@@ -43,12 +43,19 @@ public class SimpleSpinnerAdapter extends ArrayAdapter<String> {
     private View initView(int position, View convertView, ViewGroup parent, int textColor) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.simple_spinner_item, parent, false);
+                    R.layout.image_spinner_item, parent, false);
         }
 
+        ImageView image = convertView.findViewById(R.id.iconSpinnerItem);
         TextView accountName = convertView.findViewById(R.id.accountTypeTextView);
-        accountName.setText(getItem(position));
         accountName.setTextColor(ContextCompat.getColor(getContext(), textColor));
+
+        SpinnerItem currentItem = getItem(position);
+
+        if (currentItem != null) {
+            image.setImageResource(currentItem.getImage());
+            accountName.setText(currentItem.getName());
+        }
 
         return convertView;
     }

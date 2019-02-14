@@ -1,30 +1,18 @@
 package com.example.vlad.financemanager.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.Spinner;
-import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vlad.financemanager.R;
@@ -35,14 +23,14 @@ import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
+import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter;
 import com.example.vlad.financemanager.ui.adapters.SimpleSpinnerAdapter;
-import com.example.vlad.financemanager.ui.adapters.OperationsAdapter;
 import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter;
+import com.example.vlad.financemanager.ui.fragments.TabFragment;
 import com.example.vlad.financemanager.utils.DateUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +42,7 @@ import butterknife.OnClick;
 import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.DATE_KEY;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
+public class MainActivity extends AppCompatActivity implements TabFragment.OnChangeOperationClickListener {
 
     public static final String OPERATION_KEY = "operation";
     public static final String IS_OPERATION_INCOME = "is_operation_income";
@@ -65,25 +53,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     public static final int ACCOUNT_ALL_ID = -1;
     public static final int NEW_OPERATION_REQUEST_CODE = 0;
     public static final int CHANGE_OPERATION_REQUEST_CODE = 1;
+    public static final int USER_ID = 0;
 
-    private final List<String> TAB_TITLES = Arrays.asList("Outcome", "Income");
-
-    Spinner dateSpinner;
+    @BindView(R.id.periodsSpinner) Spinner dateSpinner;
     @BindView(R.id.accountsSpinner) Spinner accountsSpinner;
-    @BindView(R.id.leftButton) Button leftButton;
-    @BindView(R.id.rightButton) Button rightButton;
-    @BindView(R.id.balanceTextView) TextView balanceTextView;
-    @BindView(R.id.mainScreenToolbar) Toolbar toolbar;
-    @BindView(R.id.operationsRecyclerView) RecyclerView recyclerView;
+    @BindView(R.id.bottomNavigation) BottomNavigationView bottomNavigationView;
+    @BindView(R.id.newOperationButton) FloatingActionButton operationFloatingActionButton;
     @BindView(R.id.pieChartViewPager) ViewPager viewPager;
-    @BindView(R.id.pieChartTabs) TabLayout tabsStrip;
-    @BindView(R.id.drawerLayout) DrawerLayout drawerLayout;
-    @BindView(R.id.navigationView) NavigationView navigationView;
 
-    private BigDecimal balanceForSelectedPeriod = new BigDecimal(0);
-    private Calendar endOfPeriod;
-    private Operation operationBeforeChange;
-    private ActionBarDrawerToggle toggleActionBar;
+    private Calendar endOfPeriod; //TODO: remove this
 
     {
         endOfPeriod = Calendar.getInstance();
@@ -91,15 +69,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     private ViewPagerAdapter viewPagerAdapter;
-    private OperationsAdapter operationsAdapter;
     private PeriodsOfTime currentPeriod = PeriodsOfTime.DAY;
     private DatabaseHelper database;
+    private Date minOperationDate;
 
-    private List<Operation> operationList;
-
-    private int userId = 0;
+    private boolean isIncome = true;
     private int accountId = ACCOUNT_ALL_ID;
-    private int modifiedOperationIndex;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -110,26 +85,44 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         database = DatabaseHelper.getInstance(getApplicationContext());
 
-        initSupportActionBar();
+        initBottomNavigation();
         initAccountsSpinner();
         initPeriodsSpinner();
-        initOperationListAdapter();
         initViewPagerWithTabs();
-        initToggleActionBar();
     }
 
-    private void initSupportActionBar() {
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+    private void initBottomNavigation() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_income:
+                        isIncome = true;
+                        operationFloatingActionButton.setImageResource(R.drawable.ic_add_white_48dp);
+                        break;
+                    case R.id.action_outcome:
+                        isIncome = false;
+                        operationFloatingActionButton.setImageResource(R.drawable.ic_remove_white_48dp);
+                        break;
+                    default:
+                        break;
+                }
+
+                viewPagerAdapter.setIsIncome(isIncome);
+                viewPagerAdapter.notifyDataSetChanged();
+                TabFragment currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+                currentTabFragment.scrollToTop();
+                return true;
+            }
+        });
     }
 
     public void initAccountsSpinner() {
+        accountsSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         List<SpinnerItem> spinnerAccountItems = getAccountSpinnerItemListFromDb();
 
-        accountsSpinner.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-
-        SimpleSpinnerAdapter adapter = new SimpleSpinnerAdapter(this, R.layout.spinner_item, spinnerAccountItems);
+        ImageSpinnerAdapter adapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, spinnerAccountItems,
+                R.color.white, R.color.dark_black);
         accountsSpinner.setAdapter(adapter);
 
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -138,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 int selectedAccountId = ((SpinnerItem) parent.getSelectedItem()).getId();
                 if (accountId != selectedAccountId) {
                     accountId = selectedAccountId;
+                    viewPagerAdapter.setAccountId(selectedAccountId);
+                    viewPagerAdapter.notifyDataSetChanged();
                 }
-                fullUpdate();
             }
 
             @Override
@@ -149,14 +143,23 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     private void initPeriodsSpinner() {
-        dateSpinner = (Spinner) navigationView.getMenu().findItem(R.id.navigation_drawer_item_1).getActionView();
+        dateSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        SimpleSpinnerAdapter adapter = new SimpleSpinnerAdapter(this, R.layout.simple_spinner_item, getResources().getStringArray(R.array.time_periods),
+               R.color.white, R.color.dark_black);
+        dateSpinner.setAdapter(adapter);
         dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 PeriodsOfTime selectedPeriod = getPeriodBySpinnerSelected(position);
                 if (currentPeriod != selectedPeriod) {
                     currentPeriod = selectedPeriod;
-                    fullUpdate();
+                    viewPagerAdapter.setCurrentPeriod(selectedPeriod);
+                    TabFragment currentFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+                    if(currentFragment != null) {
+                        endOfPeriod = currentFragment.getCurrentEndOfPeriod();
+                    }
+                    initViewPagerWithTabs();
+                    viewPager.setCurrentItem(DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.getEndOfPeriodList()));
                 }
             }
 
@@ -167,42 +170,40 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     private void initViewPagerWithTabs() {
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), TAB_TITLES);
-        viewPagerAdapter.setOperationList(operationList);//TODO: delete (empty list)
-        viewPager.setAdapter(viewPagerAdapter);
-
-        // Attach the view pager to the tab strip
-        for (int i = 0; i < TAB_TITLES.size(); i++) {
-            tabsStrip.addTab(tabsStrip.newTab().setText(TAB_TITLES.get(i)));
+        minOperationDate = database.getMinOperationDate(USER_ID);
+        if (minOperationDate == null) {
+            minOperationDate = new Date();
         }
-        tabsStrip.setupWithViewPager(viewPager);
+        List<String> titles = new ArrayList<>();
+        List<Calendar> endOfPeriodList = new ArrayList<>();
+        Date maxDate = new Date();
+        initViewPagerEntriesByPeriod(titles, endOfPeriodList, minOperationDate, maxDate, true);
+
+        initViewPagerWithEntries(titles, endOfPeriodList);
     }
 
-    private void initOperationListAdapter() {
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        operationList = new ArrayList<>();//TODO: delete (empty list)
-
-        operationsAdapter = new OperationsAdapter(this, operationList);
-        operationsAdapter.setOnItemClickListener(new OperationsAdapter.ItemClick() {
-            @Override
-            public void onItemClick(int position) {
-                changeOperationClick(position);
-            }
-        });
-        operationsAdapter.setOnItemLongClickListener(new OperationsAdapter.ItemLongClick() {
-            @Override
-            public void onItemLongClick(int position) {
-                showDeleteDialog(position);
-            }
-        });
-        recyclerView.setAdapter(operationsAdapter);
+    private void initViewPagerWithEntries(List<String> titles, List<Calendar> endOfPeriodList) {
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles,
+                endOfPeriodList, currentPeriod, accountId, isIncome);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPagerAdapter.notifyDataSetChanged();
+        viewPager.setCurrentItem(endOfPeriodList.size() - 1);
     }
 
-    private void initToggleActionBar() {
-        toggleActionBar = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
-        drawerLayout.addDrawerListener(toggleActionBar);
-        toggleActionBar.syncState();
+    private void initViewPagerEntriesByPeriod(List<String> titles, List<Calendar> endOfPeriodList, Date minOperationDate, Date maxDate, boolean includeLast) {
+        Calendar currentPagerListDate = Calendar.getInstance();
+        currentPagerListDate.setTime(minOperationDate);
+        currentPagerListDate = DateUtils.getEndOfPeriod(currentPagerListDate, currentPeriod);
+
+        do {
+            String tabTitle = DateUtils.getStringDateByPeriod(currentPeriod, currentPagerListDate);
+            titles.add(tabTitle);
+
+            Calendar endOfPeriod = Calendar.getInstance();
+            endOfPeriod.setTime(currentPagerListDate.getTime());
+            endOfPeriodList.add(endOfPeriod);
+        }
+        while (DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
     }
 
     @Override
@@ -215,37 +216,64 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
 
         Operation operation = getOperationFromExtras(extras);
+        TabFragment currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+        PeriodsOfTime currentPeriod = currentTabFragment.getCurrentPeriod();
+        Calendar currentDate = currentTabFragment.getCurrentEndOfPeriod();
 
         if (requestCode == NEW_OPERATION_REQUEST_CODE) {
-            database.insertOperation(operation, userId, operation.getAccountId());
-            updateUiViaNewOperation(operation);
+            long id = database.insertOperation(operation, USER_ID, operation.getAccountId());
+            operation.setId((int) id);
+            if (isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
+                updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID));
+            } else {
+                currentTabFragment.updateUiViaNewOperation(operation);
+            }
         } else {
-            database.updateOperation(operation, userId, operation.getAccountId());
-            updateUiViaModifiedOperation(operation);
+            database.updateOperation(operation, USER_ID, operation.getAccountId());
+            if (isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate)) {
+                currentTabFragment.updateUiViaModifiedOperation(operation);
+            } else {
+                currentTabFragment.removeModifiedOperation();
+            }
         }
-        updateUiRelatedToBalance();
+        viewPagerAdapter.notifyDataSetChanged();
     }
 
-    private void updateUiViaModifiedOperation(Operation operation) {
-        if (isOperationFitsToCurrPeriodAndAccount(operation)) {
-            operationList.set(modifiedOperationIndex, operation);
-            operationsAdapter.notifyItemChanged(modifiedOperationIndex);
-            recountBalanceViaOperation(operation, true);
-        } else {
-            recountBalanceViaDeletedOperation(operation);
-            removeOperationFromTheList(modifiedOperationIndex);
-        }
+    private boolean isNeedToUpdateViewPagerItems(Operation operation, PeriodsOfTime currentPeriod, Calendar currentDate) {
+        return operation.getId() == database.getMinOperationDateId(MainActivity.USER_ID) &&
+                !isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate);
     }
 
-    private void updateUiViaNewOperation(Operation operation) {
-        if (isOperationFitsToCurrPeriodAndAccount(operation)) {
-            operationList.add(0, operation);
-            operationsAdapter.notifyDataSetChanged();
-            recountBalanceViaOperation(operation, false);
-        }
+    private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation, PeriodsOfTime currentPeriod, Calendar currentDate) {
+
+        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(),
+                currentPeriod, currentDate);
+        boolean isSuiteToCurrentAccount = accountId == operation.getAccountId() || accountId == MainActivity.ACCOUNT_ALL_ID;
+        return isInPeriod && isSuiteToCurrentAccount;
+    }
+
+    private void updateViewPagerItemsAtStart(Date minOperationDate) {
+        List<String> newTabTitles = new ArrayList<>();
+        List<Calendar> newEndOfPeriodList = new ArrayList<>();
+        initViewPagerEntriesByPeriod(newTabTitles, newEndOfPeriodList, minOperationDate,
+                DateUtils.substractOneDay(this.minOperationDate), false);
+
+        List<String> tabTitles = viewPagerAdapter.getTabTitles();
+        tabTitles.addAll(0, newTabTitles);
+        List<Calendar> endOfPeriodList = viewPagerAdapter.getEndOfPeriodList();
+        endOfPeriodList.addAll(0, newEndOfPeriodList);
+
+        this.minOperationDate = minOperationDate;
+
+        int position = viewPager.getCurrentItem();
+        position += newTabTitles.size();
+
+        initViewPagerWithEntries(tabTitles, endOfPeriodList);
+        viewPager.setCurrentItem(position);
     }
 
     private Operation getOperationFromExtras(Bundle extras) {
+
         Operation operation = (Operation) extras.getSerializable(OPERATION_KEY);
         String amountString = extras.getString(AMOUNT_KEY);
         operation.setAmount(new BigDecimal(amountString));
@@ -255,204 +283,54 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         return operation;
     }
 
-    private void updateUiRelatedToBalance() {
-        updateViewPagerAdapter();
-        balanceTextView.setText(String.format(getString(R.string.balance_placeholder), balanceForSelectedPeriod));
-    }
-
-    private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation) {
-        int currentAccId = ((SpinnerItem) accountsSpinner.getSelectedItem()).getId();
-        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(), currentPeriod, endOfPeriod);
-        boolean isSuiteToCurrentAccount = currentAccId == operation.getAccountId() || currentAccId == ACCOUNT_ALL_ID;
-        return isInPeriod && isSuiteToCurrentAccount;
-    }
-
-    private void recountBalanceViaOperation(Operation operation, boolean isModifiedOperation) {
-        if (isModifiedOperation) {
-            recountBalanceViaDeletedOperation(operationBeforeChange);
-        }
-
-        recountBalanceViaNewOperation(operation);
-    }
-
-    private void recountBalanceViaNewOperation(Operation newOperation) {
-        if (newOperation.getIsOperationIncome())
-            balanceForSelectedPeriod = balanceForSelectedPeriod.add(newOperation.getAmount());
-        else
-            balanceForSelectedPeriod = balanceForSelectedPeriod.subtract(newOperation.getAmount());
-    }
-
-    private void recountBalanceViaDeletedOperation(Operation canceledOperation) {
-        if (canceledOperation.getIsOperationIncome())
-            balanceForSelectedPeriod = balanceForSelectedPeriod.subtract(canceledOperation.getAmount());
-        else
-            balanceForSelectedPeriod = balanceForSelectedPeriod.add(canceledOperation.getAmount());
-    }
-
-    private void countBalance() {
-        balanceForSelectedPeriod = new BigDecimal(0);
-        for (Operation operation : operationList) {
-            recountBalanceViaNewOperation(operation);
-        }
-    }
-
-    @OnClick({R.id.incomeButton, R.id.outcomeButton})
-    @Override
+    @OnClick({R.id.newOperationButton})
     public void onClick(View v) {
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
-        switch (v.getId()) {
-            case R.id.incomeButton:
-                intent.putExtra(IS_OPERATION_INCOME, true);
-                break;
-            case R.id.outcomeButton:
-                intent.putExtra(IS_OPERATION_INCOME, false);
-                break;
-            default:
-                break;
-        }
+        intent.putExtra(IS_OPERATION_INCOME, isIncome);
         intent.putExtra(IS_MODIFYING_OPERATION, false);
         Bundle extras = new Bundle();
-        extras.putSerializable(USER_ID_KEY, userId);
+        extras.putSerializable(USER_ID_KEY, USER_ID);
         extras.putLong(DATE_KEY, endOfPeriod.getTimeInMillis());
         intent.putExtras(extras);
 
         startActivityForResult(intent, NEW_OPERATION_REQUEST_CODE);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (toggleActionBar.onOptionsItemSelected(item))
-            return true;
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public PeriodsOfTime getPeriodBySpinnerSelected(int positionInSpinner) {
         switch (positionInSpinner) {
-            case SpinnerItem.POSITION_DAY: return PeriodsOfTime.DAY;
-            case SpinnerItem.POSITION_WEEK: return PeriodsOfTime.WEEK;
-            case SpinnerItem.POSITION_MONTH: return PeriodsOfTime.MONTH;
-            case SpinnerItem.POSITION_YEAR: return PeriodsOfTime.YEAR;
-            default: return PeriodsOfTime.ALL_TIME;
+            case SpinnerItem.POSITION_DAY:
+                return PeriodsOfTime.DAY;
+            case SpinnerItem.POSITION_WEEK:
+                return PeriodsOfTime.WEEK;
+            case SpinnerItem.POSITION_MONTH:
+                return PeriodsOfTime.MONTH;
+            case SpinnerItem.POSITION_YEAR:
+                return PeriodsOfTime.YEAR;
+            default:
+                return PeriodsOfTime.ALL_TIME;
         }
     }
 
-    private void fullUpdate() {
-        int accountId = ((SpinnerItem) accountsSpinner.getSelectedItem()).getId();
-        List<Operation> operationList = database.getOperations(accountId, currentPeriod, endOfPeriod);
-        updateUiOperationsList(operationList);
-
-        countBalance();
-        updateUiRelatedToBalance();
-    }
-
-    private void updateUiOperationsList(List<Operation> operationList) {
-        this.operationList.clear();
-        this.operationList.addAll(operationList);
-        operationsAdapter.notifyDataSetChanged();
-    }
-
-    private void updateViewPagerAdapter() {//TODO: extract dependencies, create method for adding only one operation
-        String viewPagerDateString = DateUtils.getStringDateByPeriod(currentPeriod, endOfPeriod);
-        viewPagerAdapter.setOperationList(operationList);
-        viewPagerAdapter.setDateString(viewPagerDateString);
-        viewPagerAdapter.notifyDataSetChanged();
-    }
-
-    private void showDeleteDialog(final int position) {
-        CharSequence[] buttonsDialog = new CharSequence[]{getString(R.string.delete), getString(R.string.cancel)};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.delete_dialog_text));
-        builder.setItems(buttonsDialog, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) deleteOperation(position);
-            }
-        });
-        builder.show();
-    }
-
-    private void deleteOperation(int position) {
-        Operation operationToRemove = operationList.get(position);
-        database.deleteOperation(operationToRemove);
-        recountBalanceViaDeletedOperation(operationToRemove);
-        updateUiRelatedToBalance();
-        removeOperationFromTheList(position);
-    }
-
-    private void removeOperationFromTheList(int position) {
-        operationList.remove(position);
-        operationsAdapter.notifyItemRemoved(position);
-    }
-
-    private void changeOperationClick(int position) {
-        modifiedOperationIndex = position;
-        Operation operation = operationList.get(position);
-
+    public void onChangeOperationClick(Operation operation) {
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         Bundle extras = new Bundle();
         extras.putSerializable(OPERATION_KEY, operation);
-        extras.putSerializable(USER_ID_KEY, userId);
+        extras.putSerializable(USER_ID_KEY, USER_ID);
         extras.putSerializable(DATE_KEY, operation.getOperationDate().getTime());
         extras.putSerializable(IS_MODIFYING_OPERATION, true);
         extras.putSerializable(IS_OPERATION_INCOME, operation.getIsOperationIncome());
         extras.putSerializable(AMOUNT_KEY, operation.getAmount().toString());
         intent.putExtras(extras);
 
-        operationBeforeChange = operation;
         startActivityForResult(intent, CHANGE_OPERATION_REQUEST_CODE);
     }
 
     //Getting spinner items collection for accounts
     private List<SpinnerItem> getAccountSpinnerItemListFromDb() {
-        List<Account> accountList = new ArrayList<>(database.getAllAccounts(userId));
+        List<Account> accountList = new ArrayList<>(database.getAllAccounts(USER_ID));
         List<SpinnerItem> spinnerItemList = new ArrayList<>();
         spinnerItemList.add(new SpinnerItem(ACCOUNT_ALL_ID, getString(R.string.all), R.drawable.dollar));
         spinnerItemList.addAll(SpinnerItemMapper.mapAccountsToSpinnerItems(accountList));
         return spinnerItemList;
-    }
-
-    public void buttonLeftClick(View view) {
-        slideDate(false);
-    }
-
-    public void buttonRightClick(View view) {
-        slideDate(true);
-    }
-
-    private void slideDate(boolean isRightSlide) { //TODO: Refactor this
-        if (currentPeriod == PeriodsOfTime.ALL_TIME)
-            return;
-
-        int slideDays;
-        switch (currentPeriod) {
-            case DAY:
-                slideDays = 1;
-                break;
-            case WEEK:
-                slideDays = 7;
-                break;
-            case MONTH:
-                slideDays = endOfPeriod.getActualMaximum(Calendar.DAY_OF_MONTH);
-                break;
-            default:
-                slideDays = endOfPeriod.getActualMaximum(Calendar.DAY_OF_YEAR);
-                break;
-        }
-
-        if (isRightSlide) {
-            endOfPeriod.set(Calendar.DAY_OF_YEAR, endOfPeriod.get(Calendar.DAY_OF_YEAR) + slideDays);
-        } else {
-            endOfPeriod.set(Calendar.DAY_OF_YEAR, endOfPeriod.get(Calendar.DAY_OF_YEAR) - slideDays);
-        }
-
-        //if a new date get out from the today date
-        if (endOfPeriod.compareTo(Calendar.getInstance()) > 0) {
-            endOfPeriod = Calendar.getInstance();
-            return;
-        }
-
-        fullUpdate();
     }
 }

@@ -30,35 +30,37 @@ public class PresenterMoneyCalculator {
     public void calculatorBtnOnClick(@IdRes int btnId, String numberValue) {
         switch (btnId) {
             case R.id.calculatorBackButton:
-                view.setCalcResultText(model.clearLastSymbol());
+                view.setAmountResultText(model.clearLastSymbol());
                 break;
             case R.id.additionCalculatorButton:
                 performOperation(CalculatorOperations.ADD);
-                view.setCalcResultText(model.getResultText());
+                view.setAmountResultText(model.getResultText());
                 break;
             case R.id.substractionCalculatorButton:
                 performOperation(CalculatorOperations.SUB);
-                view.setCalcResultText(model.getResultText());
+                view.setAmountResultText(model.getResultText());
                 break;
             case R.id.multiplicationCalculatorButton:
                 performOperation(CalculatorOperations.MUL);
-                view.setCalcResultText(model.getResultText());
+                view.setAmountResultText(model.getResultText());
                 break;
             case R.id.divisionCalculatorButton:
                 performOperation(CalculatorOperations.DIV);
-                view.setCalcResultText(model.getResultText());
+                view.setAmountResultText(model.getResultText());
                 break;
             case R.id.equalsCalculatorButton:
-                if (model.calculatePress())
-                    view.setCalcResultText(model.getResultText());
+                if (model.calculatePress()) {
+                    view.setAmountResultText(model.getResultText());
+                }
                 else {
-                    view.setCalcResultText(model.calculationError());
+                    view.setAmountResultText(model.calculationError());
                     view.calculationErrorSignal();
                 }
                 break;
             default:
-                if (model.isNewResultCorrect(numberValue.charAt(0)))
-                    view.setCalcResultText(model.newResultText(numberValue.charAt(0)));
+                if (model.isNewResultCorrect(numberValue.charAt(0))) {
+                    view.setAmountResultText(model.newResultText(numberValue.charAt(0)));
+                }
                 break;
         }
 
@@ -75,7 +77,7 @@ public class PresenterMoneyCalculator {
      * Clears number, reset calculator
      */
     public void clearNumber() {
-        view.setCalcResultText(model.clearNumber());
+        view.setAmountResultText(model.clearNumber());
     }
 
     /**
@@ -85,13 +87,13 @@ public class PresenterMoneyCalculator {
         Category category = new Category();
         category.setId(view.getCategoryId());
 
-        if (new BigDecimal(model.getResultText()).compareTo(model.zeroBigDecimalValue) == 0) {
+        if (new BigDecimal(view.getAmount()).compareTo(model.zeroBigDecimalValue) == 0) {
             view.calculationErrorSignal("Set the amount, please");
             return;
         }
 
         Operation operation = new Operation();
-        operation.initOperation(modifyingOperationId, view.getAccountId(), new BigDecimal(model.getResultText()), view.getOperationDate(),
+        operation.initOperation(modifyingOperationId, view.getAccountId(), new BigDecimal(view.getAmount()), view.getOperationDate(),
                 view.getComment().trim(), view.getIsOperationInput(), category);
 
         view.sendNewOperation(operation);
@@ -105,5 +107,10 @@ public class PresenterMoneyCalculator {
 
     public void setModifyingOperationId(int modifyingOperationId) {
         this.modifyingOperationId = modifyingOperationId;
+    }
+
+    public void calculatorReset() {
+        model.clearNumber();
+        view.setCalculatorToZero();
     }
 }

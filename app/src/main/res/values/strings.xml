@@ -4,7 +4,8 @@
     <string name="close">Close</string>
     <string name="slide_left_label">"&lt;&lt;"</string>
     <string name="slide_right_label">"&gt;&gt;"</string>
-    <string name="balance_placeholder">"Balance: %s ₴"</string>
+    <string name="income_balance_placeholder">"₴%s"</string>
+    <string name="outcome_balance_placeholder">"-₴%s"</string>
 
     <string name="period_of_time_title">Period</string>
 
@@ -17,6 +18,7 @@
     <string name="category_title">Category</string>
     <string name="account_title">Account</string>
     <string name="comment_title">Comment</string>
+    <string name="amount_title">Amount</string>
 
     <string name="delete_dialog_text">Do you really want to delete this operation?</string>
     <string name="delete">Delete</string>
@@ -25,6 +27,8 @@
     <string name="operation_save_error">Operation saving error</string>
     <string name="operation_add_error">Operation add error</string>
     <string name="operation_insert_error">operation insert error</string>
+
+    <string name="amount_edit_text_digits">0123456789.</string>
 
     <string name="all">All</string>
 
@@ -63,8 +67,4 @@
         <item>Year</item>
         <item>All time</item>
     </string-array>
-
-
-
-
 </resources>

@@ -4,15 +4,16 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public final class DateUtils {
 
+    private static final long MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
     private static final int DAYS_IN_WEEK = 7;
-    private static final String DATE_MEDIUM_PATTERN = "E, dd MMMM";
+    private static final String DATE_MEDIUM_PATTERN = "dd MMMM";
     private static final String DATE_MONTH_AND_YEAR_PATTERN = "MMMM, yyyy";
     private static final String DATE_YEAR_PATTERN = "yyyy";
     public static final String DATE_FULL_PATTERN = "MM.dd.yyyy";
@@ -48,6 +49,66 @@ public final class DateUtils {
         return textDate;
     }
 
+    public static boolean slideDateIfAble(Calendar currDate, boolean isRightSlide, PeriodsOfTime currentPeriod, Date minDate, Date maxDate, boolean includeLast) { //TODO: Refactor this
+        if (currentPeriod == PeriodsOfTime.ALL_TIME)
+            return false;
+
+        if (includeLast) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(maxDate);
+            maxDate = getEndOfPeriod(calendar, currentPeriod).getTime();
+        }
+
+        int slideDays;
+        switch (currentPeriod) {
+            case DAY:
+                slideDays = 1;
+                break;
+            case WEEK:
+                slideDays = 7;
+                break;
+            case MONTH:
+                slideDays = getActualMaxForNextMonth(currDate);
+                break;
+            default:
+                slideDays = getActualMaxForNextYear(currDate);
+                break;
+        }
+
+        if (isRightSlide) {
+            currDate.setTime(new Date(currDate.getTime().getTime() + slideDays * MILLISECONDS_IN_DAY));
+        } else {
+            currDate.setTime(new Date(currDate.getTime().getTime() - slideDays * MILLISECONDS_IN_DAY));
+        }
+
+        setMinTimeOfADay(currDate);
+
+        //if a new date get out from the today date
+        if (currDate.getTime().compareTo(maxDate) > 0) {
+            currDate.setTime(maxDate);
+            return false;
+        } else if (currDate.getTime().compareTo(minDate) < 0) {
+            currDate.setTime(minDate);
+            return false;
+        }
+
+        return true;
+    }
+
+    private static int getActualMaxForNextMonth(Calendar currDate) {
+        Calendar nextMonth = Calendar.getInstance();
+        nextMonth.setTime(currDate.getTime());
+        nextMonth.add(Calendar.MONTH, 1);
+        return nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    private static int getActualMaxForNextYear(Calendar currDate) {
+        Calendar nextYear = Calendar.getInstance();
+        nextYear.setTime(currDate.getTime());
+        nextYear.add(Calendar.YEAR, 1);
+        return nextYear.getActualMaximum(Calendar.DAY_OF_YEAR);
+    }
+
     public static String getStringDate(Date date, String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
     }
@@ -68,22 +129,22 @@ public final class DateUtils {
         if (endOfPeriod.get(Calendar.DAY_OF_MONTH) < DAYS_IN_WEEK) {
             Calendar fromDate = Calendar.getInstance();
             fromDate.setTime(endOfPeriod.getTime());
-            fromDate.set(Calendar.DAY_OF_WEEK, 1);
+            fromDate.set(Calendar.DAY_OF_WEEK, fromDate.getFirstDayOfWeek());
 
             weekPeriodTextDateBuilder.append(fromDate.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(DATE_MONTH_YEAR_FORMAT.format(fromDate))
+                    .append(DATE_MONTH_YEAR_FORMAT.format(fromDate.getTime()))
                     .append(" - ")
                     .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod));
+                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod.getTime()));
 
         } else {
             weekPeriodTextDateBuilder.append(endOfPeriod.get(Calendar.DAY_OF_MONTH) - (DAYS_IN_WEEK - 1))
                     .append(" - ")
                     .append(endOfPeriod.get(Calendar.DAY_OF_MONTH))
                     .append(" ")
-                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod));
+                    .append(DATE_MONTH_YEAR_FORMAT.format(endOfPeriod.getTime()));
         }
 
 
@@ -97,7 +158,7 @@ public final class DateUtils {
 
         switch (period) {
             case WEEK:
-                endOfPeriod.set(Calendar.DAY_OF_WEEK, 7);
+                endOfPeriod.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                 break;
             case MONTH:
                 endOfPeriod.set(Calendar.DAY_OF_MONTH, endOfPeriod.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -113,6 +174,22 @@ public final class DateUtils {
         return endOfPeriod;
     }
 
+    public static Date substractOneDay(Date date) {
+        return new Date(date.getTime() - MILLISECONDS_IN_DAY);
+    }
+
+    public static int getSutedDateIndexByDateFromList(Calendar date, List<Calendar> endOfPeriodList) {
+        if (endOfPeriodList.size() == 1) return 0;
+
+        int position = endOfPeriodList.size() - 1;
+        int i = position;
+        while (date.compareTo(endOfPeriodList.get(--i)) <= 0) {
+            position = i;
+        }
+
+        return position;
+    }
+
     public static void setMaxTimeOfADay(Calendar endOfPeriod) {
         endOfPeriod.set(Calendar.HOUR_OF_DAY, 23);
         endOfPeriod.set(Calendar.MINUTE, 59);
@@ -125,7 +202,7 @@ public final class DateUtils {
 
         switch (period) {
             case WEEK:
-                startOfPeriod.set(Calendar.DAY_OF_WEEK, 1);
+                startOfPeriod.set(Calendar.DAY_OF_WEEK, startOfPeriod.getFirstDayOfWeek());
                 break;
             case MONTH:
                 startOfPeriod.set(Calendar.DAY_OF_MONTH, 1);

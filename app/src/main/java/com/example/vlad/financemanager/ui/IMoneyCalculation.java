@@ -14,9 +14,13 @@ public interface IMoneyCalculation {
 
     String getComment();
 
+    String getAmount();
+
     boolean getIsOperationInput();
 
-    void setCalcResultText(String resultText);
+    void setAmountResultText(String resultText);
+
+    void setCalculatorToZero();
 
     void finishActivity();
 

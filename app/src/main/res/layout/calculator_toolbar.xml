@@ -7,7 +7,7 @@
     android:layout_height="?attr/actionBarSize"
     android:layout_width="match_parent"
     app:theme="@style/HeaderBaseTheme"
-    android:background="@color/colorPrimary">
+    android:background="@color/primary">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

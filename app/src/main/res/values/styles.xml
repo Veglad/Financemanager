@@ -2,19 +2,38 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
         <item name="drawerArrowStyle">@style/MyDrawerArrowToggle</item>
     </style>
 
     <style name="HeaderBaseTheme" parent="@style/Widget.AppCompat.Toolbar">
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/primary</item>
     </style>
 
     <style name="MyDrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="ButtonCalculator">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:onClick">calculatorBtnOnClick</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="ButtonSelectIncomeOutcome" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">Monospace</item>
+        <item name="android:background">@drawable/select_income_outcome_drawable</item>
     </style>
 
 </resources>
