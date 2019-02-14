@@ -46,7 +46,7 @@ class User(var balance: BigDecimal?, var name: String?) {
     fun addNewCustomCategory(category: Category): Boolean {
         //Checking if we have a category with the same name
         for (categor in userCategories!!) {
-            if (category.getName() == category.getName())
+            if (category.name == category.name)
                 return false
         }
 

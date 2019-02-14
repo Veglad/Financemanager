@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
         extras.putSerializable(USER_ID_KEY, USER_ID);
         extras.putSerializable(DATE_KEY, operation.getOperationDate().getTime());
         extras.putSerializable(IS_MODIFYING_OPERATION, true);
-        extras.putSerializable(IS_OPERATION_INCOME, operation.getIsOperationIncome());
+        extras.putSerializable(IS_OPERATION_INCOME, operation.isOperationIncome());
         extras.putSerializable(AMOUNT_KEY, operation.getAmount().toString());
         intent.putExtras(extras);
 
@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
         List<Account> accountList = new ArrayList<>(database.getAllAccounts(USER_ID));
         List<SpinnerItem> spinnerItemList = new ArrayList<>();
         spinnerItemList.add(new SpinnerItem(ACCOUNT_ALL_ID, getString(R.string.all), R.drawable.dollar));
-        spinnerItemList.addAll(SpinnerItemMapper.mapAccountsToSpinnerItems(accountList));
+        spinnerItemList.addAll(SpinnerItemMapper.Companion.mapAccountsToSpinnerItems(accountList));
         return spinnerItemList;
     }
 }

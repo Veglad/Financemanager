@@ -69,7 +69,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
 
         holder.categoryText.setText(operation.getCategory().getName());
 
-        if (operation.getIsOperationIncome()) {
+        if (operation.isOperationIncome()) {
             holder.amountText.setText(String.format("+%s ₴", operation.getAmount().toString()));
             holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_green));
         } else {

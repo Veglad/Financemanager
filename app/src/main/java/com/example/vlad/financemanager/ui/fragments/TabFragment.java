@@ -133,7 +133,7 @@ public class TabFragment extends Fragment {
     private List<Operation> getOperationsByIsIncome(boolean isIncome, List<Operation> operationList) {
         List<Operation> operationListFiltered = new ArrayList<>();
         for (Operation operation : operationList) {
-            if (operation.getIsOperationIncome() == isIncome) {
+            if (operation.isOperationIncome() == isIncome) {
                 operationListFiltered.add(operation);
             }
         }

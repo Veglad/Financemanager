@@ -155,18 +155,19 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
 
-    fun getOperation(operationId: Long, userId: Int): Operation {
+    fun getOperation(operationId: Long, userId: Int): Operation? {
         val db = readableDatabase
 
         val operationCursor = db.query(OperationTable.TABLE_NAME, null,
                 OperationTable.COLUMN_ID + " = ?" + " AND " + OperationTable.COLUMN_USER_ID + " = ?",
                 arrayOf(operationId.toString(), userId.toString()), null, null, null, null)
 
-        var category: Category? = null
+        var category: Category?
         if (operationCursor.moveToFirst()) {
             val categoryId = operationCursor.getInt(operationCursor.getColumnIndex(OperationTable.COLUMN_CATEGORY_ID))
             category = getCategory(categoryId)
-        }
+            if(category == null) return null
+        } else return null
 
         val dateString = operationCursor.getString(operationCursor.getColumnIndex(OperationTable.COLUMN_DATE))
         val operationDate = convertStringFromDbtoDate(dateString)
@@ -188,7 +189,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             val dateString = dateCursor.getString(0) ?: return null
             date = convertStringFromDbtoDate(dateString)
         }
-
         return date
     }
 
@@ -219,16 +219,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         return category
     }
 
-    private fun getOperationFromCursor(cursorOperations: Cursor, category: Category?, operationDate: Date): Operation {
-        val operation = Operation()
-        operation.initOperation(cursorOperations.getInt(cursorOperations.getColumnIndex(OperationTable.COLUMN_ID)),
-                cursorOperations.getInt(cursorOperations.getColumnIndex(OperationTable.COLUMN_ACCOUNT_ID)),
-                BigDecimal(cursorOperations.getString(cursorOperations.getColumnIndex(OperationTable.COLUMN_AMOUNT))),
+    private fun getOperationFromCursor(cursorOperations: Cursor, category: Category, operationDate: Date): Operation {
+        return Operation(BigDecimal(cursorOperations.getString(cursorOperations.getColumnIndex(OperationTable.COLUMN_AMOUNT))),
                 operationDate,
                 cursorOperations.getString(cursorOperations.getColumnIndex(OperationTable.COLUMN_COMMENT)),
                 cursorOperations.getInt(cursorOperations.getColumnIndex(OperationTable.COLUMN_IS_INCOME)) > 0,
-                category)
-        return operation
+                category,
+                cursorOperations.getInt(cursorOperations.getColumnIndex(OperationTable.COLUMN_ID)),
+                cursorOperations.getInt(cursorOperations.getColumnIndex(OperationTable.COLUMN_ACCOUNT_ID)))
     }
 
 
@@ -287,20 +285,22 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
     fun getCategory(categoryId: Int): Category? {
         val db = readableDatabase
-        var category: Category? = null
+        var category: Category
 
         val cursorCategory = db.query(CategoryTable.TABLE_NAME, null, CategoryTable.COLUMN_ID + " = ?",
                 arrayOf(categoryId.toString()), null, null, null, null)
 
         if (cursorCategory.moveToFirst()) {
             category = getCategoryFromCursor(cursorCategory)
+        } else {
+            return null
         }
         return category
     }
 
 
     // If accountId < 0 method selects all accounts
-    fun getOperations(accountId: Int?, period: PeriodsOfTime, currDay: Calendar): List<Operation> {
+    fun getOperations(accountId: Int?, period: PeriodsOfTime, currDay: Calendar): List<Operation>? {
         val operationsList = ArrayList<Operation>()
         val db = readableDatabase
         val operationsCursor = getOperationCursor(accountId!!, DateUtils.getEndOfPeriod(currDay, period), db, period)
@@ -309,7 +309,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         if (operationsCursor.moveToFirst()) {
             do {
                 val categoryId = operationsCursor.getInt(operationsCursor.getColumnIndex(OperationTable.COLUMN_CATEGORY_ID))
-                val category = getCategory(categoryId)
+                val category = getCategory(categoryId) ?: return null
 
                 val dateString = operationsCursor.getString(operationsCursor.getColumnIndex(OperationTable.COLUMN_DATE))
                 val operationDate = convertStringFromDbtoDate(dateString)

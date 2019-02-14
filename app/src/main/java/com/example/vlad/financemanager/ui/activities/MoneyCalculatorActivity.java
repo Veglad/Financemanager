@@ -115,9 +115,9 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     private void initSpinnersItemLists(int userId) {
         List<Account> accountList = databaseHelper.getAllAccounts(userId);
-        accountSpinnerItemList = SpinnerItemMapper.mapAccountsToSpinnerItems(accountList);
+        accountSpinnerItemList = SpinnerItemMapper.Companion.mapAccountsToSpinnerItems(accountList);
         List<Category> categoryList = databaseHelper.getAllCategories(userId, isOperationIncome);
-        categorySpinnerItemList = SpinnerItemMapper.mapCategoryToSpinnerItems(categoryList);
+        categorySpinnerItemList = SpinnerItemMapper.Companion.mapCategoryToSpinnerItems(categoryList);
     }
 
     private void initToolbar(Boolean isIncome) {

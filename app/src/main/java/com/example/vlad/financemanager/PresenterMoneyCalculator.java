@@ -92,9 +92,8 @@ public class PresenterMoneyCalculator {
             return;
         }
 
-        Operation operation = new Operation();
-        operation.initOperation(modifyingOperationId, view.getAccountId(), new BigDecimal(view.getAmount()), view.getOperationDate(),
-                view.getComment().trim(), view.getIsOperationInput(), category);
+        Operation operation = new Operation(new BigDecimal(view.getAmount()), view.getOperationDate(), view.getComment().trim(),
+                view.getIsOperationInput(), category, modifyingOperationId, view.getAccountId());
 
         view.sendNewOperation(operation);
 
