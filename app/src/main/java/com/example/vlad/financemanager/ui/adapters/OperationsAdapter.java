@@ -26,27 +26,27 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
 
     private Context context;
     private List<Operation> operationList;
-    private itemDeleteClick itemDeleteClickListener;
-    private ItemClick itemClickListener;
+    private onItemDeleteClickListener itemDeleteClickListener;
+    private OnItemClickListener itemClickListener;
 
     public OperationsAdapter(Context context, List<Operation> operations) {
         this.context = context;
         operationList = operations;
     }
 
-    public interface ItemClick {
+    public interface OnItemClickListener {
         void onItemClick(int position);
     }
 
-    public interface itemDeleteClick {
+    public interface onItemDeleteClickListener {
         void onItemDeleteClick(int position);
     }
 
-    public void setOnItemClickListener(ItemClick listener) {
+    public void setOnItemClickListener(OnItemClickListener listener) {
         itemClickListener = listener;
     }
 
-    public void setOnItemDeleteClickListener(itemDeleteClick listener) {
+    public void setOnItemDeleteClickListener(onItemDeleteClickListener listener) {
         itemDeleteClickListener = listener;
     }
 
@@ -98,7 +98,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.deleteMoreMenuAction:
+                            case R.id.deleteMoreMenuItem:
                                 if (itemDeleteClickListener != null) {
                                     itemDeleteClickListener.onItemDeleteClick(holder.getAdapterPosition());
                                 }

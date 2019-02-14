@@ -1,14 +1,12 @@
 package com.example.vlad.financemanager.ui.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +59,7 @@ public class TabFragment extends Fragment {
     private OperationsAdapter operationsAdapter;
 
     private DatabaseHelper database;
-    private onChangeOperationClickListener iMainActivity;
+    private OnChangeOperationClickListener onChangeOperationClickListener;
     private Calendar currentEndOfPeriod;
     private List<Operation> operationList = new ArrayList<>();
     private PeriodsOfTime currentPeriod;
@@ -76,8 +74,8 @@ public class TabFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof onChangeOperationClickListener) {
-            iMainActivity = ((onChangeOperationClickListener) context);
+        if (context instanceof OnChangeOperationClickListener) {
+            onChangeOperationClickListener = ((OnChangeOperationClickListener) context);
         }
     }
 
@@ -253,7 +251,7 @@ public class TabFragment extends Fragment {
                 changeOperationClick(position);
             }
         });
-        operationsAdapter.setOnItemDeleteClickListener(new OperationsAdapter.itemDeleteClick() {
+        operationsAdapter.setOnItemDeleteClickListener(new OperationsAdapter.onItemDeleteClickListener() {
             @Override
             public void onItemDeleteClick(int position) {
                 deleteOperation(position);
@@ -265,7 +263,7 @@ public class TabFragment extends Fragment {
     private void changeOperationClick(int position) {
         modifiedOperationIndex = position;
         Operation operation = operationList.get(position);
-        iMainActivity.onChangeOperationClick(operation);
+        onChangeOperationClickListener.onChangeOperationClick(operation);
     }
 
     private void deleteOperation(int position) {
@@ -305,7 +303,7 @@ public class TabFragment extends Fragment {
         removeOperationFromTheList(modifiedOperationIndex);
     }
 
-    public interface onChangeOperationClickListener {
+    public interface OnChangeOperationClickListener {
         void onChangeOperationClick(Operation operation);
     }
 

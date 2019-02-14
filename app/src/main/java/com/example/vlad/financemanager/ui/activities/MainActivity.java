@@ -6,13 +6,11 @@ import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -44,7 +42,7 @@ import butterknife.OnClick;
 import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.DATE_KEY;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener, TabFragment.onChangeOperationClickListener {
+public class MainActivity extends AppCompatActivity implements TabFragment.OnChangeOperationClickListener {
 
     public static final String OPERATION_KEY = "operation";
     public static final String IS_OPERATION_INCOME = "is_operation_income";
@@ -286,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     @OnClick({R.id.newOperationButton})
-    @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         intent.putExtra(IS_OPERATION_INCOME, isIncome);

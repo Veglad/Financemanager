@@ -46,7 +46,7 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
 public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation,
-        DatePickerDialog.OnDateSetListener, TextWatcher, View.OnClickListener {
+        DatePickerDialog.OnDateSetListener{
     public static final String DATE_KEY = "date_key";
     private static final String DATE_PICKER_TAG = "date picker";
 
@@ -327,7 +327,6 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     }
 
     @OnClick({R.id.closeOperationButton, R.id.saveRecordButton})
-    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.closeOperationButton:
@@ -340,19 +339,8 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         }
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-    }
-
     @OnTextChanged({R.id.amountMoneyActivityEditText})
-    @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (before > count) presenter.calculatorReset();
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-
     }
 }
