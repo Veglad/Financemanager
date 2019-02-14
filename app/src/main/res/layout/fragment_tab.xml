@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragmentTabScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,18 +13,47 @@
         android:orientation="vertical">
 
         <View
+            android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/viewPagerDateTextView"
-            app:layout_constraintEnd_toEndOf="@+id/pieChart"
-            app:layout_constraintStart_toStartOf="@+id/pieChart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/beforeImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_navigate_before_white_24_64dp"
+            app:layout_constraintBottom_toTopOf="@+id/viewPagerDateTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/pieChart" />
+
+        <ImageView
+            android:id="@+id/nextImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_navigate_next_white_24_64dp"
+            app:layout_constraintBottom_toTopOf="@+id/viewPagerDateTextView"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/pieChart" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="250dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/nextImageView"
+            app:layout_constraintStart_toEndOf="@id/beforeImageView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
