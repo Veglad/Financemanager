@@ -96,7 +96,7 @@ public class TabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        database = DatabaseHelper.getInstance(getContext().getApplicationContext());
+        database = DatabaseHelper.Companion.getInstance(getContext().getApplicationContext());
     }
 
     @Override

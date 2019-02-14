@@ -82,7 +82,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         setContentView(R.layout.activity_money_calculator);
         ButterKnife.bind(this);
 
-        databaseHelper = DatabaseHelper.getInstance(getApplicationContext());
+        databaseHelper = DatabaseHelper.Companion.getInstance(getApplicationContext());
         presenter = new PresenterMoneyCalculator(this);
 
         btnBack.setOnLongClickListener(new View.OnLongClickListener() {

@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        database = DatabaseHelper.getInstance(getApplicationContext());
+        database = DatabaseHelper.Companion.getInstance(getApplicationContext());
 
         initBottomNavigation();
         initAccountsSpinner();
