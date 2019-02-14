@@ -2,6 +2,7 @@ package com.example.vlad.financemanager.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     public void initAccountsSpinner() {
+        accountsSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         List<SpinnerItem> spinnerAccountItems = getAccountSpinnerItemListFromDb();
 
         ImageSpinnerAdapter adapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, spinnerAccountItems,
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void initPeriodsSpinner() {
+        dateSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         SimpleSpinnerAdapter adapter = new SimpleSpinnerAdapter(this, R.layout.simple_spinner_item, getResources().getStringArray(R.array.time_periods),
                 ContextCompat.getColor(this, R.color.white), ContextCompat.getColor(this, R.color.darkBlack));
         dateSpinner.setAdapter(adapter);
