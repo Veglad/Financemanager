@@ -13,7 +13,7 @@
         android:fitsSystemWindows="true"
         app:theme="@style/ThemeOverlay.AppCompat"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="0dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary"
         app:itemBackground="@drawable/bottom_nav_foreground_selector"
         app:itemIconTint="@color/bottom_nav_item_selector"
         app:itemTextColor="@color/bottom_nav_item_selector"

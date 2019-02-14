@@ -17,7 +17,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private PeriodsOfTime currentPeriod;
     private List<Calendar> endOfPeriodList;
     private List<String> tabTitles;
-    SparseArray<TabFragment> registeredFragments = new SparseArray<TabFragment>();
+    private SparseArray<TabFragment> registeredFragments = new SparseArray<TabFragment>();
 
     private int accountId;
     private boolean isIncome;
@@ -36,10 +36,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         return TabFragment.newInstance(currentPeriod, endOfPeriodList.get(position), isIncome, accountId, tabTitles.get(position));
-    }
-
-    public void setendOfPeriodList(List<Calendar> endOfPeriodList) {
-        this.endOfPeriodList = endOfPeriodList;
     }
 
     public void setAccountId(int accountId) {

@@ -1,7 +1,9 @@
 package com.example.vlad.financemanager.ui.adapters;
 
 import android.content.Context;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +18,11 @@ import java.util.List;
 
 public class SimpleSpinnerAdapter extends ArrayAdapter<String> {
 
-    private int dropDownTextColor;
-    private int selectedTextColor;
+    @ColorRes private int dropDownTextColor;
+    @ColorRes private int selectedTextColor;
 
-    public SimpleSpinnerAdapter(Context context, int resource, String[] spinnerItems, int selectedTextColor, int dropDownTextColor) {
+    public SimpleSpinnerAdapter(Context context, int resource, String[] spinnerItems,
+                                @ColorRes int selectedTextColor, @ColorRes int dropDownTextColor) {
         super(context, resource, spinnerItems);
         this.selectedTextColor = selectedTextColor;
         this.dropDownTextColor = dropDownTextColor;
@@ -45,7 +48,7 @@ public class SimpleSpinnerAdapter extends ArrayAdapter<String> {
 
         TextView accountName = convertView.findViewById(R.id.accountTypeTextView);
         accountName.setText(getItem(position));
-        accountName.setTextColor(textColor);
+        accountName.setTextColor(ContextCompat.getColor(getContext(), textColor));
 
         return convertView;
     }

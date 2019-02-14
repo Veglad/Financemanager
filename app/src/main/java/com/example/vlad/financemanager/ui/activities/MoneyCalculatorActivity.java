@@ -42,8 +42,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
-public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation, DatePickerDialog.OnDateSetListener {
+public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation,
+        DatePickerDialog.OnDateSetListener, TextWatcher, View.OnClickListener {
     public static final String DATE_KEY = "date_key";
     private static final String DATE_PICKER_TAG = "date picker";
 
@@ -106,21 +109,9 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
                 return false;
             }
         });
-        amountEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (before > count) presenter.calculatorReset();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
     }
+
+
 
     private void initSpinnersItemLists(int userId) {
         List<Account> accountList = databaseHelper.getAllAccounts(userId);
@@ -218,10 +209,6 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         presenter.calculatorBtnOnClick(pressedButton.getId(), pressedButton.getText().toString());
     }
 
-    public void btnSaveOnClick(View v) {
-        presenter.onButtonSaveClick();
-    }
-
     public void finishActivity() {
         finish();
     }
@@ -311,7 +298,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
 
     public void initSpinnersWithItemLists(List<SpinnerItem> accountSpinnerItemList, List<SpinnerItem> categorySpinnerItemList) {
         ImageSpinnerAdapter accountSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, accountSpinnerItemList,
-                ContextCompat.getColor(this, R.color.darkGrey), ContextCompat.getColor(this, R.color.darkBlack));
+                ContextCompat.getColor(this, R.color.dark_gray), ContextCompat.getColor(this, R.color.dark_black));
         accountsSpinner.setAdapter(accountSpinnerAdapter);
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -325,7 +312,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         });
 
         ImageSpinnerAdapter categoriesSpinnerAdapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, categorySpinnerItemList,
-                ContextCompat.getColor(this, R.color.darkGrey), ContextCompat.getColor(this, R.color.darkBlack));
+                ContextCompat.getColor(this, R.color.dark_gray), ContextCompat.getColor(this, R.color.dark_black));
         categoriesSpinner.setAdapter(categoriesSpinnerAdapter);
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -339,7 +326,33 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         });
     }
 
-    public void btnCloseOnClick(View view) {
-        finishActivity();
+    @OnClick({R.id.closeOperationButton, R.id.saveRecordButton})
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.closeOperationButton:
+                finishActivity();
+                break;
+            case R.id.saveRecordButton:
+                presenter.onButtonSaveClick();
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @OnTextChanged({R.id.newOperationButton})
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (before > count) presenter.calculatorReset();
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

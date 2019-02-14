@@ -56,16 +56,16 @@ public class TabFragment extends Fragment {
     @BindView(R.id.pieChart) PieChart pieChart;
     @BindView(R.id.viewPagerDateTextView) TextView dateTitleTextView;
     @BindView(R.id.operationsRecyclerView) RecyclerView recyclerView;
-    @BindView(R.id.fragmentTabScrollView)
-    ScrollView scrollView;
+    @BindView(R.id.fragmentTabScrollView) ScrollView scrollView;
 
-    OperationsAdapter operationsAdapter;
+    private OperationsAdapter operationsAdapter;
 
     private DatabaseHelper database;
-    private IMainActivity iMainActivity;
+    private onChangeOperationClickListener iMainActivity;
     private Calendar currentEndOfPeriod;
     private List<Operation> operationList = new ArrayList<>();
     private PeriodsOfTime currentPeriod;
+    private Unbinder unbinder;
 
     private String dateTitle;
     private String balanceString;
@@ -73,24 +73,21 @@ public class TabFragment extends Fragment {
     private int modifiedOperationIndex;
     private int accountId;
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof IMainActivity) {
-            iMainActivity = ((IMainActivity) context);
+        if (context instanceof onChangeOperationClickListener) {
+            iMainActivity = ((onChangeOperationClickListener) context);
         }
     }
-
-    private Unbinder unbinder;
 
     public static TabFragment newInstance(PeriodsOfTime currentPeriod, Calendar endOfPeriod, boolean isIncome, int accountId, String dateTitle) {
         Bundle args = new Bundle();
         args.putSerializable(END_OF_PERIOD_KEY, endOfPeriod);
         args.putSerializable(CURRENT_PERIOD_KEY, currentPeriod);
-        args.putSerializable(IS_INCOME_KEY, isIncome);
-        args.putSerializable(ACCOUNT_ID_KEY, accountId);
-        args.putSerializable(DATE_TITLE_KEY, dateTitle);
+        args.putBoolean(IS_INCOME_KEY, isIncome);
+        args.putInt(ACCOUNT_ID_KEY, accountId);
+        args.putString(DATE_TITLE_KEY, dateTitle);
 
         TabFragment fragment = new TabFragment();
         fragment.setArguments(args);
@@ -308,7 +305,7 @@ public class TabFragment extends Fragment {
         removeOperationFromTheList(modifiedOperationIndex);
     }
 
-    public interface IMainActivity {
+    public interface onChangeOperationClickListener {
         void onChangeOperationClick(Operation operation);
     }
 

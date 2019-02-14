@@ -49,16 +49,18 @@ public class PresenterMoneyCalculator {
                 view.setAmountResultText(model.getResultText());
                 break;
             case R.id.equalsCalculatorButton:
-                if (model.calculatePress())
+                if (model.calculatePress()) {
                     view.setAmountResultText(model.getResultText());
+                }
                 else {
                     view.setAmountResultText(model.calculationError());
                     view.calculationErrorSignal();
                 }
                 break;
             default:
-                if (model.isNewResultCorrect(numberValue.charAt(0)))
+                if (model.isNewResultCorrect(numberValue.charAt(0))) {
                     view.setAmountResultText(model.newResultText(numberValue.charAt(0)));
+                }
                 break;
         }
 

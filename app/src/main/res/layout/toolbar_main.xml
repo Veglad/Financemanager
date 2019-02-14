@@ -4,7 +4,7 @@
     android:id="@+id/calculatorToolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimary"
+    android:background="@color/primary"
     android:fitsSystemWindows="true"
     app:theme="@style/HeaderBaseTheme"
     app:layout_scrollFlags="scroll|enterAlways"

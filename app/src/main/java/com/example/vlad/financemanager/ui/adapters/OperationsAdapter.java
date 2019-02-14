@@ -71,10 +71,10 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
 
         if (operation.getIsOperationIncome()) {
             holder.amountText.setText(String.format("+%s ₴", operation.getAmount().toString()));
-            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.colorLiteGreen));
+            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_green));
         } else {
             holder.amountText.setText(String.format("-%s ₴", operation.getAmount().toString()));
-            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.colorLiteRed));
+            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_red));
         }
 
         String resultDateText = DateUtils.getStringDate(operation.getOperationDate(), DateUtils.DATE_FULL_PATTERN);

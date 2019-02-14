@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -45,7 +44,7 @@ import butterknife.OnClick;
 import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.DATE_KEY;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener, TabFragment.IMainActivity {
+public class MainActivity extends AppCompatActivity implements OnClickListener, TabFragment.onChangeOperationClickListener {
 
     public static final String OPERATION_KEY = "operation";
     public static final String IS_OPERATION_INCOME = "is_operation_income";
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         List<SpinnerItem> spinnerAccountItems = getAccountSpinnerItemListFromDb();
 
         ImageSpinnerAdapter adapter = new ImageSpinnerAdapter(this, R.layout.image_spinner_item, spinnerAccountItems,
-                ContextCompat.getColor(this, R.color.white), ContextCompat.getColor(this, R.color.darkBlack));
+                R.color.white, R.color.dark_black);
         accountsSpinner.setAdapter(adapter);
 
         accountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -148,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     private void initPeriodsSpinner() {
         dateSpinner.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         SimpleSpinnerAdapter adapter = new SimpleSpinnerAdapter(this, R.layout.simple_spinner_item, getResources().getStringArray(R.array.time_periods),
-                ContextCompat.getColor(this, R.color.white), ContextCompat.getColor(this, R.color.darkBlack));
+               R.color.white, R.color.dark_black);
         dateSpinner.setAdapter(adapter);
         dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
