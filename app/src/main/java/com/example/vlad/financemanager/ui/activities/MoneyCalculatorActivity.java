@@ -46,7 +46,7 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
 public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation,
-        DatePickerDialog.OnDateSetListener{
+        DatePickerDialog.OnDateSetListener {
     public static final String DATE_KEY = "date_key";
     private static final String DATE_PICKER_TAG = "date picker";
 
