@@ -1,4 +1,5 @@
 package com.example.vlad.financemanager.ui;
 
-public class OnItemDeleteClickListener {
+public interface OnItemDeleteClickListener {
+    void onItemDeleteClick(int position);
 }

@@ -2,7 +2,6 @@ package com.example.vlad.financemanager.ui.adapters
 
 import android.content.Context
 import android.support.v7.widget.PopupMenu
-import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.support.v4.content.ContextCompat
@@ -14,25 +13,20 @@ import android.widget.TextView
 
 import com.example.vlad.financemanager.R
 import com.example.vlad.financemanager.data.models.Operation
+import com.example.vlad.financemanager.ui.OnItemClickListener
+import com.example.vlad.financemanager.ui.OnItemDeleteClickListener
 import com.example.vlad.financemanager.utils.DateUtils
 
-class OperationsAdapter(private val context: Context, private var operationList: List<Operation>?) : RecyclerView.Adapter<OperationsAdapter.OperationViewHolder>() {
-    private var itemDeleteClickListener: onItemDeleteClickListener? = null
+class OperationsAdapter(private val context: Context,
+                        private var operationList: List<Operation>?) : RecyclerView.Adapter<OperationsAdapter.OperationViewHolder>() {
+    private var itemDeleteClickListener: OnItemDeleteClickListener? = null
     private var itemClickListener: OnItemClickListener? = null
-
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
-    }
-
-    interface onItemDeleteClickListener {
-        fun onItemDeleteClick(position: Int)
-    }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         itemClickListener = listener
     }
 
-    fun setOnItemDeleteClickListener(listener: onItemDeleteClickListener) {
+    fun setOnItemDeleteClickListener(listener: OnItemDeleteClickListener) {
         itemDeleteClickListener = listener
     }
 
@@ -85,30 +79,19 @@ class OperationsAdapter(private val context: Context, private var operationList:
             }
             popup.show()
         }
-
     }
 
     override fun getItemCount(): Int {
         return operationList!!.size
     }
 
-    internal inner class OperationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var categoryText: TextView
-        var amountText: TextView
-        var commentText: TextView
-        var textDate: TextView
-        var categoryImg: ImageView
-        var moreButton: ImageButton
-
-        init {
-
-            categoryText = itemView.findViewById(R.id.itemCategoryNameTextView)
-            amountText = itemView.findViewById(R.id.itemAmountTextView)
-            commentText = itemView.findViewById(R.id.itemCommentTextView)
-            textDate = itemView.findViewById(R.id.dateOperationRecyclerItemTextView)
-            categoryImg = itemView.findViewById(R.id.circleIconImageView)
-            moreButton = itemView.findViewById(R.id.moreButton)
-        }
+    class OperationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var categoryText: TextView = itemView.findViewById(R.id.itemCategoryNameTextView)
+        var amountText: TextView = itemView.findViewById(R.id.itemAmountTextView)
+        var commentText: TextView = itemView.findViewById(R.id.itemCommentTextView)
+        var textDate: TextView = itemView.findViewById(R.id.dateOperationRecyclerItemTextView)
+        var categoryImg: ImageView = itemView.findViewById(R.id.circleIconImageView)
+        var moreButton: ImageButton = itemView.findViewById(R.id.moreButton)
     }
 
     fun setOperationList(operationList: List<Operation>) {

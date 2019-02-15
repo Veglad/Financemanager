@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ScrollView
 import android.widget.TextView
 
@@ -19,6 +20,8 @@ import com.example.vlad.financemanager.data.database.DatabaseHelper
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime
 import com.example.vlad.financemanager.data.models.Operation
 import com.example.vlad.financemanager.ui.OnChangeOperationClickListener
+import com.example.vlad.financemanager.ui.OnItemClickListener
+import com.example.vlad.financemanager.ui.OnItemDeleteClickListener
 import com.example.vlad.financemanager.ui.adapters.OperationsAdapter
 import com.github.mikephil.charting.charts.Chart
 import com.github.mikephil.charting.charts.PieChart
@@ -233,9 +236,9 @@ class TabFragment : Fragment() {
         operationsRecyclerView.itemAnimator = DefaultItemAnimator()
         operationsRecyclerView.layoutManager = LinearLayoutManager(context!!.applicationContext)
 
-        operationsAdapter = OperationsAdapter(context, operationList)
-        operationsAdapter.setOnItemClickListener { position -> changeOperationClick(position) }
-        operationsAdapter.setOnItemDeleteClickListener { position -> deleteOperation(position) }
+        operationsAdapter = OperationsAdapter(context!!, operationList)
+        operationsAdapter.setOnItemClickListener(OnItemClickListener { position -> changeOperationClick(position) })
+        operationsAdapter.setOnItemDeleteClickListener(OnItemDeleteClickListener { position -> deleteOperation(position) })
         operationsRecyclerView.adapter = operationsAdapter
     }
 
