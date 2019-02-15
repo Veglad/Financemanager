@@ -77,7 +77,7 @@ public class OperationsAdapter extends RecyclerView.Adapter<OperationsAdapter.Op
             holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_red));
         }
 
-        String resultDateText = DateUtils.getStringDate(operation.getOperationDate(), DateUtils.DATE_FULL_PATTERN);
+        String resultDateText = DateUtils.INSTANCE.getStringDate(operation.getOperationDate(), DateUtils.DATE_FULL_PATTERN);
         holder.textDate.setText(resultDateText);
         holder.categoryImg.setImageResource(operation.getCategory().getIcon());
 

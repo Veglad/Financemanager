@@ -111,6 +111,7 @@ public class TabFragment extends Fragment {
             accountId = extras.getInt(ACCOUNT_ID_KEY);
             currentPeriod = (PeriodsOfTime) extras.getSerializable(CURRENT_PERIOD_KEY);
             currentEndOfPeriod = (Calendar) extras.getSerializable(END_OF_PERIOD_KEY);
+            currentEndOfPeriod.setFirstDayOfWeek(Calendar.MONDAY);
             dateTitle = extras.getString(DATE_TITLE_KEY);
             isIncome = getArguments().getBoolean(IS_INCOME_KEY);
 

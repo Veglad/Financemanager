@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
     {
         endOfPeriod = Calendar.getInstance();
         endOfPeriod.setTime(new Date());
+        endOfPeriod.setFirstDayOfWeek(Calendar.MONDAY);
     }
 
     private ViewPagerAdapter viewPagerAdapter;
@@ -159,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
                         endOfPeriod = currentFragment.getCurrentEndOfPeriod();
                     }
                     initViewPagerWithTabs();
-                    viewPager.setCurrentItem(DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.getEndOfPeriodList()));
+                    viewPager.setCurrentItem(DateUtils.INSTANCE.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.getEndOfPeriodList()));
                 }
             }
 
@@ -193,17 +194,17 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
     private void initViewPagerEntriesByPeriod(List<String> titles, List<Calendar> endOfPeriodList, Date minOperationDate, Date maxDate, boolean includeLast) {
         Calendar currentPagerListDate = Calendar.getInstance();
         currentPagerListDate.setTime(minOperationDate);
-        currentPagerListDate = DateUtils.getEndOfPeriod(currentPagerListDate, currentPeriod);
+        currentPagerListDate = DateUtils.INSTANCE.getEndOfPeriod(currentPagerListDate, currentPeriod);
 
         do {
-            String tabTitle = DateUtils.getStringDateByPeriod(currentPeriod, currentPagerListDate);
+            String tabTitle = DateUtils.INSTANCE.getStringDateByPeriod(currentPeriod, currentPagerListDate);
             titles.add(tabTitle);
 
             Calendar endOfPeriod = Calendar.getInstance();
             endOfPeriod.setTime(currentPagerListDate.getTime());
             endOfPeriodList.add(endOfPeriod);
         }
-        while (DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
+        while (DateUtils.INSTANCE.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast));
     }
 
     @Override
@@ -246,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
 
     private boolean isOperationFitsToCurrPeriodAndAccount(Operation operation, PeriodsOfTime currentPeriod, Calendar currentDate) {
 
-        boolean isInPeriod = !DateUtils.isOutOfPeriod(operation.getOperationDate(),
+        boolean isInPeriod = !DateUtils.INSTANCE.isOutOfPeriod(operation.getOperationDate(),
                 currentPeriod, currentDate);
         boolean isSuiteToCurrentAccount = accountId == operation.getAccountId() || accountId == MainActivity.ACCOUNT_ALL_ID;
         return isInPeriod && isSuiteToCurrentAccount;
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
         List<String> newTabTitles = new ArrayList<>();
         List<Calendar> newEndOfPeriodList = new ArrayList<>();
         initViewPagerEntriesByPeriod(newTabTitles, newEndOfPeriodList, minOperationDate,
-                DateUtils.substractOneDay(this.minOperationDate), false);
+                DateUtils.INSTANCE.substractOneDay(this.minOperationDate), false);
 
         List<String> tabTitles = viewPagerAdapter.getTabTitles();
         tabTitles.addAll(0, newTabTitles);
