@@ -32,11 +32,11 @@ class ViewPagerAdapter(fragmentManager: FragmentManager,
     }
 
     //This method is invoked after notifyDataSetChanged method invocation
-    override fun getItemPosition(`object`: Any): Int {
-        val fragment = `object` as TabFragment
+    override fun getItemPosition(any: Any): Int {
+        val fragment = any as TabFragment
         fragment.fullTabFragmentUpdate(currentPeriod, fragment.currentEndOfPeriod, isIncome, accountId, fragment.dateTitle)
 
-        return super.getItemPosition(`object`)
+        return super.getItemPosition(any)
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -45,9 +45,9 @@ class ViewPagerAdapter(fragmentManager: FragmentManager,
         return fragment
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+    override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
         registeredFragments.remove(position)
-        super.destroyItem(container, position, `object`)
+        super.destroyItem(container, position, any)
     }
 
     fun getRegisteredFragment(position: Int): TabFragment {
