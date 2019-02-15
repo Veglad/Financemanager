@@ -237,8 +237,18 @@ class TabFragment : Fragment() {
         operationsRecyclerView.layoutManager = LinearLayoutManager(context!!.applicationContext)
 
         operationsAdapter = OperationsAdapter(context!!, operationList)
-        operationsAdapter.setOnItemClickListener(OnItemClickListener { position -> changeOperationClick(position) })
-        operationsAdapter.setOnItemDeleteClickListener(OnItemDeleteClickListener { position -> deleteOperation(position) })
+        operationsAdapter.setOnItemClickListener(object : OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                changeOperationClick(position)
+            }
+
+        })
+        operationsAdapter.setOnItemDeleteClickListener(object : OnItemDeleteClickListener {
+            override fun onItemDeleteClick(position: Int) {
+                deleteOperation(position)
+            }
+
+        })
         operationsRecyclerView.adapter = operationsAdapter
     }
 

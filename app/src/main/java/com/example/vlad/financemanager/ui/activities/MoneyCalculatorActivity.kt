@@ -23,8 +23,6 @@ import android.widget.Toast
 
 import com.example.vlad.financemanager.data.database.DatabaseHelper
 import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper
-import com.example.vlad.financemanager.data.models.Account
-import com.example.vlad.financemanager.data.models.Category
 import com.example.vlad.financemanager.ui.IMoneyCalculation
 import com.example.vlad.financemanager.PresenterMoneyCalculator
 import com.example.vlad.financemanager.R
@@ -39,13 +37,21 @@ import java.util.Calendar
 import java.util.Date
 
 class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
+    override val comment: String
+        get(){
+            return commentEditText.text.toString()
+        }
+    override val amount: String
+        get(){
+            return amountEditText.text.toString()
+        }
 
     private val sdf = SimpleDateFormat("E, dd MMMM")
     private val sdfWithYear = SimpleDateFormat("E, MMMM dd, yyyy")
 
     private lateinit var resultText: TextView
     private lateinit var amountEditText: EditText
-    private lateinit var comment: EditText
+    private lateinit var commentEditText: EditText
     private lateinit var toolbar: Toolbar
     private lateinit var toolbarTitle: TextView
     private lateinit var accountsSpinner: Spinner
@@ -56,15 +62,15 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     private lateinit var btnBack: ImageButton
 
     private lateinit var presenter: PresenterMoneyCalculator
-    private var operationDate = Date()
+    override var operationDate = Date()
     private lateinit var databaseHelper: DatabaseHelper
 
     private lateinit var categorySpinnerItemList: List<SpinnerItem>
     private lateinit var accountSpinnerItemList: List<SpinnerItem>
 
-    private var isOperationIncome: Boolean = false
-    private var accountId: Int = 0
-    private var categoryId: Int = 0
+    override var isOperationInput: Boolean = false
+    override var accountId: Int = 0
+    override var categoryId: Int = 0
 
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +80,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         resultText = findViewById(R.id.calculationResultTextView)
         amountEditText = findViewById(R.id.amountMoneyActivityEditText)
         amountEditText.addTextChangedListener(this)
-        comment = findViewById(R.id.commentMoneyActivityEditText)
+        commentEditText = findViewById(R.id.commentMoneyActivityEditText)
         toolbar = findViewById(R.id.calculatorActivityToolbar)
         toolbarTitle = findViewById(R.id.toolbarTitleTextView)
         accountsSpinner = findViewById(R.id.accountSpinner)
@@ -113,7 +119,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     private fun initSpinnersItemLists(userId: Int) {
         val accountList = databaseHelper.getAllAccounts(userId)
         accountSpinnerItemList = SpinnerItemMapper.mapAccountsToSpinnerItems(accountList)
-        val categoryList = databaseHelper.getAllCategories(userId, isOperationIncome)
+        val categoryList = databaseHelper.getAllCategories(userId, isOperationInput)
         categorySpinnerItemList = SpinnerItemMapper.mapCategoryToSpinnerItems(categoryList)
     }
 
@@ -152,30 +158,6 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         }
 
         return dateButtonTitle
-    }
-
-    override fun getCategoryId(): Int {
-        return categoryId
-    }
-
-    override fun getAccountId(): Int {
-        return accountId
-    }
-
-    override fun getOperationDate(): Date {
-        return operationDate
-    }
-
-    override fun getComment(): String {
-        return comment.text.toString()
-    }
-
-    override fun getIsOperationInput(): Boolean {
-        return isOperationIncome
-    }
-
-    override fun getAmount(): String {
-        return amountEditText.text.toString()
     }
 
     override fun setAmountResultText(result: String) {
@@ -229,12 +211,12 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         if(extras == null) return
 
         val userId = extras.getInt(MainActivity.USER_ID_KEY)
-        isOperationIncome = extras.getBoolean(MainActivity.IS_OPERATION_INCOME)
+        isOperationInput = extras.getBoolean(MainActivity.IS_OPERATION_INCOME)
         val isModifyingOperation = extras.getBoolean(MainActivity.IS_MODIFYING_OPERATION)
 
         initSpinnersItemLists(userId)
         initSpinnersWithItemLists(accountSpinnerItemList, categorySpinnerItemList)
-        initToolbar(isOperationIncome)
+        initToolbar(isOperationInput)
 
         if (isModifyingOperation) {//Init UI via operation
             val operation = initOperationFromExtras(extras)
@@ -256,7 +238,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
 
         initDateTimePicker(Date(operation.operationDate.time))
         dateButton.text = dateButtonTitle
-        comment.setText(operation.comment)
+        commentEditText.setText(operation.comment)
         setAmountResultText(operation.amount.toString())
         presenter.settingResultText(operation.amount)
         selectSpinnerItemMatchesToId(operation.category.id, categorySpinnerItemList, categoriesSpinner)

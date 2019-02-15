@@ -202,7 +202,7 @@ class ModelMoneyCalculator {
         return resultText
     }
 
-    fun calculationError(): String? {
+    fun calculationError(): String {
         clearNumber()
         return resultText
     }
