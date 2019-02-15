@@ -4,7 +4,7 @@ import java.io.Serializable
 import java.math.BigDecimal
 import java.util.Date
 
-class Operation(@Transient
+data class Operation(@Transient
                 var amount: BigDecimal,
                 var operationDate: Date,
                 var comment: String,

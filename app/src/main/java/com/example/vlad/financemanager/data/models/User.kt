@@ -3,7 +3,7 @@ package com.example.vlad.financemanager.data.models
 import java.math.BigDecimal
 import java.util.ArrayList
 
-class User(var balance: BigDecimal?, var name: String?) {
+data class User(var balance: BigDecimal?, var name: String?) {
 
     val id: Int = 0
 

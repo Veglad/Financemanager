@@ -2,7 +2,7 @@ package com.example.vlad.financemanager.data.models
 
 import java.io.Serializable
 
-class Category(var id: Int,
+data class Category(var id: Int,
                var name: String,
                var icon: Int,
                var isCustom: Boolean,

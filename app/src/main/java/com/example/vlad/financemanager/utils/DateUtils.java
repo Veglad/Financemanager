@@ -158,7 +158,7 @@ public final class DateUtils {
 
         switch (period) {
             case WEEK:
-                endOfPeriod.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                endOfPeriod.set(Calendar.DAY_OF_WEEK, endOfPeriod.getActualMaximum(Calendar.DAY_OF_WEEK));
                 break;
             case MONTH:
                 endOfPeriod.set(Calendar.DAY_OF_MONTH, endOfPeriod.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -179,11 +179,11 @@ public final class DateUtils {
     }
 
     public static int getSutedDateIndexByDateFromList(Calendar date, List<Calendar> endOfPeriodList) {
-        if (endOfPeriodList.size() == 1) return 0;
+        if (endOfPeriodList.size() < 1) return 0;
 
         int position = endOfPeriodList.size() - 1;
         int i = position;
-        while (date.compareTo(endOfPeriodList.get(--i)) <= 0) {
+        while (i != 0 && date.compareTo(endOfPeriodList.get(--i)) <= 0) {
             position = i;
         }
 
