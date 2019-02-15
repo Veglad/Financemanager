@@ -40,29 +40,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTextChanged;
-
 public class MoneyCalculatorActivity extends AppCompatActivity implements IMoneyCalculation,
-        DatePickerDialog.OnDateSetListener {
+        DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
     public static final String DATE_KEY = "date_key";
     private static final String DATE_PICKER_TAG = "date picker";
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("E, dd MMMM");
     private final SimpleDateFormat sdfWithYear = new SimpleDateFormat("E, MMMM dd, yyyy");
 
-    @BindView(R.id.calculationResultTextView) TextView resultText;
-    @BindView(R.id.amountMoneyActivityEditText) EditText amountEditText;
-    @BindView(R.id.commentMoneyActivityEditText) EditText comment;
-    @BindView(R.id.calculatorActivityToolbar) Toolbar toolbar;
-    @BindView(R.id.toolbarTitleTextView) TextView toolbarTitle;
-    @BindView(R.id.accountSpinner) Spinner accountsSpinner;
-    @BindView(R.id.categorySpinner) Spinner categoriesSpinner;
-    @BindView(R.id.operationDateButton) Button dateButton;
-    @BindView(R.id.saveRecordButton) Button saveButton;
-    @BindView(R.id.calculatorBackButton) ImageButton btnBack;
+    private TextView resultText;
+    private EditText amountEditText;
+    private EditText comment;
+    private Toolbar toolbar;
+    private TextView toolbarTitle;
+    private Spinner accountsSpinner;
+    private Spinner categoriesSpinner;
+    private Button dateButton;
+    private Button saveButton;
+    private Button closeButton;
+    private ImageButton btnBack;
 
     private PresenterMoneyCalculator presenter;
     private Date operationDate = new Date();
@@ -80,7 +76,21 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_money_calculator);
-        ButterKnife.bind(this);
+
+        resultText = findViewById(R.id.calculationResultTextView);
+        amountEditText = findViewById(R.id.amountMoneyActivityEditText);
+        amountEditText.addTextChangedListener(this);
+        comment = findViewById(R.id.commentMoneyActivityEditText);
+        toolbar = findViewById(R.id.calculatorActivityToolbar);
+        toolbarTitle = findViewById(R.id.toolbarTitleTextView);
+        accountsSpinner = findViewById(R.id.accountSpinner);
+        categoriesSpinner = findViewById(R.id.categorySpinner);
+        dateButton = findViewById(R.id.operationDateButton);
+        saveButton = findViewById(R.id.saveRecordButton);
+        saveButton.setOnClickListener(this);
+        closeButton = findViewById(R.id.closeOperationButton);
+        closeButton.setOnClickListener(this);
+        btnBack = findViewById(R.id.calculatorBackButton);
 
         databaseHelper = DatabaseHelper.Companion.getInstance(getApplicationContext());
         presenter = new PresenterMoneyCalculator(this);
@@ -326,7 +336,7 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         });
     }
 
-    @OnClick({R.id.closeOperationButton, R.id.saveRecordButton})
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.closeOperationButton:
@@ -339,8 +349,18 @@ public class MoneyCalculatorActivity extends AppCompatActivity implements IMoney
         }
     }
 
-    @OnTextChanged({R.id.amountMoneyActivityEditText})
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (before > count) presenter.calculatorReset();
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

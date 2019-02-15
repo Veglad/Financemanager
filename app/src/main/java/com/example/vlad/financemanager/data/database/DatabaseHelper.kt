@@ -230,7 +230,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
 
-    fun getAllCategories(userId: Int, isIncome: Boolean): List<Category> {
+    fun getAllCategories(userId: Int, isIncome: Boolean): MutableList<Category> {
         val categoryList = ArrayList<Category>()
         val db = readableDatabase
 
@@ -247,7 +247,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         return categoryList
     }
 
-    fun getAllAccounts(userId: Int): List<Account> {
+    fun getAllAccounts(userId: Int): MutableList<Account> {
         val accountList = ArrayList<Account>()
         val db = readableDatabase
 
@@ -300,7 +300,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
 
     // If accountId < 0 method selects all accounts
-    fun getOperations(accountId: Int?, period: PeriodsOfTime, currDay: Calendar): List<Operation>? {
+    fun getOperations(accountId: Int?, period: PeriodsOfTime, currDay: Calendar): MutableList<Operation>? {
         val operationsList = ArrayList<Operation>()
         val db = readableDatabase
         val operationsCursor = getOperationCursor(accountId!!, DateUtils.getEndOfPeriod(currDay, period), db, period)

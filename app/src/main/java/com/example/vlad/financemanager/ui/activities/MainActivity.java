@@ -23,6 +23,7 @@ import com.example.vlad.financemanager.data.models.Category;
 import com.example.vlad.financemanager.data.models.Operation;
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime;
 import com.example.vlad.financemanager.data.models.SpinnerItem;
+import com.example.vlad.financemanager.ui.OnChangeOperationClickListener;
 import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter;
 import com.example.vlad.financemanager.ui.adapters.SimpleSpinnerAdapter;
 import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter;
@@ -35,14 +36,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import static com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.DATE_KEY;
 
 
-public class MainActivity extends AppCompatActivity implements TabFragment.OnChangeOperationClickListener {
+public class MainActivity extends AppCompatActivity implements OnChangeOperationClickListener {
 
     public static final String OPERATION_KEY = "operation";
     public static final String IS_OPERATION_INCOME = "is_operation_income";
@@ -55,11 +52,11 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
     public static final int CHANGE_OPERATION_REQUEST_CODE = 1;
     public static final int USER_ID = 0;
 
-    @BindView(R.id.periodsSpinner) Spinner dateSpinner;
-    @BindView(R.id.accountsSpinner) Spinner accountsSpinner;
-    @BindView(R.id.bottomNavigation) BottomNavigationView bottomNavigationView;
-    @BindView(R.id.newOperationButton) FloatingActionButton operationFloatingActionButton;
-    @BindView(R.id.pieChartViewPager) ViewPager viewPager;
+    private Spinner dateSpinner;
+    private Spinner accountsSpinner;
+    private BottomNavigationView bottomNavigationView;
+    private FloatingActionButton operationFloatingActionButton;
+    private ViewPager viewPager;
 
     private Calendar endOfPeriod; //TODO: remove this
 
@@ -82,9 +79,14 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
         database = DatabaseHelper.Companion.getInstance(getApplicationContext());
+
+        dateSpinner = findViewById(R.id.periodsSpinner);
+        accountsSpinner = findViewById(R.id.accountsSpinner);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        operationFloatingActionButton = findViewById(R.id.newOperationButton);
+        viewPager = findViewById(R.id.pieChartViewPager);
 
         initBottomNavigation();
         initAccountsSpinner();
@@ -284,8 +286,7 @@ public class MainActivity extends AppCompatActivity implements TabFragment.OnCha
         return operation;
     }
 
-    @OnClick({R.id.newOperationButton})
-    public void onClick(View v) {
+    public void onNewOperationButtonClick(View v) {
         Intent intent = new Intent(this, MoneyCalculatorActivity.class);
         intent.putExtra(IS_OPERATION_INCOME, isIncome);
         intent.putExtra(IS_MODIFYING_OPERATION, false);

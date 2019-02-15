@@ -35,7 +35,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return TabFragment.newInstance(currentPeriod, endOfPeriodList.get(position), isIncome, accountId, tabTitles.get(position));
+        return TabFragment.Companion.newInstance(currentPeriod, endOfPeriodList.get(position), isIncome, accountId, tabTitles.get(position));
     }
 
     public void setAccountId(int accountId) {

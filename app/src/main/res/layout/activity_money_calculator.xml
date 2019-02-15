@@ -133,6 +133,7 @@
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:background="@color/white"
                 android:text="@string/save"
+                android:onClick=""
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
