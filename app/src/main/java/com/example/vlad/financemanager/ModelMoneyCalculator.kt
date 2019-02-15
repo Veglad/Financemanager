@@ -5,33 +5,39 @@ import com.example.vlad.financemanager.data.enums.CalculatorOperations
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-internal class ModelMoneyCalculator {
-    private val RESULT_MAX_LENGTH = 8
+class ModelMoneyCalculator {
+
+    companion object {
+        private const val NOT_FOUND_INDEX = -1
+        private const val DECIMAL_PLACES_MAX_COUNT = 2
+        private const val RESULT_MAX_LENGTH = 8
+    }
+
     private val maxAllowedValue = BigDecimal("99999999")
     val zeroBigDecimalValue = BigDecimal("0")
 
-    var resultText: String? = null
+    var resultText: String
         private set
     /**
      * First operand (Accumulator)
      */
-    private var accumulator: BigDecimal? = null
+    private var accumulator: BigDecimal
     /**
      * Second operand
      */
-    private var secondOperand: BigDecimal? = null
+    private var secondOperand: BigDecimal
     /**
      * Field for keeping some data in specific situations
      */
-    private var tempOperand: BigDecimal? = null
+    private var tempOperand: BigDecimal
     /**
      * operation to perform
      */
-    private var operation: CalculatorOperations? = null
+    private var operation: CalculatorOperations
     /**
      * Field for keeping name of operation
      */
-    private var tempOperation: CalculatorOperations? = null
+    private var tempOperation: CalculatorOperations
     /**
      * is temp operand empty or no. Using for complex sequence of operations
      */
@@ -48,6 +54,7 @@ internal class ModelMoneyCalculator {
     init {
         resultText = "0"
         accumulator = BigDecimal(0)
+        tempOperand = BigDecimal(0)
         secondOperand = BigDecimal(0)
         operation = CalculatorOperations.NONE
         tempOperation = CalculatorOperations.NONE
@@ -64,6 +71,7 @@ internal class ModelMoneyCalculator {
             CalculatorOperations.SUB -> result = countLowPriorityOperation(CalculatorOperations.SUB)
             CalculatorOperations.MUL -> result = countHighPriorityOperation(CalculatorOperations.MUL)
             CalculatorOperations.DIV -> result = countHighPriorityOperation(CalculatorOperations.DIV)
+            else -> { }
         }
         if (isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0"
 
@@ -111,24 +119,25 @@ internal class ModelMoneyCalculator {
     private fun calculate(): Boolean {
         secondOperand = BigDecimal(resultText)
         when (operation) {
-            CalculatorOperations.ADD -> accumulator = accumulator!!.add(secondOperand)
-            CalculatorOperations.SUB -> accumulator = accumulator!!.subtract(secondOperand)
+            CalculatorOperations.ADD -> accumulator = accumulator.add(secondOperand)
+            CalculatorOperations.SUB -> accumulator = accumulator.subtract(secondOperand)
             CalculatorOperations.MUL -> {
-                accumulator = accumulator!!.multiply(secondOperand)
-                accumulator = accumulator!!.setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                accumulator = accumulator.multiply(secondOperand)
+                accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN)
             }
             CalculatorOperations.DIV -> {
                 //division by zero
-                if (secondOperand!!.compareTo(zeroBigDecimalValue) == 0) return false
+                if (secondOperand.compareTo(zeroBigDecimalValue) == 0) return false
 
-                accumulator = accumulator!!.divide(secondOperand, 2, RoundingMode.CEILING)
-                accumulator = accumulator!!.setScale(2, BigDecimal.ROUND_HALF_EVEN)
+                accumulator = accumulator.divide(secondOperand, 2, RoundingMode.CEILING)
+                accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN)
             }
+            else -> { }
         }
         //If the new number is too big
-        if (accumulator!!.compareTo(maxAllowedValue) > 0) return false
+        if (accumulator > maxAllowedValue) return false
 
-        resultText = accumulator!!.toString()
+        resultText = accumulator.toString()
         justCount = true
         return true
     }
@@ -144,9 +153,9 @@ internal class ModelMoneyCalculator {
         }
 
         //If the result value is less or equals 0
-        if (accumulator!!.compareTo(zeroBigDecimalValue) <= 0) return false
+        if (accumulator <= zeroBigDecimalValue) return false
         //If the new number is too big
-        if (accumulator!!.compareTo(maxAllowedValue) > 0) return false
+        if (accumulator > maxAllowedValue) return false
 
         //Reset accumulator and second operand
         isTempOperationEmpty = true
@@ -158,21 +167,22 @@ internal class ModelMoneyCalculator {
     }
 
     fun isNewResultCorrect(newChar: Char): Boolean {
-        val lastIndexOfSeparator = resultText!!.lastIndexOf('.')
+        val lastIndexOfSeparator = resultText.lastIndexOf('.')
 
-        if (newChar == '.' && resultText!!.contains("."))
+        if (newChar == '.' && resultText.contains("."))
             return false
-        if (lastIndexOfSeparator != NOT_FOUND_INDEX && lastIndexOfSeparator <= resultText!!.length - (DECIMAL_PLACES_MAX_COUNT - 1))
+        if (lastIndexOfSeparator != NOT_FOUND_INDEX && lastIndexOfSeparator <= resultText.length - (DECIMAL_PLACES_MAX_COUNT - 1))
             return false
-        return if (lastIndexOfSeparator == NOT_FOUND_INDEX && resultText!!.length == RESULT_MAX_LENGTH && newChar != '.') false else true
+
+        return !(lastIndexOfSeparator == NOT_FOUND_INDEX && resultText.length == RESULT_MAX_LENGTH && newChar != '.')
 
     }
 
     fun clearLastSymbol(): String {
-        if (resultText!!.length == 1 || resultText!!.contains("E") || resultText!!.contains("e"))
-            resultText = "0"
+        resultText = if (resultText.length == 1 || resultText.contains("E") || resultText.contains("e"))
+            "0"
         else
-            resultText = resultText!!.substring(0, resultText!!.length - 1)
+            resultText.substring(0, resultText.length - 1)
 
         return resultText
     }
@@ -198,7 +208,7 @@ internal class ModelMoneyCalculator {
     }
 
     fun newResultText(lastChar: Char): String {
-        if (resultText!!.length == 1 && resultText!![0] == '0' && lastChar != '.')
+        if (resultText.length == 1 && resultText[0] == '0' && lastChar != '.')
             resultText = lastChar + ""
         else if (justCount && lastChar != '.') {
             justCount = false
@@ -216,10 +226,5 @@ internal class ModelMoneyCalculator {
     fun initFotChangeOperation(newResult: BigDecimal) {
         resultText = newResult.toString()
         accumulator = newResult
-    }
-
-    companion object {
-        private val NOT_FOUND_INDEX = -1
-        private val DECIMAL_PLACES_MAX_COUNT = 2
     }
 }
