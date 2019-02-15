@@ -1,26 +1,18 @@
 package com.example.vlad.financemanager.ui.activities
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
-import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
-import android.widget.Spinner
 import android.widget.Toast
 
 import com.example.vlad.financemanager.R
 import com.example.vlad.financemanager.data.database.DatabaseHelper
 import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper
-import com.example.vlad.financemanager.data.models.Account
-import com.example.vlad.financemanager.data.models.Category
 import com.example.vlad.financemanager.data.models.Operation
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime
 import com.example.vlad.financemanager.data.models.SpinnerItem
@@ -28,7 +20,6 @@ import com.example.vlad.financemanager.ui.OnChangeOperationClickListener
 import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter
 import com.example.vlad.financemanager.ui.adapters.SimpleSpinnerAdapter
 import com.example.vlad.financemanager.ui.adapters.ViewPagerAdapter
-import com.example.vlad.financemanager.ui.fragments.TabFragment
 import com.example.vlad.financemanager.utils.DateUtils
 
 import java.math.BigDecimal
@@ -37,6 +28,7 @@ import java.util.Calendar
 import java.util.Date
 
 import com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.Companion.DATE_KEY
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
@@ -53,12 +45,6 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
         const val CHANGE_OPERATION_REQUEST_CODE = 1
         const val USER_ID = 0
     }
-
-    private lateinit var dateSpinner: Spinner
-    private lateinit var accountsSpinner: Spinner
-    private lateinit var bottomNavigationView: BottomNavigationView
-    private lateinit var operationFloatingActionButton: FloatingActionButton
-    private lateinit var viewPager: ViewPager
 
     private var endOfPeriod: Calendar //TODO: remove this
 
@@ -93,12 +79,6 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
 
         database = DatabaseHelper.getInstance(applicationContext)
 
-        dateSpinner = findViewById(R.id.periodsSpinner)
-        accountsSpinner = findViewById(R.id.accountsSpinner)
-        bottomNavigationView = findViewById(R.id.bottomNavigation)
-        operationFloatingActionButton = findViewById(R.id.newOperationButton)
-        viewPager = findViewById(R.id.pieChartViewPager)
-
         initBottomNavigation()
         initAccountsSpinner()
         initPeriodsSpinner()
@@ -106,15 +86,15 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun initBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.action_income -> {
                     isIncome = true
-                    operationFloatingActionButton.setImageResource(R.drawable.ic_add_white_48dp)
+                    newOperationButton.setImageResource(R.drawable.ic_add_white_48dp)
                 }
                 R.id.action_outcome -> {
                     isIncome = false
-                    operationFloatingActionButton.setImageResource(R.drawable.ic_remove_white_48dp)
+                    newOperationButton.setImageResource(R.drawable.ic_remove_white_48dp)
                 }
                 else -> {
                 }
@@ -122,7 +102,7 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
 
             viewPagerAdapter.setIsIncome(isIncome)
             viewPagerAdapter.notifyDataSetChanged()
-            val currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.currentItem)
+            val currentTabFragment = viewPagerAdapter.getRegisteredFragment(pieChartViewPager.currentItem)
             currentTabFragment.scrollToTop()
             true
         }
@@ -152,20 +132,20 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun initPeriodsSpinner() {
-        dateSpinner.background.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP)
+        periodsSpinner.background.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP)
         val adapter = SimpleSpinnerAdapter(this, R.layout.simple_spinner_item, resources.getStringArray(R.array.time_periods),
                 R.color.white, R.color.dark_black)
-        dateSpinner.adapter = adapter
-        dateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        periodsSpinner.adapter = adapter
+        periodsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedPeriod = getPeriodBySpinnerSelected(position)
                 if (currentPeriod !== selectedPeriod) {
                     currentPeriod = selectedPeriod
                     viewPagerAdapter.setCurrentPeriod(selectedPeriod)
-                    val currentFragment = viewPagerAdapter.getRegisteredFragment(viewPager.currentItem)
+                    val currentFragment = viewPagerAdapter.getRegisteredFragment(pieChartViewPager.currentItem)
                     endOfPeriod = currentFragment.currentEndOfPeriod
                     initViewPagerWithTabs()
-                    viewPager.currentItem = DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.endOfPeriodList)
+                    pieChartViewPager.currentItem = DateUtils.getSutedDateIndexByDateFromList(endOfPeriod, viewPagerAdapter.endOfPeriodList)
                 }
             }
 
@@ -187,9 +167,9 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     private fun initViewPagerWithEntries(titles: MutableList<String>, endOfPeriodList: MutableList<Calendar>) {
         viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, titles,
                 endOfPeriodList, currentPeriod, accountId, isIncome)
-        viewPager.adapter = viewPagerAdapter
+        pieChartViewPager.adapter = viewPagerAdapter
         viewPagerAdapter.notifyDataSetChanged()
-        viewPager.currentItem = endOfPeriodList.size - 1
+        pieChartViewPager.currentItem = endOfPeriodList.size - 1
     }
 
     private fun initViewPagerEntriesByPeriod(titles: MutableList<String>, endOfPeriodList: MutableList<Calendar>, minOperationDate: Date?, maxDate: Date, includeLast: Boolean) {
@@ -216,7 +196,7 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
         }
 
         val operation = getOperationFromExtras(extras)
-        val currentTabFragment = viewPagerAdapter.getRegisteredFragment(viewPager.currentItem)
+        val currentTabFragment = viewPagerAdapter.getRegisteredFragment(pieChartViewPager.currentItem)
         val currentPeriod = currentTabFragment.currentPeriod
         val currentDate = currentTabFragment.currentEndOfPeriod
 
@@ -264,11 +244,11 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
 
         this.minOperationDate = minOperationDate
 
-        var position = viewPager.currentItem
+        var position = pieChartViewPager.currentItem
         position += newTabTitles.size
 
         initViewPagerWithEntries(tabTitles, endOfPeriodList)
-        viewPager.currentItem = position
+        pieChartViewPager.currentItem = position
     }
 
     private fun getOperationFromExtras(extras: Bundle): Operation {

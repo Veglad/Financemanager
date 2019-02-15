@@ -7,13 +7,30 @@
     android:background="@color/primary_transparent"
     tools:context=".ui.activities.MoneyCalculatorActivity">
 
-    <include
+    <android.support.v7.widget.Toolbar
         android:id="@+id/calculatorActivityToolbar"
-        layout="@layout/calculator_toolbar"
+        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:theme="@style/HeaderBaseTheme"
+        android:background="@color/primary">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/toolbarTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="SomeText"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"

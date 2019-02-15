@@ -30,6 +30,7 @@ import com.example.vlad.financemanager.data.models.Operation
 import com.example.vlad.financemanager.data.models.SpinnerItem
 import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter
 import com.example.vlad.financemanager.ui.fragments.DatePickerFragment
+import kotlinx.android.synthetic.main.activity_money_calculator.*
 
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
@@ -39,27 +40,15 @@ import java.util.Date
 class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
     override val comment: String
         get(){
-            return commentEditText.text.toString()
+            return commentMoneyActivityEditText.text.toString()
         }
     override val amount: String
         get(){
-            return amountEditText.text.toString()
+            return amountMoneyActivityEditText.text.toString()
         }
 
     private val sdf = SimpleDateFormat("E, dd MMMM")
     private val sdfWithYear = SimpleDateFormat("E, MMMM dd, yyyy")
-
-    private lateinit var resultText: TextView
-    private lateinit var amountEditText: EditText
-    private lateinit var commentEditText: EditText
-    private lateinit var toolbar: Toolbar
-    private lateinit var toolbarTitle: TextView
-    private lateinit var accountsSpinner: Spinner
-    private lateinit var categoriesSpinner: Spinner
-    private lateinit var dateButton: Button
-    private lateinit var saveButton: Button
-    private lateinit var closeButton: Button
-    private lateinit var btnBack: ImageButton
 
     private lateinit var presenter: PresenterMoneyCalculator
     override var operationDate = Date()
@@ -77,25 +66,14 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_money_calculator)
 
-        resultText = findViewById(R.id.calculationResultTextView)
-        amountEditText = findViewById(R.id.amountMoneyActivityEditText)
-        amountEditText.addTextChangedListener(this)
-        commentEditText = findViewById(R.id.commentMoneyActivityEditText)
-        toolbar = findViewById(R.id.calculatorActivityToolbar)
-        toolbarTitle = findViewById(R.id.toolbarTitleTextView)
-        accountsSpinner = findViewById(R.id.accountSpinner)
-        categoriesSpinner = findViewById(R.id.categorySpinner)
-        dateButton = findViewById(R.id.operationDateButton)
-        saveButton = findViewById(R.id.saveRecordButton)
-        saveButton.setOnClickListener(this)
-        closeButton = findViewById(R.id.closeOperationButton)
-        closeButton.setOnClickListener(this)
-        btnBack = findViewById(R.id.calculatorBackButton)
+        amountMoneyActivityEditText.addTextChangedListener(this)
+        saveRecordButton.setOnClickListener(this)
+        closeOperationButton.setOnClickListener(this)
 
         databaseHelper = DatabaseHelper.getInstance(applicationContext)
         presenter = PresenterMoneyCalculator(this)
 
-        btnBack.setOnLongClickListener {
+        calculatorBackButton.setOnLongClickListener {
             presenter.clearNumber()
             true
         }
@@ -105,8 +83,8 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     }
 
     private fun initAmountEditText() {
-        amountEditText.requestFocus()
-        amountEditText.setOnKeyListener { _, keyCode, keyEvent ->
+        amountMoneyActivityEditText.requestFocus()
+        amountMoneyActivityEditText.setOnKeyListener { _, keyCode, keyEvent ->
             if (!(keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)) {
                 presenter.calculatorReset()
             }
@@ -124,21 +102,21 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     }
 
     private fun initToolbar(isIncome: Boolean) {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(calculatorActivityToolbar)
         supportActionBar?.let {
             it.setDisplayShowHomeEnabled(true)
             it.setDisplayHomeAsUpEnabled(true)
         }
-        toolbar.navigationIcon!!.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        toolbar.setNavigationOnClickListener { finish() }
+        calculatorActivityToolbar.navigationIcon!!.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        calculatorActivityToolbar.setNavigationOnClickListener { finish() }
 
         val title = if (isIncome) getString(R.string.income) else getString(R.string.outcome)
-        toolbarTitle.text = title
+        toolbarTitleTextView.text = title
     }
 
     private fun initDateTimePicker(operationDate: Date) {
-        dateButton.text = sdf.format(Date())
-        dateButton.setOnClickListener {
+        operationDateButton.text = sdf.format(Date())
+        operationDateButton.setOnClickListener {
             val df = DatePickerFragment()
             df.setCalendar(operationDate)
             df.show(supportFragmentManager, DATE_PICKER_TAG)
@@ -161,12 +139,12 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     }
 
     override fun setAmountResultText(result: String) {
-        amountEditText.setText(result)
-        resultText.text = result
+        amountMoneyActivityEditText.setText(result)
+        calculationResultTextView.text = result
     }
 
     override fun setCalculatorToZero() {
-        resultText.text = "0"
+        calculationResultTextView.text = "0"
     }
 
     fun calculatorBtnOnClick(view: View) {
@@ -204,7 +182,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
         operationDate = calendar.time
-        dateButton.text = getDateButtonTitleByDate(operationDate.time)
+        operationDateButton.text = getDateButtonTitleByDate(operationDate.time)
     }
 
     private fun initUiViaExtras(extras: Bundle?) {
@@ -230,19 +208,19 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     private fun primaryUiInit() {
         initDateTimePicker(Date())
         val dateButtonTitle = getDateButtonTitleByDate(Date().time)
-        dateButton.text = dateButtonTitle
+        operationDateButton.text = dateButtonTitle
     }
 
     private fun initUiViaOperationValues(operation: Operation) {
         val dateButtonTitle: String = getDateButtonTitleByDate(operation.operationDate.time)
 
         initDateTimePicker(Date(operation.operationDate.time))
-        dateButton.text = dateButtonTitle
-        commentEditText.setText(operation.comment)
+        operationDateButton.text = dateButtonTitle
+        commentMoneyActivityEditText.setText(operation.comment)
         setAmountResultText(operation.amount.toString())
         presenter.settingResultText(operation.amount)
-        selectSpinnerItemMatchesToId(operation.category.id, categorySpinnerItemList, categoriesSpinner)
-        selectSpinnerItemMatchesToId(operation.accountId, accountSpinnerItemList, accountsSpinner)
+        selectSpinnerItemMatchesToId(operation.category.id, categorySpinnerItemList, categorySpinner)
+        selectSpinnerItemMatchesToId(operation.accountId, accountSpinnerItemList, accountSpinner)
     }
 
     private fun selectSpinnerItemMatchesToId(id: Int, categorySpinnerItemList: List<SpinnerItem>, spinner: Spinner?) {
@@ -263,8 +241,8 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     private fun initSpinnersWithItemLists(accountSpinnerItemList: List<SpinnerItem>, categorySpinnerItemList: List<SpinnerItem>) {
         val accountSpinnerAdapter = ImageSpinnerAdapter(this, R.layout.image_spinner_item, accountSpinnerItemList,
                 R.color.dark_gray, R.color.dark_black)
-        accountsSpinner.adapter = accountSpinnerAdapter
-        accountsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        accountSpinner.adapter = accountSpinnerAdapter
+        accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
 
@@ -276,8 +254,8 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
 
         val categoriesSpinnerAdapter = ImageSpinnerAdapter(this, R.layout.image_spinner_item, categorySpinnerItemList,
                 R.color.dark_gray, R.color.dark_black)
-        categoriesSpinner.adapter = categoriesSpinnerAdapter
-        categoriesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        categorySpinner.adapter = categoriesSpinnerAdapter
+        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
 
