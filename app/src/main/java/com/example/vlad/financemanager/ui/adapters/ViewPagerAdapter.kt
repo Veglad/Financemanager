@@ -12,8 +12,8 @@ import com.example.vlad.financemanager.data.enums.PeriodsOfTime
 import java.util.Calendar
 
 class ViewPagerAdapter(fragmentManager: FragmentManager,
-                       var tabTitles: List<String>,
-                       var endOfPeriodList: List<Calendar>,
+                       var tabTitles: MutableList<String>,
+                       var endOfPeriodList: MutableList<Calendar>,
                        private var currentPeriod: PeriodsOfTime,
                        private var accountId: Int,
                        private var isIncome: Boolean) : FragmentStatePagerAdapter(fragmentManager) {
