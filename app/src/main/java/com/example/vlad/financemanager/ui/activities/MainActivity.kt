@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun initAccountsSpinner() {
-        accountsSpinner.background.setColorFilter(ContextCompat.getColor(this,  R.color.white), PorterDuff.Mode.SRC_ATOP)
+        accountsSpinner.background.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP)
         val spinnerAccountItems = accountSpinnerItemListFromDb
 
         val adapter = ImageSpinnerAdapter(this, R.layout.image_spinner_item, spinnerAccountItems,
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun initViewPagerWithTabs() {
-        minOperationDate = database.getMinOperationDate(USER_ID)?: Date()
+        minOperationDate = database.getMinOperationDate(USER_ID) ?: Date()
 
         val titles = mutableListOf<String>()
         val endOfPeriodList = mutableListOf<Calendar>()
@@ -204,7 +204,7 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
             val id = database.insertOperation(operation, USER_ID, operation.accountId)
             operation.id = id.toInt()
             if (isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
-                updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID)?: Date())
+                updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID) ?: Date())
             } else {
                 currentTabFragment.updateUiViaNewOperation(operation)
             }
@@ -252,7 +252,6 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun getOperationFromExtras(extras: Bundle): Operation {
-
         val operation = extras.getSerializable(OPERATION_KEY) as Operation
         val amountString = extras.getString(AMOUNT_KEY)
         operation.amount = BigDecimal(amountString)

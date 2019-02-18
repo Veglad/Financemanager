@@ -5,10 +5,10 @@ import java.math.BigDecimal
 import java.util.Date
 
 data class Operation(@Transient
-                var amount: BigDecimal,
-                var operationDate: Date,
-                var comment: String,
-                var isOperationIncome: Boolean,
-                var category: Category,
-                var id: Int,
-                var accountId: Int) : Serializable
+                     var amount: BigDecimal,
+                     var operationDate: Date,
+                     var comment: String,
+                     var isOperationIncome: Boolean,
+                     var category: Category,
+                     var id: Int,
+                     var accountId: Int) : Serializable

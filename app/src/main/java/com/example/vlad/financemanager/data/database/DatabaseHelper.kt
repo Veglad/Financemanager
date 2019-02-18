@@ -166,7 +166,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         if (operationCursor.moveToFirst()) {
             val categoryId = operationCursor.getInt(operationCursor.getColumnIndex(OperationTable.COLUMN_CATEGORY_ID))
             category = getCategory(categoryId)
-            if(category == null) return null
+            if (category == null) return null
         } else return null
 
         val dateString = operationCursor.getString(operationCursor.getColumnIndex(OperationTable.COLUMN_DATE))

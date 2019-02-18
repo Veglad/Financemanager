@@ -44,14 +44,12 @@ data class User(var balance: BigDecimal?, var name: String?) {
     }
 
     fun addNewCustomCategory(category: Category): Boolean {
-        //Checking if we have a category with the same name
         for (categor in userCategories!!) {
             if (category.name == category.name)
                 return false
         }
 
         userCategories.add(category)
-        //UPDATE DB!!!!!!!!!!!!!!!!!!
 
         return true
     }
@@ -60,7 +58,6 @@ data class User(var balance: BigDecimal?, var name: String?) {
         for (i in userCategories!!.indices) {
             if (userCategories[i].id == categoryId) {
                 userCategories.removeAt(i)
-                //UPDATE DB!!!!!!!!!!!!!!!!!!
                 return true
             }
         }

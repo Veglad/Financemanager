@@ -1,13 +1,13 @@
 package com.example.vlad.financemanager.data.database
 
-object UserTable{
+object UserTable {
     const val TABLE_NAME = "usersList"
     const val COLUMN_NAME = "name"
     const val COLUMN_ID = "id"
     const val COLUMN_BALANCE = "balance"
 }
 
-object OperationTable{
+object OperationTable {
     const val TABLE_NAME = "operationList"
     const val COLUMN_ID = "id"
     const val COLUMN_AMOUNT = "amount"
@@ -20,7 +20,7 @@ object OperationTable{
     const val COLUMN_ACCOUNT_ID = "account_id"
 }
 
-object CategoryTable{
+object CategoryTable {
     const val TABLE_NAME = "categoryList"
     const val COLUMN_NAME = "name"
     const val COLUMN_ID = "id"
@@ -30,7 +30,7 @@ object CategoryTable{
     const val COLUMN_IS_INPUT_CATEGORY = "is_input_category"
 }
 
-object AccountTable{
+object AccountTable {
     const val TABLE_NAME = "accountList"
     const val COLUMN_NAME = "name"
     const val COLUMN_ID = "id"

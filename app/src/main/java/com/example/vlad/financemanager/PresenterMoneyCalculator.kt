@@ -10,19 +10,9 @@ import com.example.vlad.financemanager.ui.IMoneyCalculation
 import java.math.BigDecimal
 
 class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
-    private val model: ModelMoneyCalculator
+    private val model: ModelMoneyCalculator = ModelMoneyCalculator()
     private var modifyingOperationId: Int = 0
 
-    init {
-        model = ModelMoneyCalculator()
-    }
-
-    /**
-     * Method - updates the result int the calculator if the result is correct
-     *
-     * @param btnId       Clicked button
-     * @param numberValue Text value of this button (0,1,2..9, .)
-     */
     fun calculatorBtnOnClick(@IdRes btnId: Int, numberValue: String) {
         when (btnId) {
             R.id.calculatorBackButton -> view.setAmountResultText(model.clearLastSymbol())
@@ -52,7 +42,6 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
                 view.setAmountResultText(model.newResultText(numberValue[0]))
             }
         }
-
     }
 
     private fun performOperation(add: CalculatorOperations) {
@@ -62,16 +51,10 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
         }
     }
 
-    /**
-     * Clears number, reset calculator
-     */
     fun clearNumber() {
         view.setAmountResultText(model.clearNumber())
     }
 
-    /**
-     * Saving user's data as a new operation
-     */
     fun onButtonSaveClick() {
         val category = Category()
         category.id = view.categoryId
@@ -83,9 +66,7 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
 
         val operation = Operation(BigDecimal(view.amount), view.operationDate, view.comment.trim { it <= ' ' },
                 view.isOperationInput, category, modifyingOperationId, view.accountId)
-
         view.sendNewOperation(operation)
-
         view.finishActivity()
     }
 

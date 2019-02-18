@@ -37,13 +37,20 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 
-class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
+class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
+        DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
+
+    companion object {
+        const val DATE_KEY = "date_key"
+        private const val DATE_PICKER_TAG = "date picker"
+    }
+
     override val comment: String
-        get(){
+        get() {
             return commentMoneyActivityEditText.text.toString()
         }
     override val amount: String
-        get(){
+        get() {
             return amountMoneyActivityEditText.text.toString()
         }
 
@@ -186,7 +193,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
     }
 
     private fun initUiViaExtras(extras: Bundle?) {
-        if(extras == null) return
+        if (extras == null) return
 
         val userId = extras.getInt(MainActivity.USER_ID_KEY)
         isOperationInput = extras.getBoolean(MainActivity.IS_OPERATION_INCOME)
@@ -245,7 +252,6 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
-
                 accountId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
             }
 
@@ -258,7 +264,6 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
         categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
-
                 categoryId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
             }
 
@@ -283,10 +288,5 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation, DatePick
 
     override fun afterTextChanged(editable: Editable) {
 
-    }
-
-    companion object {
-        const val DATE_KEY = "date_key"
-        private const val DATE_PICKER_TAG = "date picker"
     }
 }

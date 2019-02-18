@@ -71,7 +71,8 @@ class ModelMoneyCalculator {
             CalculatorOperations.SUB -> result = countLowPriorityOperation(CalculatorOperations.SUB)
             CalculatorOperations.MUL -> result = countHighPriorityOperation(CalculatorOperations.MUL)
             CalculatorOperations.DIV -> result = countHighPriorityOperation(CalculatorOperations.DIV)
-            else -> { }
+            else -> {
+            }
         }
         if (isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0"
 
@@ -132,7 +133,8 @@ class ModelMoneyCalculator {
                 accumulator = accumulator.divide(secondOperand, 2, RoundingMode.CEILING)
                 accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN)
             }
-            else -> { }
+            else -> {
+            }
         }
         //If the new number is too big
         if (accumulator > maxAllowedValue) return false
@@ -179,10 +181,11 @@ class ModelMoneyCalculator {
     }
 
     fun clearLastSymbol(): String {
-        resultText = if (resultText.length == 1 || resultText.contains("E") || resultText.contains("e"))
+        resultText = if (resultText.length == 1 || resultText.contains("E") || resultText.contains("e")) {
             "0"
-        else
+        } else {
             resultText.substring(0, resultText.length - 1)
+        }
 
         return resultText
     }
@@ -208,13 +211,14 @@ class ModelMoneyCalculator {
     }
 
     fun newResultText(lastChar: Char): String {
-        if (resultText.length == 1 && resultText[0] == '0' && lastChar != '.')
+        if (resultText.length == 1 && resultText[0] == '0' && lastChar != '.') {
             resultText = lastChar + ""
-        else if (justCount && lastChar != '.') {
+        } else if (justCount && lastChar != '.') {
             justCount = false
             resultText = lastChar + ""
-        } else
+        } else {
             resultText += lastChar
+        }
 
         return resultText
     }

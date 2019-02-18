@@ -101,7 +101,7 @@ class TabFragment : Fragment() {
         pieChart = view.findViewById(R.id.pieChart)
         viewPagerDateTextView = view.findViewById(R.id.viewPagerDateTextView)
         operationsRecyclerView = view.findViewById(R.id.operationsRecyclerView)
-        fragmentTabScrollView =view.findViewById(R.id.fragmentTabScrollView)
+        fragmentTabScrollView = view.findViewById(R.id.fragmentTabScrollView)
 
         initOperationListAdapter()
         val extras = arguments
@@ -152,7 +152,7 @@ class TabFragment : Fragment() {
         updateTabFragment(isIncome, dateTitle, balanceString, operationList)
     }
 
-    fun getBalanceString(isIncome: Boolean, balance: BigDecimal): String {
+    private fun getBalanceString(isIncome: Boolean, balance: BigDecimal): String {
         val placeholderBalanceString = getString(if (isIncome) R.string.income_balance_placeholder else R.string.outcome_balance_placeholder)
         return String.format(placeholderBalanceString, balance)
     }
@@ -237,7 +237,7 @@ class TabFragment : Fragment() {
         operationsRecyclerView.layoutManager = LinearLayoutManager(context!!.applicationContext)
 
         operationsAdapter = OperationsAdapter(context!!, operationList)
-        operationsAdapter.setOnItemClickListener(object : OnItemClickListener{
+        operationsAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(position: Int) {
                 changeOperationClick(position)
             }
@@ -284,7 +284,7 @@ class TabFragment : Fragment() {
 
     fun updateUiViaNewOperation(operation: Operation) {
         operationList.add(0, operation)
-        operationsAdapter.notifyDataSetChanged()//TODO: If operation date is less than min operation date
+        operationsAdapter.notifyDataSetChanged()
     }
 
     private fun setEmptyEntry(): PieEntry {

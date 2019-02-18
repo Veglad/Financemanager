@@ -139,7 +139,8 @@ object DateUtils {
             PeriodsOfTime.WEEK -> endOfPeriod.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
             PeriodsOfTime.MONTH -> endOfPeriod.set(Calendar.DAY_OF_MONTH, endOfPeriod.getActualMaximum(Calendar.DAY_OF_MONTH))
             PeriodsOfTime.YEAR -> endOfPeriod.set(Calendar.DAY_OF_YEAR, endOfPeriod.getActualMaximum(Calendar.DAY_OF_YEAR))
-            else -> { }
+            else -> {
+            }
         }
         setMaxTimeOfADay(endOfPeriod)
 
@@ -176,7 +177,8 @@ object DateUtils {
             PeriodsOfTime.WEEK -> startOfPeriod.set(Calendar.DAY_OF_WEEK, startOfPeriod.firstDayOfWeek)
             PeriodsOfTime.MONTH -> startOfPeriod.set(Calendar.DAY_OF_MONTH, 1)
             PeriodsOfTime.YEAR -> startOfPeriod.set(Calendar.DAY_OF_YEAR, 1)
-            else -> { }
+            else -> {
+            }
         }
         setMinTimeOfADay(startOfPeriod)
 
