@@ -159,6 +159,11 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
         presenter.calculatorBtnOnClick(pressedButton.id, pressedButton.text.toString())
     }
 
+    fun backButtonClick(view: View) {
+        val pressedButton = view as ImageButton
+        presenter.calculatorBtnOnClick(pressedButton.id)
+    }
+
     override fun finishActivity() {
         finish()
     }
@@ -206,7 +211,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
         if (isModifyingOperation) {//Init UI via operation
             val operation = initOperationFromExtras(extras)
             operation.operationDate = Date(extras.getLong(DATE_KEY))
-            initUiViaOperationValues(operation)
+            presenter.initUiViaOperationValues(operation)
         } else {
             primaryUiInit()
         }
@@ -218,14 +223,13 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
         operationDateButton.text = dateButtonTitle
     }
 
-    private fun initUiViaOperationValues(operation: Operation) {
+    override fun initUiViaOperationValues(operation: Operation) {
         val dateButtonTitle: String = getDateButtonTitleByDate(operation.operationDate.time)
 
         initDateTimePicker(Date(operation.operationDate.time))
         operationDateButton.text = dateButtonTitle
         commentMoneyActivityEditText.setText(operation.comment)
         setAmountResultText(operation.amount.toString())
-        presenter.settingResultText(operation.amount)
         selectSpinnerItemMatchesToId(operation.category.id, categorySpinnerItemList, categorySpinner)
         selectSpinnerItemMatchesToId(operation.accountId, accountSpinnerItemList, accountSpinner)
     }

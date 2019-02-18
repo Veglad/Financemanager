@@ -13,7 +13,7 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
     private val model: ModelMoneyCalculator = ModelMoneyCalculator()
     private var modifyingOperationId: Int = 0
 
-    fun calculatorBtnOnClick(@IdRes btnId: Int, numberValue: String) {
+    fun calculatorBtnOnClick(@IdRes btnId: Int, numberValue: String = "") {
         when (btnId) {
             R.id.calculatorBackButton -> view.setAmountResultText(model.clearLastSymbol())
             R.id.additionCalculatorButton -> {
@@ -70,10 +70,6 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
         view.finishActivity()
     }
 
-    fun settingResultText(result: BigDecimal) {
-        model.initFotChangeOperation(result)
-    }
-
     fun setModifyingOperationId(modifyingOperationId: Int) {
         this.modifyingOperationId = modifyingOperationId
     }
@@ -81,5 +77,10 @@ class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
     fun calculatorReset() {
         model.clearNumber()
         view.setCalculatorToZero()
+    }
+
+    fun initUiViaOperationValues(operation: Operation) {
+        view.initUiViaOperationValues(operation)
+        model.initFotChangeOperation(operation.amount)
     }
 }

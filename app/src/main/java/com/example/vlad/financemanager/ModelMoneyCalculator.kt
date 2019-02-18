@@ -17,7 +17,6 @@ class ModelMoneyCalculator {
     val zeroBigDecimalValue = BigDecimal("0")
 
     var resultText: String
-        private set
     /**
      * First operand (Accumulator)
      */
@@ -186,7 +185,7 @@ class ModelMoneyCalculator {
         } else {
             resultText.substring(0, resultText.length - 1)
         }
-
+        accumulator = BigDecimal(resultText)
         return resultText
     }
 
@@ -221,10 +220,6 @@ class ModelMoneyCalculator {
         }
 
         return resultText
-    }
-
-    fun setResultText(newResult: BigDecimal) {
-        resultText = newResult.toString()
     }
 
     fun initFotChangeOperation(newResult: BigDecimal) {

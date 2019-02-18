@@ -30,5 +30,6 @@ interface IMoneyCalculation {
 
     fun sendNewOperation(operation: Operation)
 
+    fun initUiViaOperationValues(operation: Operation)
 
 }
