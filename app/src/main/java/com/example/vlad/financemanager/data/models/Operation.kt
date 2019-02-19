@@ -1,9 +1,12 @@
 package com.example.vlad.financemanager.data.models
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.math.BigDecimal
 import java.util.Date
 
+@Parcelize
 data class Operation(@Transient
                      var amount: BigDecimal,
                      var operationDate: Date,
@@ -11,4 +14,4 @@ data class Operation(@Transient
                      var isOperationIncome: Boolean,
                      var category: Category,
                      var id: Int,
-                     var accountId: Int) : Serializable
+                     var accountId: Int) : Parcelable

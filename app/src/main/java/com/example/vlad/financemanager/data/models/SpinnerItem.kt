@@ -1,8 +1,10 @@
 package com.example.vlad.financemanager.data.models
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-data class SpinnerItem(val id: Int, val name: String, val image: Int) : Serializable {
+@Parcelize
+data class SpinnerItem(val id: Int, val name: String, val image: Int) : Parcelable {
     companion object {
         const val POSITION_DAY = 0
         const val POSITION_WEEK = 1

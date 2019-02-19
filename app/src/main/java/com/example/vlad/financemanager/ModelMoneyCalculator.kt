@@ -40,15 +40,15 @@ class ModelMoneyCalculator {
     /**
      * is temp operand empty or no. Using for complex sequence of operations
      */
-    private var isTempOperationEmpty: Boolean = false
+    private var isTempOperationEmpty = false
     /**
      * Flag - used for identifying if calculation has just completed
      */
-    private var justCount: Boolean = false
+    private var justCount = false
     /**
      * Flag - used for identifying if there is a sequence of the operations with the same prioriy
      */
-    private var multiSamePriorityOperation: Boolean = false
+    private var severalSamePriorityOperation = false
 
     init {
         resultText = "0"
@@ -59,21 +59,18 @@ class ModelMoneyCalculator {
         tempOperation = CalculatorOperations.NONE
         isTempOperationEmpty = true
         justCount = false
-        multiSamePriorityOperation = false
+        severalSamePriorityOperation = false
     }
 
     fun mathOperationBtnClick(chosenOperation: CalculatorOperations): Boolean {
         var result = true
 
         when (chosenOperation) {
-            CalculatorOperations.ADD -> result = countLowPriorityOperation(CalculatorOperations.ADD)
-            CalculatorOperations.SUB -> result = countLowPriorityOperation(CalculatorOperations.SUB)
-            CalculatorOperations.MUL -> result = countHighPriorityOperation(CalculatorOperations.MUL)
-            CalculatorOperations.DIV -> result = countHighPriorityOperation(CalculatorOperations.DIV)
-            else -> {
-            }
+            CalculatorOperations.ADD, CalculatorOperations.SUB  -> result = countLowPriorityOperation(chosenOperation)
+            CalculatorOperations.MUL, CalculatorOperations.DIV  -> result = countHighPriorityOperation(chosenOperation)
         }
-        if (isTempOperationEmpty && !multiSamePriorityOperation) resultText = "0"
+
+        if (isTempOperationEmpty && !severalSamePriorityOperation) resultText = "0"
 
         return result
     }
@@ -81,7 +78,7 @@ class ModelMoneyCalculator {
     private fun countLowPriorityOperation(chosenOperation: CalculatorOperations): Boolean {
         var result = true
         if (operation !== CalculatorOperations.NONE) {
-            multiSamePriorityOperation = true
+            severalSamePriorityOperation = true
             result = calculate()
         } else {
             accumulator = BigDecimal(resultText)
@@ -106,7 +103,7 @@ class ModelMoneyCalculator {
             //saving current operation
             tempOperation = if (operation === CalculatorOperations.ADD) CalculatorOperations.ADD else CalculatorOperations.SUB
         } else if (operation !== CalculatorOperations.NONE) {
-            multiSamePriorityOperation = true
+            severalSamePriorityOperation = true
             result = calculate()
         } else {
             accumulator = BigDecimal(resultText)
@@ -131,8 +128,6 @@ class ModelMoneyCalculator {
 
                 accumulator = accumulator.divide(secondOperand, 2, RoundingMode.CEILING)
                 accumulator = accumulator.setScale(2, BigDecimal.ROUND_HALF_EVEN)
-            }
-            else -> {
             }
         }
         //If the new number is too big
@@ -195,7 +190,7 @@ class ModelMoneyCalculator {
         isTempOperationEmpty = true
         tempOperation = CalculatorOperations.NONE
         operation = CalculatorOperations.NONE
-        multiSamePriorityOperation = false
+        severalSamePriorityOperation = false
         justCount = false
 
         accumulator = BigDecimal(0)

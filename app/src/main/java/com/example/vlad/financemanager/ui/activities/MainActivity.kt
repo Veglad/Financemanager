@@ -15,6 +15,7 @@ import com.example.vlad.financemanager.data.database.DatabaseHelper
 import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper
 import com.example.vlad.financemanager.data.models.Operation
 import com.example.vlad.financemanager.data.enums.PeriodsOfTime
+import com.example.vlad.financemanager.data.models.Category
 import com.example.vlad.financemanager.data.models.SpinnerItem
 import com.example.vlad.financemanager.ui.OnChangeOperationClickListener
 import com.example.vlad.financemanager.ui.adapters.ImageSpinnerAdapter
@@ -28,8 +29,8 @@ import java.util.Calendar
 import java.util.Date
 
 import com.example.vlad.financemanager.ui.activities.MoneyCalculatorActivity.Companion.DATE_KEY
+import com.example.vlad.financemanager.ui.fragments.TabFragment
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
 
@@ -46,25 +47,18 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
         const val USER_ID = 0
     }
 
-    private var endOfPeriod: Calendar //TODO: remove this
+    private var endOfPeriod: Calendar
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var currentPeriod = PeriodsOfTime.DAY
     private lateinit var database: DatabaseHelper
-    private var minOperationDate: Date = Date()
+    private var minOperationDate = Date()
 
     private var isIncome = true
     private var accountId = ACCOUNT_ALL_ID
 
     //Getting spinner items collection for accounts
-    private val accountSpinnerItemListFromDb: List<SpinnerItem>
-        get() {
-            val accountList = ArrayList(database.getAllAccounts(USER_ID))
-            val spinnerItemList = ArrayList<SpinnerItem>()
-            spinnerItemList.add(SpinnerItem(ACCOUNT_ALL_ID, getString(R.string.all), R.drawable.dollar))
-            spinnerItemList.addAll(SpinnerItemMapper.mapAccountsToSpinnerItems(accountList))
-            return spinnerItemList
-        }
+    private val accountSpinnerItemListFromDb = mutableListOf<SpinnerItem>()
 
     init {
         endOfPeriod = Calendar.getInstance()
@@ -76,7 +70,6 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         database = DatabaseHelper.getInstance(applicationContext)
 
         initBottomNavigation()
@@ -96,8 +89,6 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
                     isIncome = false
                     newOperationButton.setImageResource(R.drawable.ic_remove_white_48dp)
                 }
-                else -> {
-                }
             }
 
             viewPagerAdapter.setIsIncome(isIncome)
@@ -109,6 +100,11 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun initAccountsSpinner() {
+        with(accountSpinnerItemListFromDb) {
+            val accountList = ArrayList(database.getAllAccounts(USER_ID))
+            add(SpinnerItem(ACCOUNT_ALL_ID, getString(R.string.all), R.drawable.dollar))
+            addAll(SpinnerItemMapper.mapAccountsToSpinnerItems(accountList))
+        }
         accountsSpinner.background.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP)
         val spinnerAccountItems = accountSpinnerItemListFromDb
 
@@ -172,7 +168,8 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
         pieChartViewPager.currentItem = endOfPeriodList.size - 1
     }
 
-    private fun initViewPagerEntriesByPeriod(titles: MutableList<String>, endOfPeriodList: MutableList<Calendar>, minOperationDate: Date?, maxDate: Date, includeLast: Boolean) {
+    private fun initViewPagerEntriesByPeriod(titles: MutableList<String>, endOfPeriodList: MutableList<Calendar>,
+                                             minOperationDate: Date, maxDate: Date, includeLast: Boolean) {
         var currentPagerListDate = Calendar.getInstance()
         currentPagerListDate.time = minOperationDate
         currentPagerListDate = DateUtils.getEndOfPeriod(currentPagerListDate, currentPeriod)
@@ -184,18 +181,16 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
             val endOfPeriod = Calendar.getInstance()
             endOfPeriod.time = currentPagerListDate.time
             endOfPeriodList.add(endOfPeriod)
-        } while (DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate!!, maxDate, includeLast))
+        } while (DateUtils.slideDateIfAble(currentPagerListDate, true, currentPeriod, minOperationDate, maxDate, includeLast))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null) return
-        val extras: Bundle? = data.extras
-        if (resultCode != 0 || extras == null) {
+        if (data == null || resultCode != 0 || data.extras == null) {
             Toast.makeText(this, getString(R.string.operation_save_error), Toast.LENGTH_SHORT).show()
             return
         }
 
-        val operation = getOperationFromExtras(extras)
+        val operation = getOperationFromExtras(data.extras)
         val currentTabFragment = viewPagerAdapter.getRegisteredFragment(pieChartViewPager.currentItem)
         val currentPeriod = currentTabFragment.currentPeriod
         val currentDate = currentTabFragment.currentEndOfPeriod
@@ -203,20 +198,28 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
         if (requestCode == NEW_OPERATION_REQUEST_CODE) {
             val id = database.insertOperation(operation, USER_ID, operation.accountId)
             operation.id = id.toInt()
-            if (isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
-                updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID) ?: Date())
-            } else {
-                currentTabFragment.updateUiViaNewOperation(operation)
-            }
+            updateUiVieNewOperation(operation, currentPeriod, currentDate, currentTabFragment)
         } else {
             database.updateOperation(operation, USER_ID, operation.accountId)
-            if (isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate)) {
-                currentTabFragment.updateUiViaModifiedOperation(operation)
-            } else {
-                currentTabFragment.removeModifiedOperation()
-            }
+            updateUiViaModifiedOperation(operation, currentPeriod, currentDate, currentTabFragment)
         }
         viewPagerAdapter.notifyDataSetChanged()
+    }
+
+    private fun updateUiViaModifiedOperation(operation: Operation, currentPeriod: PeriodsOfTime, currentDate: Calendar, currentTabFragment: TabFragment) {
+        if (isOperationFitsToCurrPeriodAndAccount(operation, currentPeriod, currentDate)) {
+            currentTabFragment.updateUiViaModifiedOperation(operation)
+        } else {
+            currentTabFragment.removeModifiedOperation()
+        }
+    }
+
+    private fun updateUiVieNewOperation(operation: Operation, currentPeriod: PeriodsOfTime, currentDate: Calendar, currentTabFragment: TabFragment) {
+        if (isNeedToUpdateViewPagerItems(operation, currentPeriod, currentDate)) {
+            updateViewPagerItemsAtStart(database.getMinOperationDate(USER_ID) ?: Date())
+        } else {
+            currentTabFragment.updateUiViaNewOperation(operation)
+        }
     }
 
     private fun isNeedToUpdateViewPagerItems(operation: Operation, currentPeriod: PeriodsOfTime, currentDate: Calendar): Boolean {
@@ -252,24 +255,27 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
     }
 
     private fun getOperationFromExtras(extras: Bundle): Operation {
-        val operation = extras.getSerializable(OPERATION_KEY) as Operation
+        val operation = extras.getParcelable(OPERATION_KEY) as Operation
         val amountString = extras.getString(AMOUNT_KEY)
         operation.amount = BigDecimal(amountString)
 
-        val category = database.getCategory(operation.category.id)//TODO: Required operation with initialized category
-        operation.category = category!!
+        val category = database.getCategory(operation.category.id)
+        operation.category = category ?: Category()
         return operation
     }
 
     fun onNewOperationButtonClick(v: View) {
-        val intent = Intent(this, MoneyCalculatorActivity::class.java)
-        intent.putExtra(IS_OPERATION_INCOME, isIncome)
-        intent.putExtra(IS_MODIFYING_OPERATION, false)
-        val extras = Bundle()
-        extras.putSerializable(USER_ID_KEY, USER_ID)
-        extras.putLong(DATE_KEY, endOfPeriod.timeInMillis)
-        intent.putExtras(extras)
+        val intent = Intent(this, MoneyCalculatorActivity::class.java).apply {
+            putExtra(IS_OPERATION_INCOME, isIncome)
+            putExtra(IS_MODIFYING_OPERATION, false)
+        }
 
+        val extras = Bundle().apply {
+            putSerializable(USER_ID_KEY, USER_ID)
+            putLong(DATE_KEY, endOfPeriod.timeInMillis)
+        }
+
+        intent.putExtras(extras)
         startActivityForResult(intent, NEW_OPERATION_REQUEST_CODE)
     }
 
@@ -285,15 +291,16 @@ class MainActivity : AppCompatActivity(), OnChangeOperationClickListener {
 
     override fun onChangeOperationClick(operation: Operation) {
         val intent = Intent(this, MoneyCalculatorActivity::class.java)
-        val extras = Bundle()
-        extras.putSerializable(OPERATION_KEY, operation)
-        extras.putSerializable(USER_ID_KEY, USER_ID)
-        extras.putSerializable(DATE_KEY, operation.operationDate.time)
-        extras.putSerializable(IS_MODIFYING_OPERATION, true)
-        extras.putSerializable(IS_OPERATION_INCOME, operation.isOperationIncome)
-        extras.putSerializable(AMOUNT_KEY, operation.amount.toString())
-        intent.putExtras(extras)
+        val extras = Bundle().apply {
+            putParcelable(OPERATION_KEY, operation)
+            putSerializable(USER_ID_KEY, USER_ID)
+            putSerializable(DATE_KEY, operation.operationDate.time)
+            putSerializable(IS_MODIFYING_OPERATION, true)
+            putSerializable(IS_OPERATION_INCOME, operation.isOperationIncome)
+            putSerializable(AMOUNT_KEY, operation.amount.toString())
+        }
 
+        intent.putExtras(extras)
         startActivityForResult(intent, CHANGE_OPERATION_REQUEST_CODE)
     }
 }

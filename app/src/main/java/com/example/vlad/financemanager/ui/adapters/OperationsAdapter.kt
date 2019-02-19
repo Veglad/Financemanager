@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import butterknife.BindView
 
 import com.example.vlad.financemanager.R
 import com.example.vlad.financemanager.data.models.Operation
@@ -19,14 +20,14 @@ import com.example.vlad.financemanager.utils.DateUtils
 
 class OperationsAdapter(private val context: Context,
                         private var operationList: List<Operation>?) : RecyclerView.Adapter<OperationsAdapter.OperationViewHolder>() {
-    private var itemDeleteClickListener: OnItemDeleteClickListener? = null
-    private var itemClickListener: OnItemClickListener? = null
+    private var itemDeleteClickListener: ((Int) -> Unit)? = null
+    private var itemClickListener: ((Int) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+    fun setOnItemClickListener(listener: (Int) -> Unit) {
         itemClickListener = listener
     }
 
-    fun setOnItemDeleteClickListener(listener: OnItemDeleteClickListener) {
+    fun setOnItemDeleteClickListener(listener: (Int) -> Unit) {
         itemDeleteClickListener = listener
     }
 
@@ -39,45 +40,48 @@ class OperationsAdapter(private val context: Context,
     override fun onBindViewHolder(holder: OperationViewHolder, position: Int) {
         val (amount, operationDate, comment, isOperationIncome, category) = operationList!![position]
 
-        holder.commentText.text = comment
-        if (comment.isEmpty()) {
-            holder.commentText.visibility = View.GONE
-        }
+        with(holder) {
+            commentText.text = comment
+            if (comment.isEmpty()) {
+                commentText.visibility = View.GONE
+            }
 
-        holder.categoryText.text = category.name
+            categoryText.text = category.name
 
-        if (isOperationIncome) {
-            holder.amountText.text = String.format("+%s ₴", amount.toString())
-            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_green))
-        } else {
-            holder.amountText.text = String.format("-%s ₴", amount.toString())
-            holder.amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_red))
-        }
+            if (isOperationIncome) {
+                amountText.text = String.format("+%s ₴", amount.toString())
+                amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_green))
+            } else {
+                amountText.text = String.format("-%s ₴", amount.toString())
+                amountText.setTextColor(ContextCompat.getColor(context, R.color.lite_red))
+            }
 
-        val resultDateText = DateUtils.getStringDate(operationDate, DateUtils.DATE_FULL_PATTERN)
-        holder.textDate.text = resultDateText
-        holder.categoryImg.setImageResource(category.icon)
+            val resultDateText = DateUtils.getStringDate(operationDate, DateUtils.DATE_FULL_PATTERN)
+            textDate.text = resultDateText
+            categoryImg.setImageResource(category.icon)
 
-        holder.itemView.setOnClickListener {
-            if (itemClickListener != null) {
-                itemClickListener!!.onItemClick(holder.adapterPosition)
+            itemView.setOnClickListener {
+                itemClickListener?.invoke(holder.adapterPosition)
+            }
+            moreButton.setOnClickListener {
+                initPopupMenu(holder)
             }
         }
-        holder.moreButton.setOnClickListener {
-            val popup = PopupMenu(context, holder.moreButton)
-            popup.inflate(R.menu.more_operation_menu)
-            popup.setOnMenuItemClickListener { item ->
+    }
+
+    private fun initPopupMenu(holder: OperationViewHolder) {
+        PopupMenu(context, holder.moreButton).apply {
+            inflate(R.menu.more_operation_menu)
+            setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.deleteMoreMenuItem -> {
-                        if (itemDeleteClickListener != null) {
-                            itemDeleteClickListener!!.onItemDeleteClick(holder.adapterPosition)
-                        }
+                        itemDeleteClickListener?.invoke(holder.adapterPosition)
                         true
                     }
                     else -> false
                 }
             }
-            popup.show()
+            show()
         }
     }
 

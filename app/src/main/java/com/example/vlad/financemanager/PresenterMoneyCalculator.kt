@@ -10,8 +10,8 @@ import com.example.vlad.financemanager.ui.IMoneyCalculation
 import java.math.BigDecimal
 
 class PresenterMoneyCalculator(private val view: IMoneyCalculation) {
-    private val model: ModelMoneyCalculator = ModelMoneyCalculator()
-    private var modifyingOperationId: Int = 0
+    private val model = ModelMoneyCalculator()
+    private var modifyingOperationId = 0
 
     fun calculatorBtnOnClick(@IdRes btnId: Int, numberValue: String = "") {
         when (btnId) {

@@ -1,68 +1,64 @@
 package com.example.vlad.financemanager.data.models
 
 import java.math.BigDecimal
-import java.util.ArrayList
 
 data class User(var balance: BigDecimal?, var name: String?) {
 
     val id: Int = 0
 
-    private val accounts: MutableList<Account>
+    private val accounts = mutableListOf<Account>()
 
-    private val userCategories: MutableList<Category>? = null
-
-    init {
-        accounts = ArrayList()
-    }
+    private val userCategories = mutableListOf<Category>()
 
     fun getAccounts(): List<Account> {
         return accounts
     }
 
-
     fun addNewAccount(account: Account): Boolean {
         //Checking if we have a category with the same name
-        for (acc in accounts) {
-            if (account.name == account.name)
-                return false
+        val isUniqueAccount = accounts.all {
+            it.id != account.id
         }
 
-        accounts.add(account)
+        if(isUniqueAccount) accounts.add(account)
 
-        return true
+        return isUniqueAccount
     }
 
     fun deleteAccount(accountId: Int): Boolean {
-        for (account in accounts) {
-            if (account.id == accountId) {
-                accounts.remove(account)
-                return true
-            }
+        val accountToDelete = accounts.filter {
+            it.id == accountId
         }
 
-        return false
+        return if(accountToDelete.size == 1) {
+            accounts.remove(accountToDelete[0])
+            true
+        } else {
+            false
+        }
     }
 
     fun addNewCustomCategory(category: Category): Boolean {
-        for (categor in userCategories!!) {
-            if (category.name == category.name)
-                return false
+        val isUniqueCategory = userCategories.all {
+            it.id != category.id
         }
 
-        userCategories.add(category)
+        if(isUniqueCategory) userCategories.add(category)
 
-        return true
+        return isUniqueCategory
     }
 
     fun deleteCustomCategory(categoryId: Int): Boolean {
-        for (i in userCategories!!.indices) {
-            if (userCategories[i].id == categoryId) {
-                userCategories.removeAt(i)
-                return true
-            }
+        val categoryToDelete = userCategories.filter {
+            it.id == categoryId
         }
 
-        return false
+        return if(categoryToDelete.size == 1) {
+            userCategories.remove(categoryToDelete[0])
+            true
+        } else {
+            false
+        }
     }
 
     fun getUserCategories(): List<Category>? {

@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -15,11 +14,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
+import butterknife.OnClick
 
 import com.example.vlad.financemanager.data.database.DatabaseHelper
 import com.example.vlad.financemanager.data.mappers.SpinnerItemMapper
@@ -38,7 +36,7 @@ import java.util.Calendar
 import java.util.Date
 
 class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
-        DatePickerDialog.OnDateSetListener, View.OnClickListener, TextWatcher {
+        DatePickerDialog.OnDateSetListener {
 
     companion object {
         const val DATE_KEY = "date_key"
@@ -54,8 +52,8 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
             return amountMoneyActivityEditText.text.toString()
         }
 
-    private val sdf = SimpleDateFormat("E, dd MMMM")
-    private val sdfWithYear = SimpleDateFormat("E, MMMM dd, yyyy")
+    private val mediumDateFormat = SimpleDateFormat("E, dd MMMM")
+    private val longDateFormat = SimpleDateFormat("E, MMMM dd, yyyy")
 
     private lateinit var presenter: PresenterMoneyCalculator
     override var operationDate = Date()
@@ -73,10 +71,6 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_money_calculator)
 
-        amountMoneyActivityEditText.addTextChangedListener(this)
-        saveRecordButton.setOnClickListener(this)
-        closeOperationButton.setOnClickListener(this)
-
         databaseHelper = DatabaseHelper.getInstance(applicationContext)
         presenter = PresenterMoneyCalculator(this)
 
@@ -85,18 +79,39 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
             true
         }
 
+        initViewsWithClickListeners()
         initAmountEditText()
         initUiViaExtras(intent.extras)
     }
 
-    private fun initAmountEditText() {
-        amountMoneyActivityEditText.requestFocus()
-        amountMoneyActivityEditText.setOnKeyListener { _, keyCode, keyEvent ->
-            if (!(keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)) {
-                presenter.calculatorReset()
-            }
+    private fun initViewsWithClickListeners() {
+        amountMoneyActivityEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {}
 
-            false
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if (before > count) presenter.calculatorReset()
+            }
+        })
+
+        closeOperationButton.setOnClickListener { finishActivity() }
+        saveRecordButton.setOnClickListener { presenter.onButtonSaveClick() }
+        calculatorBackButton.setOnClickListener {
+            val pressedButton = it as ImageButton
+            presenter.calculatorBtnOnClick(pressedButton.id)
+        }
+    }
+
+    private fun initAmountEditText() {
+        amountMoneyActivityEditText.apply {
+            requestFocus()
+            setOnKeyListener { _, keyCode, keyEvent ->
+                if (!(keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    presenter.calculatorReset()
+                }
+                false
+            }
         }
     }
 
@@ -114,7 +129,7 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
             it.setDisplayShowHomeEnabled(true)
             it.setDisplayHomeAsUpEnabled(true)
         }
-        calculatorActivityToolbar.navigationIcon!!.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+        calculatorActivityToolbar.navigationIcon?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
         calculatorActivityToolbar.setNavigationOnClickListener { finish() }
 
         val title = if (isIncome) getString(R.string.income) else getString(R.string.outcome)
@@ -122,32 +137,35 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
     }
 
     private fun initDateTimePicker(operationDate: Date) {
-        operationDateButton.text = sdf.format(Date())
+        operationDateButton.apply {
+            text = mediumDateFormat.format(Date())
+        }
         operationDateButton.setOnClickListener {
-            val df = DatePickerFragment()
-            df.setCalendar(operationDate)
-            df.show(supportFragmentManager, DATE_PICKER_TAG)
+            DatePickerFragment().apply {
+                setCalendar(operationDate)
+                show(supportFragmentManager, DATE_PICKER_TAG)
+            }
         }
     }
 
-    private fun getDateButtonTitleByDate(dateInMillis: Long?): String {
+    private fun getDateButtonTitleByDate(dateInMillis: Long): String {
         val calendar = Calendar.getInstance()
-        calendar.timeInMillis = dateInMillis!!
+        calendar.timeInMillis = dateInMillis
         operationDate = calendar.time
 
         val dateButtonTitle: String
         dateButtonTitle = if (calendar.get(Calendar.YEAR) != Calendar.getInstance().get(Calendar.YEAR)) {
-            sdfWithYear.format(calendar.time)
+            longDateFormat.format(calendar.time)
         } else {
-            sdf.format(calendar.time)
+            mediumDateFormat.format(calendar.time)
         }
 
         return dateButtonTitle
     }
 
-    override fun setAmountResultText(result: String) {
-        amountMoneyActivityEditText.setText(result)
-        calculationResultTextView.text = result
+    override fun setAmountResultText(resultText: String) {
+        amountMoneyActivityEditText.setText(resultText)
+        calculationResultTextView.text = resultText
     }
 
     override fun setCalculatorToZero() {
@@ -157,11 +175,6 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
     fun calculatorBtnOnClick(view: View) {
         val pressedButton = view as Button
         presenter.calculatorBtnOnClick(pressedButton.id, pressedButton.text.toString())
-    }
-
-    fun backButtonClick(view: View) {
-        val pressedButton = view as ImageButton
-        presenter.calculatorBtnOnClick(pressedButton.id)
     }
 
     override fun finishActivity() {
@@ -177,29 +190,30 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
     }
 
     override fun sendNewOperation(operation: Operation) {
-        val intent = Intent()
         val amount = operation.amount.toString()
-        val extras = Bundle()
-        extras.putString(MainActivity.AMOUNT_KEY, amount)
-        extras.putSerializable(MainActivity.OPERATION_KEY, operation)
-        intent.putExtras(extras)
+        val extras = Bundle().apply {
+            putString(MainActivity.AMOUNT_KEY, amount)
+            putParcelable(MainActivity.OPERATION_KEY, operation)
+        }
+        val intent = Intent().apply {
+            putExtras(extras)
+        }
 
         setResult(0, intent)
     }
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, dayOfMonth: Int) {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        }
 
         operationDate = calendar.time
         operationDateButton.text = getDateButtonTitleByDate(operationDate.time)
     }
 
-    private fun initUiViaExtras(extras: Bundle?) {
-        if (extras == null) return
-
+    private fun initUiViaExtras(extras: Bundle) {
         val userId = extras.getInt(MainActivity.USER_ID_KEY)
         isOperationInput = extras.getBoolean(MainActivity.IS_OPERATION_INCOME)
         val isModifyingOperation = extras.getBoolean(MainActivity.IS_MODIFYING_OPERATION)
@@ -235,16 +249,13 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
     }
 
     private fun selectSpinnerItemMatchesToId(id: Int, categorySpinnerItemList: List<SpinnerItem>, spinner: Spinner?) {
-        for (i in categorySpinnerItemList.indices) {
-            if (categorySpinnerItemList[i].id == id) {
-                spinner!!.setSelection(i)
-            }
-        }
+        val spinnerSelectionIndex = categorySpinnerItemList.indexOfFirst { it.id == id }
+        spinner?.setSelection(spinnerSelectionIndex)
     }
 
     private fun initOperationFromExtras(extras: Bundle): Operation {
-        val operation = extras.getSerializable(MainActivity.OPERATION_KEY) as Operation
-        operation.amount = BigDecimal(intent.extras!!.get(MainActivity.AMOUNT_KEY)!!.toString())
+        val operation = extras.getParcelable(MainActivity.OPERATION_KEY) as Operation
+        operation.amount = BigDecimal(extras.get(MainActivity.AMOUNT_KEY)!!.toString())
         presenter.setModifyingOperationId(operation.id)
         return operation
     }
@@ -252,45 +263,30 @@ class MoneyCalculatorActivity : AppCompatActivity(), IMoneyCalculation,
     private fun initSpinnersWithItemLists(accountSpinnerItemList: List<SpinnerItem>, categorySpinnerItemList: List<SpinnerItem>) {
         val accountSpinnerAdapter = ImageSpinnerAdapter(this, R.layout.image_spinner_item, accountSpinnerItemList,
                 R.color.dark_gray, R.color.dark_black)
-        accountSpinner.adapter = accountSpinnerAdapter
-        accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>,
-                                        itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
-                accountId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
-            }
+        accountSpinner.apply {
+            adapter = accountSpinnerAdapter
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>,
+                                            itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
+                    accountId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+                override fun onNothingSelected(parent: AdapterView<*>) {}
+            }
         }
 
         val categoriesSpinnerAdapter = ImageSpinnerAdapter(this, R.layout.image_spinner_item, categorySpinnerItemList,
                 R.color.dark_gray, R.color.dark_black)
-        categorySpinner.adapter = categoriesSpinnerAdapter
-        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>,
-                                        itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
-                categoryId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
+        categorySpinner.apply {
+            adapter = categoriesSpinnerAdapter
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>,
+                                            itemSelected: View, selectedItemPosition: Int, selectedId: Long) {
+                    categoryId = (parent.getItemAtPosition(selectedItemPosition) as SpinnerItem).id
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {}
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
-    }
-
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.closeOperationButton -> finishActivity()
-            R.id.saveRecordButton -> presenter.onButtonSaveClick()
-        }
-    }
-
-    override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-
-    }
-
-    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (before > count) presenter.calculatorReset()
-    }
-
-    override fun afterTextChanged(editable: Editable) {
-
     }
 }

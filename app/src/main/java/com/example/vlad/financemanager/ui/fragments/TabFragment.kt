@@ -14,6 +14,9 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ScrollView
 import android.widget.TextView
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.Unbinder
 
 import com.example.vlad.financemanager.R
 import com.example.vlad.financemanager.data.database.DatabaseHelper
@@ -31,6 +34,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
+import kotlinx.android.synthetic.main.fragment_tab.*
 
 import java.math.BigDecimal
 import java.util.ArrayList
@@ -49,12 +53,13 @@ class TabFragment : Fragment() {
         private val EMPTY_CHART_COLOR = Color.rgb(186, 195, 209)
 
         fun newInstance(currentPeriod: PeriodsOfTime, endOfPeriod: Calendar, isIncome: Boolean, accountId: Int, dateTitle: String): TabFragment {
-            val args = Bundle()
-            args.putSerializable(END_OF_PERIOD_KEY, endOfPeriod)
-            args.putSerializable(CURRENT_PERIOD_KEY, currentPeriod)
-            args.putBoolean(IS_INCOME_KEY, isIncome)
-            args.putInt(ACCOUNT_ID_KEY, accountId)
-            args.putString(DATE_TITLE_KEY, dateTitle)
+            val args = Bundle().apply {
+                putSerializable(END_OF_PERIOD_KEY, endOfPeriod)
+                putSerializable(CURRENT_PERIOD_KEY, currentPeriod)
+                putBoolean(IS_INCOME_KEY, isIncome)
+                putInt(ACCOUNT_ID_KEY, accountId)
+                putString(DATE_TITLE_KEY, dateTitle)
+            }
 
             val fragment = TabFragment()
             fragment.arguments = args
@@ -62,11 +67,6 @@ class TabFragment : Fragment() {
             return fragment
         }
     }
-
-    private lateinit var pieChart: PieChart
-    private lateinit var viewPagerDateTextView: TextView
-    private lateinit var operationsRecyclerView: RecyclerView
-    private lateinit var fragmentTabScrollView: ScrollView
 
     private lateinit var operationsAdapter: OperationsAdapter
     private lateinit var database: DatabaseHelper
@@ -90,35 +90,29 @@ class TabFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        database = DatabaseHelper.getInstance(context!!.applicationContext)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstance: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_tab, container, false)
+        database = DatabaseHelper.getInstance(context!!.applicationContext)
 
-        pieChart = view.findViewById(R.id.pieChart)
-        viewPagerDateTextView = view.findViewById(R.id.viewPagerDateTextView)
-        operationsRecyclerView = view.findViewById(R.id.operationsRecyclerView)
-        fragmentTabScrollView = view.findViewById(R.id.fragmentTabScrollView)
+        return view
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initOperationListAdapter()
         val extras = arguments
         extras?.let {
             //Get extras
-            accountId = extras.getInt(ACCOUNT_ID_KEY)
-            currentPeriod = extras.getSerializable(CURRENT_PERIOD_KEY) as PeriodsOfTime
-            currentEndOfPeriod = extras.getSerializable(END_OF_PERIOD_KEY) as Calendar
+            accountId = it.getInt(ACCOUNT_ID_KEY)
+            currentPeriod = it.getSerializable(CURRENT_PERIOD_KEY) as PeriodsOfTime
+            currentEndOfPeriod = it.getSerializable(END_OF_PERIOD_KEY) as Calendar
             currentEndOfPeriod.firstDayOfWeek = Calendar.MONDAY
-            dateTitle = extras.getString(DATE_TITLE_KEY)
-            isIncome = arguments!!.getBoolean(IS_INCOME_KEY)
+            dateTitle = it.getString(DATE_TITLE_KEY)
+            isIncome = it.getBoolean(IS_INCOME_KEY)
 
             fullTabFragmentUpdate(currentPeriod, currentEndOfPeriod, isIncome, accountId, dateTitle)
         }
         pieChart.setUsePercentValues(true)
-
-        return view
     }
 
     private fun getBalance(operationList: List<Operation>): BigDecimal {
@@ -173,6 +167,7 @@ class TabFragment : Fragment() {
         val entries = getPieEntries(operations)
 
         val dataSet = PieDataSet(entries, PIE_CHART_LABEL)
+        //* - convert List<Int> to vararg Int
         dataSet.setColors(*if (isIncome) ColorTemplate.MATERIAL_COLORS else ColorTemplate.COLORFUL_COLORS)
 
         dataSet.sliceSpace = 3f
@@ -186,19 +181,19 @@ class TabFragment : Fragment() {
         } else
             data.setValueFormatter(PercentFormatter())
 
-        pieChart.data = data
-        pieChart.isRotationEnabled = false
-        pieChart.getPaint(Chart.PAINT_HOLE)
-        pieChart.setCenterTextSize(18f)
-        pieChart.setCenterTextColor(ContextCompat.getColor(context!!, R.color.white))
-        pieChart.setHoleColor(ContextCompat.getColor(context!!, R.color.transparent))
+        val description = Description().apply { text = "" }
 
-        val description = Description()
-        description.text = ""
-        pieChart.description = description
-        pieChart.legend.isEnabled = false
-
-        pieChart.invalidate()
+        pieChart.apply {
+            this.data = data
+            isRotationEnabled = false
+            getPaint(Chart.PAINT_HOLE)
+            setCenterTextSize(18f)
+            setCenterTextColor(ContextCompat.getColor(context!!, R.color.white))
+            setHoleColor(ContextCompat.getColor(context!!, R.color.transparent))
+            this.description = description
+            legend.isEnabled = false
+            invalidate()
+        }
     }
 
     //get pie entries for current operation list
@@ -232,24 +227,17 @@ class TabFragment : Fragment() {
     }
 
     private fun initOperationListAdapter() {
-        operationsRecyclerView.isFocusable = false
-        operationsRecyclerView.itemAnimator = DefaultItemAnimator()
-        operationsRecyclerView.layoutManager = LinearLayoutManager(context!!.applicationContext)
+        operationsAdapter = OperationsAdapter(context!!, operationList).apply {
+            setOnItemClickListener {position -> changeOperationClick(position)}
+            setOnItemDeleteClickListener {position -> deleteOperation(position)}
+        }
 
-        operationsAdapter = OperationsAdapter(context!!, operationList)
-        operationsAdapter.setOnItemClickListener(object : OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                changeOperationClick(position)
-            }
-
-        })
-        operationsAdapter.setOnItemDeleteClickListener(object : OnItemDeleteClickListener {
-            override fun onItemDeleteClick(position: Int) {
-                deleteOperation(position)
-            }
-
-        })
-        operationsRecyclerView.adapter = operationsAdapter
+        with(operationsRecyclerView) {
+            isFocusable = false
+            itemAnimator = DefaultItemAnimator()
+            layoutManager = LinearLayoutManager(context!!.applicationContext)
+            adapter = operationsAdapter
+        }
     }
 
     private fun changeOperationClick(position: Int) {

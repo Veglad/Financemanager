@@ -14,8 +14,8 @@ import com.example.vlad.financemanager.R
 import com.example.vlad.financemanager.data.models.SpinnerItem
 
 class ImageSpinnerAdapter(context: Context, resource: Int, spinnerItems: List<SpinnerItem>,
-                          @param:ColorRes @field:ColorRes private val selectedTextColor: Int,
-                          @param:ColorRes @field:ColorRes private val dropDownTextColor: Int) :
+                          @ColorRes private val selectedTextColor: Int,
+                          @ColorRes private val dropDownTextColor: Int) :
         ArrayAdapter<SpinnerItem>(context, resource, spinnerItems) {
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -27,14 +27,11 @@ class ImageSpinnerAdapter(context: Context, resource: Int, spinnerItems: List<Sp
     }
 
     private fun initView(position: Int, convertView: View?, parent: ViewGroup, textColor: Int): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(
-                    R.layout.image_spinner_item, parent, false)
-        }
+        val view = convertView ?: LayoutInflater.from(context).inflate(
+                R.layout.image_spinner_item, parent, false)
 
-        val image = convertView!!.findViewById<ImageView>(R.id.iconSpinnerItem)
-        val accountName = convertView.findViewById<TextView>(R.id.accountTypeTextView)
+        val image = view.findViewById<ImageView>(R.id.iconSpinnerItem)
+        val accountName = view.findViewById<TextView>(R.id.accountTypeTextView)
         accountName.setTextColor(ContextCompat.getColor(context, textColor))
 
         val currentItem = getItem(position)
@@ -44,6 +41,6 @@ class ImageSpinnerAdapter(context: Context, resource: Int, spinnerItems: List<Sp
             accountName.text = currentItem.name
         }
 
-        return convertView
+        return view
     }
 }

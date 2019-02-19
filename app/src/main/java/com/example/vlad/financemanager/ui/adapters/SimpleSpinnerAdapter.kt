@@ -25,16 +25,13 @@ class SimpleSpinnerAdapter(context: Context, resource: Int, spinnerItems: Array<
     }
 
     private fun initView(position: Int, convertView: View?, parent: ViewGroup, textColor: Int): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(
-                    R.layout.simple_spinner_item, parent, false)
-        }
+        val view = convertView ?: LayoutInflater.from(context).inflate(
+                R.layout.simple_spinner_item, parent, false)
 
-        val accountName = convertView!!.findViewById<TextView>(R.id.accountTypeTextView)
+        val accountName = view.findViewById<TextView>(R.id.accountTypeTextView)
         accountName.text = getItem(position)
         accountName.setTextColor(ContextCompat.getColor(context, textColor))
 
-        return convertView
+        return view
     }
 }

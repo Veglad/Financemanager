@@ -164,9 +164,11 @@ object DateUtils {
     }
 
     private fun setMaxTimeOfADay(endOfPeriod: Calendar) {
-        endOfPeriod.set(Calendar.HOUR_OF_DAY, 23)
-        endOfPeriod.set(Calendar.MINUTE, 59)
-        endOfPeriod.set(Calendar.SECOND, 59)
+        with(endOfPeriod) {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+        }
     }
 
     fun getStartOfPeriod(currDate: Calendar, period: PeriodsOfTime): Calendar {
