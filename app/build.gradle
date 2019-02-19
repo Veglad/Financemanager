@@ -1,4 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+androidExtensions {
+    experimental = true
+}
 
 android {
     compileSdkVersion 27
@@ -33,6 +40,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

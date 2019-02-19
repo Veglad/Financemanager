@@ -71,6 +71,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_add_white_48dp"
+        android:onClick="onNewOperationButtonClick"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="@+id/pieChartViewPager" />
 
